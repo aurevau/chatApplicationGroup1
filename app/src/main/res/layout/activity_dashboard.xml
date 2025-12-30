@@ -9,6 +9,7 @@
     android:background="@color/off_white">
 
     <FrameLayout
+        android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +35,16 @@
             android:backgroundTint="@color/off_white"
             android:layout_gravity="end"/>
     </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+    </FrameLayout>
+
+
 
 
 
