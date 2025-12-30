@@ -5,4 +5,10 @@
     <string name="register_button_text">Register</string>
     <string name="hint_text_username">Username</string>
     <string name="hint_text_password">Password</string>
+
+
+    <string-array name="menu_spinner">
+        <item>Profile</item>
+        <item>Logout</item>
+    </string-array>
 </resources>
