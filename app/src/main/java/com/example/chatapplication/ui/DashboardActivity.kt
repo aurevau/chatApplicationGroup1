@@ -1,4 +1,4 @@
-package com.example.chatapplication
+package com.example.chatapplication.ui
 
 import android.os.Bundle
 import android.view.View
@@ -8,6 +8,7 @@ import android.widget.TextView
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatSpinner
+import com.example.chatapplication.R
 
 import com.example.chatapplication.databinding.ActivityDashboardBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
