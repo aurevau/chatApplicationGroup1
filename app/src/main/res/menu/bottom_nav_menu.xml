@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:id="@+id/navigation_allChats"
+        android:icon="@drawable/chats_icon"
+        android:title="Recent Chats"/>
+
+    <item android:id="@+id/navigation_allUsers"
+        android:icon="@drawable/users_icon"
+        android:title="All Users"
+        />
+</menu>
