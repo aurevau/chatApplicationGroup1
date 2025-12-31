@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapplication.databinding.ActivityWelcomeBinding
+import com.example.chatapplication.ui.DashboardActivity
 
 class WelcomeActivity : AppCompatActivity() {
 
