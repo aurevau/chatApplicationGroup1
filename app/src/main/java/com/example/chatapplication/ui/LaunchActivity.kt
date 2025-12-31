@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.example.chatapplication.WelcomeActivity
 import com.example.chatapplication.databinding.ActivityLaunchBinding
 import com.google.firebase.auth.FirebaseAuth
 
