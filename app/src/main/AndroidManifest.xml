@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication">
         <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="false" />
         <activity
@@ -20,7 +23,6 @@
         <activity
             android:name=".ui.WelcomeActivity"
             android:exported="false">
-
         </activity>
         <activity
             android:name=".ui.LaunchActivity"
