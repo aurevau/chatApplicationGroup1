@@ -12,7 +12,7 @@ class UserViewModel: ViewModel() {
 
     private val dataManager = UserRepository()
 
-    val user: LiveData<MutableList<User>> = dataManager.users
+    val user: LiveData<List<User>> = dataManager.users
 
 
     fun getCurrentUserId(): String? {

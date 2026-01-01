@@ -6,9 +6,12 @@ data class User(
     val name: String = ""
 ) {
     val initials: String
-        get() = name
-            .trim()
-            .split("\\s+" .toRegex())
-            .take(2)
-            .joinToString ("") {it.first().uppercase()}
+        get() {
+            if (name.isBlank()) return "?"
+            return name.trim()
+                .split("\\s+".toRegex())
+                .take(2)
+                .mapNotNull { it.firstOrNull()?.uppercase() }
+                .joinToString("")
+        }
 }

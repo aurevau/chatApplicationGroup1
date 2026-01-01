@@ -30,6 +30,8 @@ class UserRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter
         position: Int
     ) {
         val user = users[position]
+
+        if (user.username.isBlank() && user.name.isBlank()) return
         holder.initialCircle.text = user.initials
         holder.username.text = user.username
         holder.name.text = user.name
