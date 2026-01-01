@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
 import com.google.firebase.auth.auth
@@ -20,10 +21,10 @@ class UserRepository {
     private lateinit var currentUser: FirebaseUser
 
     init {
-        addSnapShotListener()
+        listenToUsers()
     }
 
-    fun addSnapShotListener() {
+    fun listenToUsers() {
        currentUser = Firebase.auth.currentUser ?: return
 
         db.collection("users").addSnapshotListener { snapshot, error ->
@@ -43,6 +44,10 @@ class UserRepository {
         }
     }
 
+    fun getCurrentUserId(): String? {
+        return FirebaseAuth.getInstance().currentUser?.uid
+    }
+
     fun addUser(username: String, name: String) {
         currentUser = Firebase.auth.currentUser ?: return
 
@@ -59,11 +64,9 @@ class UserRepository {
         }
     }
 
-    fun getUser(id: String): User? {
-        return users.value?.find{it.id == id}
-    }
 
-    fun updateUser(id: String, username: String, name: String) {
+
+    fun updateCurrentUser(id: String, username: String, name: String) {
         currentUser = Firebase.auth.currentUser ?: return
         val fields = mapOf(
             "username" to username,
@@ -77,7 +80,7 @@ class UserRepository {
         }
     }
 
-    fun deleteUser(id: String) {
+    fun deleteCurrentUser(id: String) {
         currentUser = Firebase.auth.currentUser ?: return
         db.collection("users").document(id).delete().addOnSuccessListener {
             Log.i("SOUT", "deleted user from database with id: $id")
