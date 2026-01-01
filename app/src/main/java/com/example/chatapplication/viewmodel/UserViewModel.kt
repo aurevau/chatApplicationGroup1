@@ -8,25 +8,30 @@ import com.example.chatapplication.repository.UserRepository
 
 class UserViewModel: ViewModel() {
 
+
+
     private val dataManager = UserRepository()
 
     val user: LiveData<MutableList<User>> = dataManager.users
 
 
-    fun addUser(name: String, username: String) {
-        dataManager.addUser(name, username)
+    fun getCurrentUserId(): String? {
+        return dataManager.getCurrentUserId()
+    }
+    fun addUser(username: String, name: String) {
+        dataManager.addUser(username, name)
     }
 
-    fun updateUser(id: String, name: String, username: String) {
-        dataManager.updateUser(id, username, name)
+    fun updateCurrentUser(name: String, username: String) {
+        val id = getCurrentUserId() ?: return
+        dataManager.updateCurrentUser(id, username, name)
     }
 
 
-    fun deleteUser(id: String) {
-        dataManager.deleteUser(id)
+    fun deleteCurrentUser() {
+        val id = getCurrentUserId() ?: return
+        dataManager.deleteCurrentUser(id)
     }
 
-    fun getUser(id: String): User? {
-        return dataManager.getUser(id)
-    }
+
 }
