@@ -14,6 +14,7 @@ import com.example.chatapplication.databinding.ActivityDashboardBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DashboardActivity : AppCompatActivity() {
+    private val usersFragment = UsersFragment()
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var spinner: AppCompatSpinner
 
@@ -53,11 +54,12 @@ class DashboardActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_allChats -> {
-                    headerText.text = "Chats"
+                    headerText.text = getString(R.string.chats)
                     true
                 }
                 R.id.navigation_allUsers -> {
-                    headerText.text = "Users"
+                    headerText.text = getString(R.string.users)
+                    usersFragment
                     true
                 }
                 else -> false
