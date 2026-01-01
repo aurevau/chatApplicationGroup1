@@ -15,10 +15,10 @@ class UserRepository {
     private val db = Firebase.firestore
 
     // Livedata för users
-    private val _users = MutableLiveData<List<User>>()
-    val users: LiveData<List<User>> get() = _users
+    private val _users = MutableLiveData<MutableList<User>>()
+    val users: LiveData<MutableList<User>> get() = _users
 
-    private var currentUser: FirebaseUser? = null
+    private lateinit var currentUser: FirebaseUser
 
     init {
         listenToUsers()
@@ -38,7 +38,7 @@ class UserRepository {
                     }
 
                 }
-                _users.value = tempList.toList()
+                _users.value = tempList
 
             }
         }
@@ -56,7 +56,7 @@ class UserRepository {
             "name" to name
         )
 
-        db.collection("users").document(currentUser?.uid ?: "").set(fields)
+        db.collection("users").document(currentUser.uid).set(fields)
             .addOnSuccessListener {
             Log.i("SOUT", "added user to database with id:  ${currentUser?.uid}")
         }.addOnFailureListener { exception ->
@@ -67,7 +67,6 @@ class UserRepository {
 
 
     fun updateCurrentUser(id: String, username: String, name: String) {
-        currentUser = Firebase.auth.currentUser ?: return
         val fields = mapOf(
             "username" to username,
             "name" to name
