@@ -21,7 +21,7 @@ class UserViewModel: ViewModel() {
         dataManager.updateUser(id, username, name)
     }
 
-    
+
     fun deleteUser(id: String) {
         dataManager.deleteUser(id)
     }
