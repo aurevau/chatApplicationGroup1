@@ -28,17 +28,21 @@ class UserRepository {
 
     fun listenToUsers() {
         db.collection("users").addSnapshotListener { snapshot, error ->
+            if(error != null) {
+                Log.e("FIRESTORE_ERROR", "Snapshot error: ${error.message}")
+                return@addSnapshotListener
+            }
+
             if (snapshot != null)  {
                 val tempList = mutableListOf<User>()
 
                 val myId = getCurrentUserId()
                 for (doc in snapshot.documents) {
-                    if(doc.id == myId) continue
+                    Log.d("FIRESTORE_DEBUG", "Doc data: ${doc.data}")  // <--- Kolla vad Firestore faktiskt returnerar
                     val user = doc.toObject(User::class.java)
                     if (user != null) {
                         tempList.add(user.copy(id = doc.id))
                     }
-
                 }
                 _users.value = tempList
 
@@ -55,11 +59,11 @@ class UserRepository {
         return FirebaseFirestore.getInstance().collection("users").document(uid)
     }
 
-    fun addUser(name: String) {
+    fun addUser(fullName: String) {
         val uid = getCurrentUserId() ?: return
 
         val fields = mapOf(
-            "name" to name
+            "fullName" to fullName
         )
 
         db.collection("users").document(uid).set(fields)
@@ -72,10 +76,10 @@ class UserRepository {
 
 
 
-    fun updateCurrentUser(name: String) {
+    fun updateCurrentUser(fullName: String) {
         val uid = getCurrentUserId() ?: return
         val fields = mapOf(
-            "name" to name
+            "fullName" to fullName
         )
 
         db.collection("users").document(uid).update(fields).addOnSuccessListener { documentReference ->

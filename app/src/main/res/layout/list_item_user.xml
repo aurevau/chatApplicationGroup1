@@ -31,11 +31,13 @@
             android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:textSize="@dimen/normal_text_size_16sp"
             android:textStyle="bold"
             android:textColor="@color/off_white"
             android:layout_marginStart="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/tv_initials"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="name"/>

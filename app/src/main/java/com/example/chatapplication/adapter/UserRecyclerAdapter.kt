@@ -4,13 +4,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
 import com.example.chatapplication.data.User
+import com.example.chatapplication.repository.UserRepository
+import com.example.chatapplication.viewmodel.UserViewModel
 
 class UserRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
 
     private var users = emptyList<User>()
+    private val db = UserRepository()
+
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -29,11 +34,17 @@ class UserRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter
         holder: UserRecyclerAdapter.UserViewHolder,
         position: Int
     ) {
+
+
         val user = users[position]
 
-        if (user.name.isBlank()) return
+        if (user.fullName.isBlank()) return
         holder.initialCircle.text = user.initials
-        holder.name.text = user.name
+        holder.name.text = if(user.id == db.getCurrentUserId()) {
+            "${user.fullName} (Me)"
+        } else {
+            user.fullName
+        }
 
         holder.itemView.setOnClickListener {
             onItemClick(user)
