@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.chatapplication.databinding.ActivityLaunchBinding
+import com.example.chatapplication.viewmodel.AuthViewModel
+import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class LaunchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLaunchBinding
+    private lateinit var authViewModel: AuthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,14 +22,19 @@ class LaunchActivity : AppCompatActivity() {
         binding = ActivityLaunchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val currentUser = FirebaseAuth.getInstance().currentUser
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+
+
+
+
+
 
 
         Handler(Looper.getMainLooper()).postDelayed({
 
-            if (currentUser != null) {
+            if (authViewModel.isLoggeedIn()) {
                 // User already logged in
-                startActivity(Intent(this, WelcomeActivity::class.java))
+                startActivity(Intent(this, DashboardActivity::class.java))
             } else {
                 // User not logged in
                 startActivity(Intent(this, WelcomeActivity::class.java))

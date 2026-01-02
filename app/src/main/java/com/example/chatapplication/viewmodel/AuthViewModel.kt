@@ -12,6 +12,7 @@ class AuthViewModel : ViewModel() {
 
     private val firestore = Firebase.firestore
 
+    private lateinit var authViewModel: AuthViewModel
 
     fun register(fullName: String, email: String, password: String) {
 
