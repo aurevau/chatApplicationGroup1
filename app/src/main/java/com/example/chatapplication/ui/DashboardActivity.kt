@@ -8,14 +8,21 @@ import android.widget.TextView
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatSpinner
+import androidx.core.view.get
+import androidx.viewpager2.widget.ViewPager2
 import com.example.chatapplication.R
+import com.example.chatapplication.adapter.DashboardActivityViewPagerAdapter
 
 import com.example.chatapplication.databinding.ActivityDashboardBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DashboardActivity : AppCompatActivity() {
+    private val usersFragment = UsersFragment()
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var spinner: AppCompatSpinner
+
+    private lateinit var viewPager: ViewPager2
+    private lateinit var pageChangeCallback: ViewPager2.OnPageChangeCallback
 
     private lateinit var headerText: TextView
     private lateinit var bottomNav: BottomNavigationView
@@ -27,6 +34,19 @@ class DashboardActivity : AppCompatActivity() {
         headerText = binding.tvHeader
         bottomNav = binding.bottomNavigation
         spinner = binding.menuSpinner
+        viewPager = binding.fragmentContainer
+
+        val viewPagerAdapter = DashboardActivityViewPagerAdapter(this)
+        viewPager.adapter = viewPagerAdapter
+        pageChangeCallback = object: ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                bottomNav.menu[position].isChecked = true
+            }
+        }
+
+        viewPager.registerOnPageChangeCallback(pageChangeCallback)
+
 
         val menuCategories = resources.getStringArray(R.array.menu_spinner)
 
@@ -53,11 +73,13 @@ class DashboardActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_allChats -> {
-                    headerText.text = "Chats"
+                    headerText.text = getString(R.string.chats)
+                    viewPager.currentItem = 0
                     true
                 }
                 R.id.navigation_allUsers -> {
-                    headerText.text = "Users"
+                    headerText.text = getString(R.string.users)
+                    viewPager.currentItem = 1
                     true
                 }
                 else -> false

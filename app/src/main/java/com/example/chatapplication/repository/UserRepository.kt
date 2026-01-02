@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
 import com.google.firebase.auth.auth
@@ -14,17 +15,17 @@ class UserRepository {
     private val db = Firebase.firestore
 
     // Livedata för users
-    private val _users = MutableLiveData(mutableListOf<User>())
+    private val _users = MutableLiveData<MutableList<User>>()
     val users: LiveData<MutableList<User>> get() = _users
 
     private lateinit var currentUser: FirebaseUser
 
     init {
-        addSnapShotListener()
+        listenToUsers()
     }
 
-    fun addSnapShotListener() {
-       currentUser = Firebase.auth.currentUser ?: return
+    fun listenToUsers() {
+//       currentUser = Firebase.auth.currentUser ?: return
 
         db.collection("users").addSnapshotListener { snapshot, error ->
             if (snapshot != null)  {
@@ -43,6 +44,10 @@ class UserRepository {
         }
     }
 
+    fun getCurrentUserId(): String? {
+        return FirebaseAuth.getInstance().currentUser?.uid
+    }
+
     fun addUser(username: String, name: String) {
         currentUser = Firebase.auth.currentUser ?: return
 
@@ -53,18 +58,15 @@ class UserRepository {
 
         db.collection("users").document(currentUser.uid).set(fields)
             .addOnSuccessListener {
-            Log.i("SOUT", "added user to database with id:  ${currentUser.uid}")
+            Log.i("SOUT", "added user to database with id:  ${currentUser?.uid}")
         }.addOnFailureListener { exception ->
             Log.e("SOUT", "failed to add user to database, error: " + exception.message )
         }
     }
 
-    fun getUser(id: String): User? {
-        return users.value?.find{it.id == id}
-    }
 
-    fun updateUser(id: String, username: String, name: String) {
-        currentUser = Firebase.auth.currentUser ?: return
+
+    fun updateCurrentUser(id: String, username: String, name: String) {
         val fields = mapOf(
             "username" to username,
             "name" to name
@@ -77,7 +79,7 @@ class UserRepository {
         }
     }
 
-    fun deleteUser(id: String) {
+    fun deleteCurrentUser(id: String) {
         currentUser = Firebase.auth.currentUser ?: return
         db.collection("users").document(id).delete().addOnSuccessListener {
             Log.i("SOUT", "deleted user from database with id: $id")
