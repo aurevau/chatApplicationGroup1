@@ -2,6 +2,7 @@ package com.example.chatapplication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
@@ -53,6 +54,12 @@ class AuthViewModel : ViewModel() {
 //                    ).show()
                 }
             }
+    }
+
+    fun isLoggeedIn() : Boolean = auth.currentUser != null
+
+    fun logOut() {
+        FirebaseAuth.getInstance().signOut()
     }
 
 
