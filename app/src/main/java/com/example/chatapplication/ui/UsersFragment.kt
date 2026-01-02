@@ -7,10 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentUsersBinding
 import com.example.chatapplication.viewmodel.UserViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 
 class UsersFragment : Fragment() {
 
@@ -19,6 +22,10 @@ class UsersFragment : Fragment() {
     private lateinit  var adapter: UserRecyclerAdapter
 
     private lateinit var viewModel: UserViewModel
+
+    private lateinit var searchInput: TextInputEditText
+    private lateinit var searchButton: FloatingActionButton
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +48,31 @@ class UsersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvUsers.adapter = adapter
+        recyclerView = binding.rvUsers
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        searchButton = binding.btnSearchUser
+        searchInput = binding.etSearchUser
 
         viewModel.user.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
+
+        }
+
+        searchButton.setOnClickListener {
+
+            binding.cvSearchUser.visibility = View.VISIBLE
+
+            val searchTerm = searchInput.text.toString()
+
+//            if (searchTerm.isEmpty()){
+//                searchInput.error = "Invalid search"
+//                return@setOnClickListener
+//            }
+            viewModel.searchUsers(searchTerm)
+
+
 
         }
     }

@@ -3,8 +3,8 @@ package com.example.chatapplication.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.chatapplication.data.User
-import com.example.chatapplication.repository.ChatRepository
 import com.example.chatapplication.repository.UserRepository
+
 
 class UserViewModel: ViewModel() {
 
@@ -14,12 +14,17 @@ class UserViewModel: ViewModel() {
 
     val user: LiveData<MutableList<User>> = dataManager.users
 
-
+    
+    
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
     fun addUser(fullName: String) {
         dataManager.addUser(fullName)
+    }
+
+    fun searchUsers(searchTerm: String) {
+        dataManager.searchUsers(searchTerm)
     }
 
     fun updateCurrentUser(fullName: String, username: String) {

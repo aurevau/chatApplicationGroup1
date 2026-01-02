@@ -6,15 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 
 class UserRepository {
+    private val listeners = mutableListOf<ListenerRegistration>()
+
     private val db = Firebase.firestore
 
     // Livedata för users
@@ -48,6 +49,35 @@ class UserRepository {
 
             }
         }
+    }
+
+    fun searchUsers(searchTerm: String) {
+        listeners.forEach { it.remove() }
+        listeners.clear()
+
+        val term = searchTerm
+        val result = mutableListOf<User>()
+
+        val queryName = allUsers()
+            .orderBy("fullName")
+            .startAt(term)
+            .endAt(term + "\uf8ff")
+
+        val listenerName = queryName.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("SOUT", "Error fetching username: ${error.message}")
+                return@addSnapshotListener
+            }
+            val searchList = snapshot?.documents?.mapNotNull { it.toObject(User::class.java)} ?: emptyList()
+            Log.d("SOUT", "Found ${searchList.size} users by username for term '$term'")
+            updateResults(result, searchList)
+        }
+        listeners.add(listenerName)
+    }
+
+    private fun updateResults(results: MutableList<User>, newList: List<User>) {
+        results.addAll(newList)
+        _users.value = results
     }
 
     fun allUsers() : CollectionReference =db.collection("users")
