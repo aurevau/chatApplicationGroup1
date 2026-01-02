@@ -220,4 +220,10 @@ class UserRepository {
             Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
         }
     }
+
+    fun resetToAllUsers(){
+        listeners.forEach { it.remove() }
+        listeners.clear()
+        listenToUsers()
+    }
 }

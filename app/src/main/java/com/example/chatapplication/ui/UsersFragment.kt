@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatapplication.R
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentUsersBinding
 import com.example.chatapplication.viewmodel.UserViewModel
@@ -70,6 +73,10 @@ class UsersFragment : Fragment() {
         viewModel.user.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
 
+            if(list.isEmpty() && searchInput.text.toString().isNotEmpty()){
+                Toast.makeText(activity, getString(R.string.user_not_found), Toast.LENGTH_SHORT).show()
+            }
+
         }
 
 
@@ -87,11 +94,16 @@ class UsersFragment : Fragment() {
 
             val searchTerm = searchInput.text.toString()
 
-//
-            viewModel.searchUsers(searchTerm)
+            if(!searchTerm.isEmpty()){
+                viewModel.searchUsers(searchTerm)
+            }
 
+        }
 
-
+        searchInput.addTextChangedListener { text ->
+            if(text.isNullOrBlank()){
+                viewModel.resetToAllUsers()
+            }
         }
     }
 

@@ -8,7 +8,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
 
-class ChatRepository {
+class MessageRepository {
 
     private val db = Firebase.firestore
     private val _message = MutableLiveData<List<Message>>()

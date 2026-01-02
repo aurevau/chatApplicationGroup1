@@ -63,4 +63,8 @@ class UserViewModel: ViewModel() {
     }
 
 
+    fun resetToAllUsers(){
+        dataManager.resetToAllUsers()
+    }
+
 }

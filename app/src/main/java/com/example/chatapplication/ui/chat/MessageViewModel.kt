@@ -1,10 +1,10 @@
 package com.example.chatapplication.ui.chat
 
 import androidx.lifecycle.ViewModel
-import com.example.chatapplication.repository.ChatRepository
+import com.example.chatapplication.repository.MessageRepository
 
-class ChatViewModel : ViewModel() {
-    private val repo = ChatRepository()
+class MessageViewModel : ViewModel() {
+    private val repo = MessageRepository()
     val messages = repo.messages
 
     fun start(roomId: String) = repo.listenToChat(roomId)
