@@ -30,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
             val fullName = binding.etFullName.editText?.text.toString().trim()
             val email = binding.etEmail.editText?.text.toString().trim()
             val password = binding.etPassword.editText?.text.toString().trim()
-
+            val fullNameLower = fullName.lowercase()
             // Enkel validering
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Fyll i alla fält", Toast.LENGTH_SHORT).show()
