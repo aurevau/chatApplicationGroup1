@@ -25,7 +25,7 @@ class LaunchActivity : AppCompatActivity() {
 
             if (currentUser != null) {
                 // User already logged in
-                startActivity(Intent(this, DashboardActivity::class.java))
+                startActivity(Intent(this, WelcomeActivity::class.java))
             } else {
                 // User not logged in
                 startActivity(Intent(this, WelcomeActivity::class.java))
