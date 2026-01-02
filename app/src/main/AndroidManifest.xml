@@ -21,6 +21,9 @@
             android:name=".ui.DashboardActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.WelcomeActivity"
             android:exported="false">
         </activity>
