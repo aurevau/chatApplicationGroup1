@@ -31,9 +31,8 @@ class UserRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter
     ) {
         val user = users[position]
 
-        if (user.username.isBlank() && user.name.isBlank()) return
+        if (user.name.isBlank()) return
         holder.initialCircle.text = user.initials
-        holder.username.text = user.username
         holder.name.text = user.name
 
         holder.itemView.setOnClickListener {
@@ -45,7 +44,6 @@ class UserRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter
 
     inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials)
-        val username: TextView = itemView.findViewById(R.id.tv_username)
         val name: TextView = itemView.findViewById(R.id.tv_name)
 
     }

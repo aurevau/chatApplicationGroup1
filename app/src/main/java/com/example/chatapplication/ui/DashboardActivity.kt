@@ -1,5 +1,6 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -9,11 +10,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.view.get
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.chatapplication.R
 import com.example.chatapplication.adapter.DashboardActivityViewPagerAdapter
 
 import com.example.chatapplication.databinding.ActivityDashboardBinding
+import com.example.chatapplication.viewmodel.AuthViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DashboardActivity : AppCompatActivity() {
@@ -24,12 +27,16 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private lateinit var pageChangeCallback: ViewPager2.OnPageChangeCallback
 
+    private lateinit var authViewModel: AuthViewModel
+
     private lateinit var headerText: TextView
     private lateinit var bottomNav: BottomNavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
         headerText = binding.tvHeader
         bottomNav = binding.bottomNavigation
@@ -62,8 +69,14 @@ class DashboardActivity : AppCompatActivity() {
             ) {
                 if (position == 0) return
                 if (menuCategories[position] == "Logout") {
-                    finish()
-//                    FirebaseUtil.logout()
+                    authViewModel.logOut()
+
+                    // Starta WelcomeActivity med CLEAR_TASK
+                    val intent = Intent(this@DashboardActivity, WelcomeActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+
+
                 }
             }
 
@@ -85,6 +98,7 @@ class DashboardActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
 
     }
 }
