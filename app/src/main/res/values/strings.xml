@@ -3,7 +3,7 @@
     <string name="welcome_header">Welcome</string>
     <string name="log_in_button_text">Log in</string>
     <string name="register_button_text">Register</string>
-    <string name="hint_text_username">Username</string>
+    <string name="hint_text_email">Email</string>
     <string name="hint_text_password">Password</string>
     <string name="back_button_text">Back</string>
 
