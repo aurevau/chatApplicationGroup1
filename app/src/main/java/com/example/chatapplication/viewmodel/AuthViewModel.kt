@@ -14,7 +14,7 @@ class AuthViewModel : ViewModel() {
 
     private lateinit var authViewModel: AuthViewModel
 
-    fun register(fullName: String, email: String, password: String) {
+    fun register(fullName: String, fullNameLower: String, email: String, password: String) {
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -24,6 +24,7 @@ class AuthViewModel : ViewModel() {
                     // Förbered extra data som ska sparas i Firestore
                     val userData = HashMap<String, Any>()
                     userData["fullName"] = fullName
+                    userData["fullNameLower"] = fullNameLower
                     userData["email"] = email
 
                     // Spara till Firestore

@@ -43,7 +43,7 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            authViewModel.register(fullName, email, password)
+            authViewModel.register(fullName, fullNameLower,email, password)
             finish()  // Gå tillbaka till föregående skärm
         }
     }
