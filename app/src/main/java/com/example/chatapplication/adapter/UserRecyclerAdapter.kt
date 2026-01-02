@@ -90,6 +90,8 @@ class UserRecyclerAdapter(
         }
     }
 
+
+
     override fun getItemCount(): Int = users.size
 
     inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {

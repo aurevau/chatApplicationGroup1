@@ -55,50 +55,18 @@ class UserRepository {
         }
     }
 
-    fun searchUsers(searchTerm: String) {
-        listeners.forEach { it.remove() }
-        listeners.clear()
+    fun searchUsersLocally(searchTerm: String) {
+        val all = _users.value ?: return
+        val term = searchTerm.trim().lowercase()
 
-        val term = searchTerm
-        val result = mutableListOf<User>()
-
-        val queryName = allUsers()
-            .orderBy("fullName")
-            .startAt(term)
-            .endAt(term + "\uf8ff")
-
-        val listenerName = queryName.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                Log.e("SOUT", "Error fetching username: ${error.message}")
-                return@addSnapshotListener
-            }
-            val searchList =
-                snapshot?.documents?.mapNotNull { it.toObject(User::class.java) } ?: emptyList()
-            Log.d("SOUT", "Found ${searchList.size} users by username for term '$term'")
-            updateResults(result, searchList)
+        val filtered = all.filter { user ->
+            user.fullName.lowercase().contains(term)
         }
-        listeners.add(listenerName)
 
-        val lowerSearchTerm = term.lowercase()
-        val queryLower = allUsers()
-            .orderBy("fullNameLower")
-            .startAt(lowerSearchTerm)
-            .endAt(lowerSearchTerm + "\uf8ff")
-
-        val listenerLower = queryLower.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                Log.e("SOUT", "Error fetching username: ${error.message}")
-                return@addSnapshotListener
-            }
-            val searchList =
-                snapshot?.documents?.mapNotNull { it.toObject(User::class.java) } ?: emptyList()
-            Log.d("SOUT", "Found ${searchList.size} users by fullNameLower for term '$lowerSearchTerm'")
-            updateResults(result, searchList)
-        }
-        listeners.add(listenerLower)
-
-
+        _users.value = filtered.toMutableList()
     }
+
+
 
     private fun updateResults(results: MutableList<User>, newList: List<User>) {
         results.addAll(newList)
