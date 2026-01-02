@@ -48,11 +48,10 @@ class UserRepository {
         return FirebaseAuth.getInstance().currentUser?.uid
     }
 
-    fun addUser(username: String, name: String) {
+    fun addUser(name: String) {
         currentUser = Firebase.auth.currentUser ?: return
 
         val fields = mapOf(
-            "username" to username,
             "name" to name
         )
 
@@ -66,9 +65,8 @@ class UserRepository {
 
 
 
-    fun updateCurrentUser(id: String, username: String, name: String) {
+    fun updateCurrentUser(id: String, name: String) {
         val fields = mapOf(
-            "username" to username,
             "name" to name
         )
 
