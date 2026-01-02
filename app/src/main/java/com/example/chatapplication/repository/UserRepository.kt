@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.CollectionReference
@@ -21,6 +22,9 @@ class UserRepository {
     // Livedata för users
     private val _users = MutableLiveData<MutableList<User>>()
     val users: LiveData<MutableList<User>> get() = _users
+
+    private val _friends = MutableLiveData<MutableList<User>>()
+    val friends: LiveData<MutableList<User>> get() = _friends
 
 
     init {
@@ -108,6 +112,69 @@ class UserRepository {
     fun currentUserDetails() : DocumentReference {
         val uid = getCurrentUserId() ?: throw Exception("User not logged in")
         return FirebaseFirestore.getInstance().collection("users").document(uid)
+    }
+
+    fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .document(otherUserId)
+            .get()
+            .addOnSuccessListener { document ->
+                callback(document.exists()) // true om vän finns
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
+    fun addFriend(currentUserId: String, friend: User) {
+        val friendData = mapOf(
+            "friendId" to friend.id,
+            "friendName" to friend.fullName,
+            "addedAt" to Timestamp.now()
+        )
+
+        db.collection("users").document(currentUserId)
+            .collection("friends").document(friend.id!!)
+            .set(friendData)
+            .addOnSuccessListener {
+                getFriends(currentUserId)
+                Log.d("SOUT", "Friend added successfully")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("SOUT", "Error adding friend", exception)
+
+            }
+
+    }
+
+    fun removeFriend(currentUserId: String, friendId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .document(friendId)
+            .delete()
+            .addOnSuccessListener { Log.d("SOUT", "Friend removed")
+                getFriends(currentUserId)}
+            .addOnFailureListener { exception -> Log.e("SOUT", "Error removing friend", exception) }
+
+    }
+
+    fun getFriends(currentUserId: String){
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .get()
+            .addOnSuccessListener { snapshots ->
+                val friendList = snapshots.documents.mapNotNull { document ->
+                    User(
+                        id = document.getString("friendId"),
+                        fullName = document.getString("friendName") ?: ""
+                    )
+                }
+                _friends.value = friendList as MutableList<User>?
+            }
     }
 
     fun addUser(fullName: String) {

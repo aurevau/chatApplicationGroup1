@@ -1,7 +1,7 @@
 package com.example.chatapplication.data
 
 data class User(
-    val id: String = "",
+    val id: String? = "",
     var fullName: String = "",
     var fullNameLower: String = fullName.lowercase()
 ) {
