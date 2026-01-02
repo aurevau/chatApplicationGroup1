@@ -68,16 +68,37 @@ class UserRepository {
                 Log.e("SOUT", "Error fetching username: ${error.message}")
                 return@addSnapshotListener
             }
-            val searchList = snapshot?.documents?.mapNotNull { it.toObject(User::class.java)} ?: emptyList()
+            val searchList =
+                snapshot?.documents?.mapNotNull { it.toObject(User::class.java) } ?: emptyList()
             Log.d("SOUT", "Found ${searchList.size} users by username for term '$term'")
             updateResults(result, searchList)
         }
         listeners.add(listenerName)
+
+        val lowerSearchTerm = term.lowercase()
+        val queryLower = allUsers()
+            .orderBy("fullNameLower")
+            .startAt(lowerSearchTerm)
+            .endAt(lowerSearchTerm + "\uf8ff")
+
+        val listenerLower = queryLower.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("SOUT", "Error fetching username: ${error.message}")
+                return@addSnapshotListener
+            }
+            val searchList =
+                snapshot?.documents?.mapNotNull { it.toObject(User::class.java) } ?: emptyList()
+            Log.d("SOUT", "Found ${searchList.size} users by fullNameLower for term '$lowerSearchTerm'")
+            updateResults(result, searchList)
+        }
+        listeners.add(listenerLower)
+
+
     }
 
     private fun updateResults(results: MutableList<User>, newList: List<User>) {
         results.addAll(newList)
-        _users.value = results
+        _users.value = results.distinctBy { it.id } as MutableList<User>?
     }
 
     fun allUsers() : CollectionReference =db.collection("users")

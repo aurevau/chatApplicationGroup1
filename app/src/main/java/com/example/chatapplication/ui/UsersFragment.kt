@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,11 @@ class UsersFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         adapter = UserRecyclerAdapter({user ->
+            // Se mer information om användaren och kunna lägga till vän?
+
+        }, {user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
+
         })
 
     }

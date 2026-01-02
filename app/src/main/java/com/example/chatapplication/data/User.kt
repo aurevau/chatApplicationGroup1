@@ -2,9 +2,10 @@ package com.example.chatapplication.data
 
 data class User(
     val id: String = "",
-    var fullName: String = ""
+    var fullName: String = "",
+    var fullNameLower: String = fullName.lowercase()
 ) {
-    constructor(): this("", "")
+    constructor(): this("", "", "")
     val initials: String
         get() {
             if (fullName.isBlank()) return "?"

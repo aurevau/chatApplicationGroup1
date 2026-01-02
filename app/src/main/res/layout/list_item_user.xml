@@ -36,11 +36,22 @@
             android:textStyle="bold"
             android:textColor="@color/off_white"
             android:layout_marginStart="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/tv_initials"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="name"/>
+
+        <Button
+            android:id="@+id/btn_start_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:backgroundTint="@color/off_white"
+            android:text="@string/open_chat"
+            android:textColor="@color/dark_green"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
