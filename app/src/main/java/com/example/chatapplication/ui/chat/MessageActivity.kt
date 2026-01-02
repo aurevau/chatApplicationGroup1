@@ -1,23 +1,19 @@
 package com.example.chatapplication.ui.chat
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.chatapplication.R
-import com.example.chatapplication.databinding.ActivityChatBinding
+import com.example.chatapplication.databinding.ActivityMessageBinding
 
-class ChatActivity : AppCompatActivity() {
+class MessageActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityChatBinding
-    private val vm: ChatViewModel by viewModels()
+    private lateinit var binding: ActivityMessageBinding
+    private val vm: MessageViewModel by viewModels()
     private val roomId = "global_room"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChatBinding.inflate(layoutInflater)
+        binding = ActivityMessageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val adapter = MessageAdapter()
