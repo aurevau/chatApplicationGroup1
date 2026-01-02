@@ -1,3 +1,5 @@
+package com.example.chatapplication.ui
+
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -6,13 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapplication.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.HashMap
-import kotlin.collections.hashMapOf
-import kotlin.collections.*
 
-
-
-class RegisterActivity : AppCompatActivity(){
+class RegisterActivity : AppCompatActivity() {
 
 
     // skapa Firebase
@@ -28,7 +25,6 @@ class RegisterActivity : AppCompatActivity(){
     private lateinit var etPassword: EditText
     private lateinit var btnRegister: Button
     private lateinit var btnBack: Button
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,44 +73,46 @@ class RegisterActivity : AppCompatActivity(){
             }
 
 
-        }
+            // Skapa användare med Firebase Auth
+            auth.createUserWithEmailAndPassword(
+                etEmail.text.toString().trim(),
+                etPassword.text.toString().trim()
+            )
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
+                        // Förbered extra data som ska sparas i Firestore
+                        val userData = HashMap<String, Any>()
+                        userData["username"] = etUsername.text.toString().trim()
+                        userData["fullName"] = etFullName.text.toString().trim()
+                        userData["dateOfBirth"] = etDateOfBirth.text.toString().trim()
+                        userData["email"] = etEmail.text.toString().trim()
 
-        // Skapa användare med Firebase Auth
-        auth.createUserWithEmailAndPassword(etEmail.text.toString().trim(), etPassword.text.toString().trim())
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
+                        // Spara till Firestore
+                        firestore.collection("users").document(userId)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Registrering lyckades!", Toast.LENGTH_LONG)
+                                    .show()
+                                finish()  // Gå tillbaka till föregående skärm
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    this,
+                                    "Fel vid sparande av data: ${e.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
 
-                    // Förbered extra data som ska sparas i Firestore
-                    val userData = HashMap<String, Any>()
-                    userData["username"] = etUsername.text.toString().trim()
-                    userData["fullName"] = etFullName.text.toString().trim()
-                    userData["dateOfBirth"] = etDateOfBirth.text.toString().trim()
-                    userData["email"] = etEmail.text.toString().trim()
-
-                    // Spara till Firestore
-                    firestore.collection("users").document(userId)
-                        .set(userData)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Registrering lyckades!", Toast.LENGTH_LONG).show()
-                            finish()  // Gå tillbaka till föregående skärm
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(this, "Fel vid sparande av data: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
-
-                } else {
-                    Toast.makeText(this, "Registrering misslyckades: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Registrering misslyckades: ${task.exception?.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-            }
-
-
+        }
     }
-
-
-
-
-
-
 }
