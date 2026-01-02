@@ -47,13 +47,15 @@ class UserViewModel: ViewModel() {
     }
 
 
-    fun searchUsers(searchTerm: String) {
-        dataManager.searchUsers(searchTerm)
-    }
+
 
     fun updateCurrentUser(fullName: String, username: String) {
         val id = getCurrentUserId() ?: return
         dataManager.updateCurrentUser(fullName)
+    }
+
+    fun searchUsersLocally(searchTerm: String) {
+        dataManager.searchUsersLocally(searchTerm)
     }
 
 

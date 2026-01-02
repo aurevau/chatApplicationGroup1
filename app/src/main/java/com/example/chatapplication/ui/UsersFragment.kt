@@ -38,6 +38,8 @@ class UsersFragment : Fragment() {
 
         adapter = UserRecyclerAdapter( viewModel, {user ->
             // Se mer information om användaren och kunna lägga till vän?
+            binding.cvSearchUser.visibility = View.GONE
+            binding.etSearchUser.text?.clear()
 
         }, {user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
@@ -70,12 +72,22 @@ class UsersFragment : Fragment() {
 
         val currentUserId = viewModel.getCurrentUserId() ?: return
 
-        viewModel.user.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list)
 
-            if(list.isEmpty() && searchInput.text.toString().isNotEmpty()){
+        viewModel.user.observe(viewLifecycleOwner) { userList ->
+            val allUsers = viewModel.user.value ?: emptyList()
+
+            val searchTerm = searchInput.text.toString().trim().lowercase()
+            val displayedUsers = if (searchTerm.isNotEmpty()) {
+                allUsers.filter { it.fullName.contains(searchTerm, ignoreCase = true) }
+            } else {
+                allUsers
+            }
+            adapter.submitList(displayedUsers)
+
+            if(searchTerm.isNotEmpty() && displayedUsers.isEmpty()){
                 Toast.makeText(activity, getString(R.string.user_not_found), Toast.LENGTH_SHORT).show()
             }
+
 
         }
 
@@ -93,9 +105,8 @@ class UsersFragment : Fragment() {
             binding.cvSearchUser.visibility = View.VISIBLE
 
             val searchTerm = searchInput.text.toString()
-
-            if(!searchTerm.isEmpty()){
-                viewModel.searchUsers(searchTerm)
+            if (searchTerm.isNotEmpty()) {
+                viewModel.searchUsersLocally(searchTerm)
             }
 
         }
@@ -103,12 +114,15 @@ class UsersFragment : Fragment() {
         searchInput.addTextChangedListener { text ->
             if(text.isNullOrBlank()){
                 viewModel.resetToAllUsers()
+
             }
+
         }
     }
 
     override fun onResume() {
         super.onResume()
+
         adapter.notifyDataSetChanged()
     }
 
