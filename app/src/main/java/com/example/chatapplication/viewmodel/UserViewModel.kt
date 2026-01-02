@@ -18,19 +18,19 @@ class UserViewModel: ViewModel() {
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
-    fun addUser(username: String, name: String) {
-        dataManager.addUser(username, name)
+    fun addUser(name: String) {
+        dataManager.addUser(name)
     }
 
     fun updateCurrentUser(name: String, username: String) {
         val id = getCurrentUserId() ?: return
-        dataManager.updateCurrentUser(id, username, name)
+        dataManager.updateCurrentUser(name)
     }
 
 
     fun deleteCurrentUser() {
         val id = getCurrentUserId() ?: return
-        dataManager.deleteCurrentUser(id)
+        dataManager.deleteCurrentUser()
     }
 
 
