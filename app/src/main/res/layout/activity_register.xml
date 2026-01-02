@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bagel_fat_one"
-                android:text="@string/register_button_text"
+                android:text="@string/register_text"
                 android:textColor="@color/white"
                 android:textSize="@dimen/header_text_size_48sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -55,7 +55,7 @@
     </FrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/FullName_et"
+        android:id="@+id/et_full_name"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
         android:layout_height="wrap_content"
@@ -74,11 +74,11 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:fontFamily="@font/bagel_fat_one"
-            android:inputType="textPassword" />
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/Email_et"
+        android:id="@+id/et_email"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
         android:layout_height="wrap_content"
@@ -89,8 +89,8 @@
         app:errorTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/FullName_et"
-        app:layout_constraintBottom_toTopOf="@id/Password_et">
+        app:layout_constraintTop_toBottomOf="@id/et_full_name"
+        app:layout_constraintBottom_toTopOf="@id/et_password">
 
 
         <com.google.android.material.textfield.TextInputEditText
@@ -104,7 +104,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/Password_et"
+        android:id="@+id/et_password"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
         android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
         app:errorTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/Email_et">
+        app:layout_constraintTop_toBottomOf="@id/et_email">
 
 
         <com.google.android.material.textfield.TextInputEditText
@@ -134,11 +134,11 @@
         android:backgroundTint="@color/button_color"
         android:layout_marginTop="@dimen/margin_32dp"
         android:fontFamily="@font/bagel_fat_one"
-        android:text="@string/register_button_text"
+        android:text="@string/register_text"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/Password_et"/>
+        app:layout_constraintTop_toBottomOf="@id/et_password"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
