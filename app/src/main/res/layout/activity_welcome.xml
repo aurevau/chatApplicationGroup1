@@ -48,7 +48,7 @@
         android:textColor="@color/black"
         android:textColorHint="@color/hint_text_color"
         app:errorTextColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        android:layout_marginTop="128dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout">
@@ -59,8 +59,6 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:fontFamily="@font/bagel_fat_one" />
-
-
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -68,13 +66,12 @@
         android:id="@+id/edit_text_password"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
+        android:layout_marginTop="@dimen/margin_16dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_16dp"
         android:hint="@string/hint_text_password"
         android:textColor="@color/black"
         android:textColorHint="@color/hint_text_color"
         app:errorTextColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_text_email">
@@ -86,8 +83,6 @@
             android:backgroundTint="@color/white"
             android:fontFamily="@font/bagel_fat_one"
             android:inputType="textPassword" />
-
-
     </com.google.android.material.textfield.TextInputLayout>
 
 
