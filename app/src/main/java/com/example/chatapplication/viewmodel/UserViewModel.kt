@@ -13,6 +13,7 @@ class UserViewModel: ViewModel() {
     private val dataManager = UserRepository()
 
     val user: LiveData<MutableList<User>> = dataManager.users
+    val friends: LiveData<MutableList<User>> = dataManager.friends
 
     
     
@@ -22,6 +23,29 @@ class UserViewModel: ViewModel() {
     fun addUser(fullName: String) {
         dataManager.addUser(fullName)
     }
+
+    fun addFriend(currentUserId: String?, friend: User) {
+        if (currentUserId != null) {
+            dataManager.addFriend(currentUserId, friend)
+        }
+    }
+
+    fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
+        dataManager.isFriend(currentUserId,otherUserId, callback)
+    }
+
+        fun removeFriend(currentUserId: String?, friendId: String?) {
+            if (currentUserId != null) {
+                if (friendId != null) {
+                    dataManager.removeFriend(currentUserId, friendId)
+                }
+            }
+    }
+
+    fun getFriends(currentUserId: String) {
+        dataManager.getFriends(currentUserId)
+    }
+
 
     fun searchUsers(searchTerm: String) {
         dataManager.searchUsers(searchTerm)

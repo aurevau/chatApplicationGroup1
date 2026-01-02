@@ -5,11 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentUsersBinding
 import com.example.chatapplication.viewmodel.UserViewModel
@@ -28,16 +26,23 @@ class UsersFragment : Fragment() {
     private lateinit var searchButton: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
-        adapter = UserRecyclerAdapter({user ->
+        val currentUserId = viewModel.getCurrentUserId()
+
+        adapter = UserRecyclerAdapter( viewModel, {user ->
             // Se mer information om användaren och kunna lägga till vän?
 
         }, {user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
 
+        }, { user ->
+            viewModel.addFriend(currentUserId, user)
+        }, {user ->
+            viewModel.removeFriend(currentUserId, user.id)
         })
 
     }
@@ -60,10 +65,21 @@ class UsersFragment : Fragment() {
         searchButton = binding.btnSearchUser
         searchInput = binding.etSearchUser
 
+        val currentUserId = viewModel.getCurrentUserId() ?: return
+
         viewModel.user.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
 
         }
+
+
+        viewModel.friends.observe(viewLifecycleOwner) {friendsList ->
+            adapter.updateFriendList(friendsList)
+        }
+
+        viewModel.getFriends(currentUserId)
+
+
 
         searchButton.setOnClickListener {
 
@@ -71,10 +87,7 @@ class UsersFragment : Fragment() {
 
             val searchTerm = searchInput.text.toString()
 
-//            if (searchTerm.isEmpty()){
-//                searchInput.error = "Invalid search"
-//                return@setOnClickListener
-//            }
+//
             viewModel.searchUsers(searchTerm)
 
 

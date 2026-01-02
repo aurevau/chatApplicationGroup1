@@ -18,4 +18,6 @@
     <string name="users">Users</string>
     <string name="hint_text_full_name">Full name</string>
     <string name="open_chat">Open Chat</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="friends">Friends</string>
 </resources>
