@@ -8,7 +8,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
-
 class MessageRepository {
 
     private val db = Firebase.firestore
@@ -49,7 +48,6 @@ class MessageRepository {
             .add(msg)
     }
 
-
     //To get the target user's details
     fun getUserDetailsById(userId: String, callback: (User?) -> Unit) {
         db.collection("users")
@@ -67,22 +65,4 @@ class MessageRepository {
                 callback(null)
             }
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

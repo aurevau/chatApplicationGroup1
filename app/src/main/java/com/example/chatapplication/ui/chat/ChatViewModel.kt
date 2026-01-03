@@ -1,9 +1,7 @@
 package com.example.chatapplication.ui.chat
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.chatapplication.data.Message
 import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.MessageRepository
 import com.example.chatapplication.repository.UserRepository
@@ -37,6 +35,5 @@ class ChatViewModel : ViewModel() {
              }
         )
     }
-
 
 }
