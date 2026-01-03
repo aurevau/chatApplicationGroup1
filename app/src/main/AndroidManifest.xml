@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication">
         <activity
-            android:name=".ui.chat.MessageActivity"
+            android:name=".ui.chat.ChatActivity"
             android:exported="false" />
         <activity
             android:name=".ui.MainActivity"

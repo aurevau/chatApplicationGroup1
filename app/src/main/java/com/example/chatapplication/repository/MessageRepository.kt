@@ -3,6 +3,7 @@ package com.example.chatapplication.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.Message
+import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -36,6 +37,24 @@ class MessageRepository {
             .document(roomId)
             .collection("messages")
             .add(msg)
+    }
+
+
+    fun getUserDetailsById(userId: String, callback: (User?) -> Unit) {
+        db.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(User::class.java)
+                    callback(user?.copy(id = document.id))
+                } else {
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback(null)
+            }
     }
 
 }

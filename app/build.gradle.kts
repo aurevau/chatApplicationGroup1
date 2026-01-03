@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.example.chatapplication"
-    compileSdk = 35  // Changed from release(36) which might be unstable or causing issues
+    compileSdk = 36
+    // Changed from release(36) which might be unstable or causing issues
 
     defaultConfig {
         applicationId = "com.example.chatapplication"

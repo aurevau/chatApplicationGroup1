@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.DashboardActivity"
+    android:background="@color/off_white">
+
+    <FrameLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/dark_green">
+        <TextView
+            android:id="@+id/tv_header"
+            android:layout_margin="16dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat"
+            android:fontFamily="@font/bagel_fat_one"
+            android:textColor="@color/off_white"
+            android:textSize="@dimen/header_text_size_48sp"/>
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/menu_spinner"
+            android:spinnerMode="dropdown"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/off_white"
+            android:layout_gravity="end"/>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/userFullName"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="20dp"
+        android:id="@+id/recyclerMessages"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/etMessage"
+            android:hint="Message"/>
+
+         <ImageButton
+             android:src="@drawable/ic_send"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:id="@+id/btnSend"
+             android:text="Send"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

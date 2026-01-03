@@ -1,20 +1,17 @@
 package com.example.chatapplication.ui.chat
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
 import com.example.chatapplication.data.Message
 import com.example.chatapplication.databinding.ItemMessageReceivedBinding
 import com.example.chatapplication.databinding.ItemMessageSentBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
-class MessageAdapter :
+class ChatAdapter :
     ListAdapter<Message, RecyclerView.ViewHolder>(Diff()) {
 
     companion object {
