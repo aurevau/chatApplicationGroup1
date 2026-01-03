@@ -2,6 +2,7 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +10,7 @@ import com.example.chatapplication.databinding.ActivityWelcomeBinding
 import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.ui.DashboardActivity
 import com.example.chatapplication.viewmodel.AuthViewModel
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -19,12 +21,26 @@ class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var authViewModel: AuthViewModel
 
+    private lateinit var emailEditText: TextInputLayout
+    private lateinit var passwordEditText: TextInputLayout
+
     private lateinit var binding: ActivityWelcomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        emailEditText = binding.editTextEmail
+        passwordEditText = binding.editTextPassword
+
+
+        val emailFromIntent = intent.getStringExtra("EMAIL")
+        val passwordFromIntent = intent.getStringExtra("PASSWORD")
+
+
+        emailEditText.editText?.setText(emailFromIntent ?: "")
+        passwordEditText.editText?.setText(passwordFromIntent ?: "")
 
         // Initiate Firebase
         auth = FirebaseAuth.getInstance()

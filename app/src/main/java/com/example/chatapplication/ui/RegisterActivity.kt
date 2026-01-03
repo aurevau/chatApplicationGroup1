@@ -1,5 +1,6 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -44,7 +45,11 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             authViewModel.register(fullName, fullNameLower,email, password)
-            finish()  // Gå tillbaka till föregående skärm
+            val intent = Intent(this, WelcomeActivity::class.java)
+            intent.putExtra("EMAIL", email)
+            intent.putExtra("PASSWORD", password)
+            startActivity(intent)
+//            finish()  // Gå tillbaka till föregående skärm
         }
     }
 }
