@@ -8,4 +8,5 @@
     <dimen name="margin_16dp">16dp</dimen>
     <dimen name="initials_circle_background_40dp">40dp</dimen>
     <dimen name="margin_32dp">32dp</dimen>
+    <dimen name="menu_icons_size">48dp</dimen>
 </resources>

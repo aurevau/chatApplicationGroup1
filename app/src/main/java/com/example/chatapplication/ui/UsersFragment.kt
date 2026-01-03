@@ -1,6 +1,8 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentUsersBinding
+import com.example.chatapplication.ui.chat.ChatActivity
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
@@ -43,6 +46,9 @@ class UsersFragment : Fragment() {
 
         }, {user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
+            val chatIntent = Intent(activity, ChatActivity::class.java)
+            chatIntent.putExtra("USER_ID", user.id)
+            startActivity(chatIntent)
 
         }, { user ->
             viewModel.addFriend(currentUserId, user)

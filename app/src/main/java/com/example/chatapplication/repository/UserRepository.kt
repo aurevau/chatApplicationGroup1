@@ -13,7 +13,6 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-
 class UserRepository {
     private val listeners = mutableListOf<ListenerRegistration>()
 

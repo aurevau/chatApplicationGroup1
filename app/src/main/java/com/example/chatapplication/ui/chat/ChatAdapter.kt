@@ -1,20 +1,21 @@
 package com.example.chatapplication.ui.chat
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
 import com.example.chatapplication.data.Message
 import com.example.chatapplication.databinding.ItemMessageReceivedBinding
 import com.example.chatapplication.databinding.ItemMessageSentBinding
+import com.example.chatapplication.ui.chat.DateUtils.formatTimestamp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class MessageAdapter :
+class ChatAdapter :
     ListAdapter<Message, RecyclerView.ViewHolder>(Diff()) {
 
     companion object {
@@ -53,7 +54,7 @@ class MessageAdapter :
 
         fun bind(message: Message) {
             binding.tvMessage.text = message.text
-            binding.tvUsername.text = "You"
+            binding.tvTimestamp.text = formatTimestamp(message.timestamp)
         }
     }
 
@@ -63,7 +64,7 @@ class MessageAdapter :
 
         fun bind(message: Message) {
             binding.tvMessage.text = message.text
-            binding.tvUsername.text = "User One"
+            binding.tvTimestamp.text = formatTimestamp(message.timestamp)
         }
     }
 

@@ -32,10 +32,10 @@ class RecentChatsFragment : Fragment() {
 
         adapter = RecentChatsRecyclerAdapter()
 
-        binding.recyclerViewRecentChats.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = this@RecentChatsFragment.adapter
-        }
+//        binding.recyclerViewRecentChats.apply {
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = this@RecentChatsFragment.adapter
+//        }
 
         viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
             adapter.setChats(chatList)
