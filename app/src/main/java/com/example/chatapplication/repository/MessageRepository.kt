@@ -30,9 +30,19 @@ class MessageRepository {
             }
     }
 
-    fun sendMessage(roomId: String, text: String){
+    fun sendMessage(targetUserId: String, text: String){
         val user = Firebase.auth.currentUser ?: return
-        val msg = Message(senderId = user.uid, text = text)
+
+        val sortedIds = listOf(user.uid, targetUserId).sorted()
+        val roomId = "${sortedIds[0]}_${sortedIds[1]}"
+
+        val msg = Message(
+            senderId = user.uid,
+            receiverId = targetUserId,
+            roomId = roomId,
+            text = text,
+            timestamp = System.currentTimeMillis()
+        )
         db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
@@ -55,31 +65,6 @@ class MessageRepository {
             }
             .addOnFailureListener { exception ->
                 callback(null)
-            }
-    }
-
-
-    //To make it support group chats, We can send an array of Ids to the function
-    fun getMessagesList(myUserId:String, targetUserId:String, callback: (List<Message>) -> Unit){
-        //sort ids to the array
-        val sortedIds = listOf(myUserId, targetUserId).sorted()
-        //make a unique string from the sorted array for roomId
-        val roomId = "${sortedIds[0]}_${sortedIds[1]}"
-
-        //Query to FireBase to get massages related to roomId
-        db.collection("chatRooms")
-            .document(roomId)
-            .collection("messages")
-            .orderBy("timestamp")
-            .get()
-            .addOnSuccessListener { snapshot ->
-                val messages = snapshot.documents.mapNotNull {
-                    it.toObject(Message::class.java)?.copy(id = it.id)
-                }
-                callback(messages)
-            }
-            .addOnFailureListener { exception ->
-                callback(emptyList())
             }
     }
 

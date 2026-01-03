@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.data.Message
 import com.example.chatapplication.databinding.ItemMessageReceivedBinding
 import com.example.chatapplication.databinding.ItemMessageSentBinding
+import com.example.chatapplication.ui.chat.DateUtils.formatTimestamp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ChatAdapter :
     ListAdapter<Message, RecyclerView.ViewHolder>(Diff()) {
@@ -50,7 +54,7 @@ class ChatAdapter :
 
         fun bind(message: Message) {
             binding.tvMessage.text = message.text
-            binding.tvUsername.text = "You"
+            binding.tvTimestamp.text = formatTimestamp(message.timestamp)
         }
     }
 
@@ -60,7 +64,7 @@ class ChatAdapter :
 
         fun bind(message: Message) {
             binding.tvMessage.text = message.text
-            binding.tvUsername.text = "User One"
+            binding.tvTimestamp.text = formatTimestamp(message.timestamp)
         }
     }
 

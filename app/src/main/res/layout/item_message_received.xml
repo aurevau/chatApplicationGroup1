@@ -1,26 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="start"
-    android:padding="8dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvUsername"
-        android:text="User :"
-        android:textSize="12sp"
-        android:textColor="@color/black"
-        />
+    android:paddingStart="16dp"
+    android:paddingEnd="48dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <TextView
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:layout_gravity="start"
+        android:background="@drawable/message_bubble_received"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:text="Message"
-        android:backgroundTint="@color/receiver"
-        android:textColor="@android:color/black"/>
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:maxWidth="280dp"/>
+
+    <TextView
+        android:id="@+id/tvTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="4dp"
+        android:text="10:30 AM"
+        android:textSize="11sp"
+        android:textColor="@color/hint_text_color"/>
+
 </LinearLayout>
