@@ -6,14 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.chatapplication"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 35  // Changed from release(36) which might be unstable or causing issues
 
     defaultConfig {
         applicationId = "com.example.chatapplication"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35 // Matched compileSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -48,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.fragment:fragment-ktx:1.6.2") // Added fragment-ktx dependency
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     testImplementation(libs.junit)
