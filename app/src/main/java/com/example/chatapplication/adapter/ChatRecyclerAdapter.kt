@@ -1,10 +1,12 @@
 package com.example.chatapplication.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapplication.data.Message
 import com.example.chatapplication.databinding.ItemMessageReceivedBinding
 import com.example.chatapplication.databinding.ItemMessageSentBinding
@@ -50,7 +52,22 @@ class ChatRecyclerAdapter :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            binding.tvMessage.text = message.text
+            if (!message.text.isNullOrEmpty()) {
+                binding.tvMessage.visibility = View.VISIBLE
+                binding.tvMessage.text = message.text
+            } else {
+                binding.tvMessage.visibility = View.GONE
+            }
+
+            if (!message.imageUrl.isNullOrEmpty()) {
+                binding.imgMessage.visibility = View.VISIBLE
+                Glide.with(binding.imgMessage.context)
+                    .load(message.imageUrl)
+                    .into(binding.imgMessage)
+            } else {
+                binding.imgMessage.visibility = View.GONE
+            }
+//            binding.tvMessage.text = message.text
             binding.tvTimestamp.text = DateUtils.formatTimestamp(message.timestamp)
         }
     }

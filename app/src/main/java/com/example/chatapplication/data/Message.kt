@@ -4,10 +4,11 @@ data class Message (
      val id:String = "",
      val senderId: String = "",
      val receiverId: String = "",
-     val text: String = "",
+     val text: String? = null,
      //roomId is a unique key for the conversations to make the get messages queries easier
      val roomId: String = "",
-     val timestamp: Long = System.currentTimeMillis()
+     val timestamp: Long = System.currentTimeMillis(),
+     val imageUrl: String? = null,
 )
 
 

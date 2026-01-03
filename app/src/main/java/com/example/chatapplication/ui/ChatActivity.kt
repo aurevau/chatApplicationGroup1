@@ -1,13 +1,19 @@
 package com.example.chatapplication.ui
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatSpinner
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapplication.R
@@ -15,6 +21,8 @@ import com.example.chatapplication.databinding.ActivityChatBinding
 import com.example.chatapplication.adapter.ChatRecyclerAdapter
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.example.chatapplication.viewmodel.ChatViewModel
+import java.io.File
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -23,6 +31,11 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var authViewModel: AuthViewModel
 
+    private val CAMERA_REQUEST_CODE = 1001
+    private val GALLERY_REQUEST_CODE = 1002
+    private var cameraImageUri: Uri? = null
+
+
     private val viewModel: ChatViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,16 +43,22 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
 
         spinner = binding.menuSpinner
         val menuCategories = resources.getStringArray(R.array.menu_spinner)
 
-        val spinnerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, menuCategories)
+        val spinnerAdapter = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            menuCategories
+        )
         spinner.adapter = spinnerAdapter
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -67,7 +86,7 @@ class ChatActivity : AppCompatActivity() {
         viewModel.getUserDetailsById(userId)
 
         //receive target user
-        viewModel.targetUser.observe(this){ user->
+        viewModel.targetUser.observe(this) { user ->
             binding.tvHeader.text = user?.fullName
             binding.tvInitials.text = user?.initials
 
@@ -98,14 +117,139 @@ class ChatActivity : AppCompatActivity() {
 
         binding.btnSend.setOnClickListener {
             val text = binding.etMessage.text.toString()
+            val myUserId = viewModel.myUserId ?: ""
+            val targetUserId = viewModel.targetUser.value?.id ?: return@setOnClickListener
+            val roomId = listOf(myUserId, targetUserId).sorted().joinToString("_")
             if (text.isNotBlank()) {
                 viewModel.send(text)
                 binding.etMessage.text.clear()
+
+
             }
+
+            binding.progressCircular.visibility = View.VISIBLE
+
+
+            viewModel.selectedImageUri.value?.let { uri ->
+                viewModel.uploadChatImage(uri, roomId,
+                    onSuccess = { imageUrl ->
+                        viewModel.sendImageMessage(targetUserId, imageUrl)
+                        viewModel.selectedImageUri.value = null
+                        binding.ivPhoto.visibility = View.GONE
+                        binding.progressCircular.visibility = View.GONE
+
+                    },
+                    onError = { e ->
+                        Toast.makeText(this, "Failed to send image: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+
+
+
         }
 
         binding.btnBack.setOnClickListener {
             finish()
         }
+
+        binding.btnImage.setOnClickListener {
+            requestMediaPermissions()
+        }
+
+
     }
+
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val granted = permissions.values.all { it }
+            if (granted) {
+                showImageSourceDialog()
+            } else {
+                Toast.makeText(this, "Permission required to select images", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
+
+
+
+
+
+    private fun requestMediaPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                )
+            )
+        } else {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            )
+        }
+    }
+
+
+    private fun showImageSourceDialog() {
+        val options = arrayOf("Camera", "Gallery")
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Select Image Source")
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> openCamera()
+                    1 -> openGallery()
+                }
+            }.show()
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+    }
+
+    private fun openCamera() {
+        val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+        val file = File(externalCacheDir, "chat_image_${System.currentTimeMillis()}.jpg")
+        cameraImageUri = FileProvider.getUriForFile(this, "${packageName}.provider", file)
+        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, cameraImageUri)
+
+        // Ge rättigheter till alla kameraappar
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        val imageUri: Uri? = when (requestCode) {
+            CAMERA_REQUEST_CODE -> cameraImageUri
+            GALLERY_REQUEST_CODE -> data?.data
+            else -> null
+        }
+
+        imageUri?.let {
+            viewModel.selectedImageUri.value = it
+            binding.ivPhoto.setImageURI(it)
+            binding.ivPhoto.visibility = View.VISIBLE
+
+        }
+
+
+
+    }
+
+
+
 }

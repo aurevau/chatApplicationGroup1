@@ -1,5 +1,7 @@
 package com.example.chatapplication.viewmodel
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.chatapplication.data.User
@@ -35,5 +37,53 @@ class ChatViewModel : ViewModel() {
              }
         )
     }
+
+    fun sendImageMessage(targetUserId: String, imageUrl: String){
+        messageRepository.sendImageMessage(targetUserId, imageUrl)
+    }
+
+    fun uploadChatImage(
+        imageUri: Uri,
+        roomId: String,
+        onSuccess: (String) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        messageRepository.uploadChatImage(imageUri, roomId, onSuccess, onError)
+    }
+
+    fun uploadAndSendImage(
+        imageUri: Uri,
+        roomId: String,
+        targetUserId: String
+    ) {
+        messageRepository.uploadChatImage(
+            imageUri = imageUri,
+            roomId = roomId,
+            onSuccess = { downloadUrl ->
+                messageRepository.sendImageMessage(targetUserId, downloadUrl)
+            },
+            onError = {
+                Log.e("ChatImage", "Upload failed", it)
+            }
+        )
+    }
+
+    val selectedImageUri = MutableLiveData<Uri?>()
+
+    fun sendImageMessageIfExists(roomId: String) {
+        selectedImageUri.value?.let { uri ->
+            uploadChatImage(uri, roomId,
+                onSuccess = { imageUrl ->
+                    val targetUserId = targetUser.value?.id ?: return@uploadChatImage
+                    sendImageMessage(targetUserId, imageUrl)
+                    selectedImageUri.value = null // nollställ efter skick
+                },
+                onError = { e ->
+                    // visa toast eller logga
+                }
+            )
+        }
+    }
+
 
 }

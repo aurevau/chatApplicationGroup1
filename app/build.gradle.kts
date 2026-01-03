@@ -42,6 +42,9 @@ android {
 }
 
 dependencies {
+    implementation("com.github.bumptech.glide:glide:5.0.5")
+
+    implementation(libs.piximagepicker)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -50,6 +53,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2") // Added fragment-ktx dependency
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
