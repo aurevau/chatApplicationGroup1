@@ -22,8 +22,10 @@ class ChatActivity : AppCompatActivity() {
 
         viewModel.getUserDetailsById(userId)
 
-        viewModel._user.observe(this){ user->
+        viewModel.targetUser.observe(this){ user->
             binding.userFullName.text = user?.fullName
+
+            viewModel.getMessagesList()
         }
 
         Log.d("chat_activity" , userId.toString())

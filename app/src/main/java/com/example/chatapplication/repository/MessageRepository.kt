@@ -40,6 +40,7 @@ class MessageRepository {
     }
 
 
+    //To get the target user's details
     fun getUserDetailsById(userId: String, callback: (User?) -> Unit) {
         db.collection("users")
             .document(userId)
@@ -57,4 +58,46 @@ class MessageRepository {
             }
     }
 
+
+    //To make it support group chats, We can send an array of Ids to the function
+    fun getMessagesList(myUserId:String, targetUserId:String, callback: (List<Message>) -> Unit){
+        //sort ids to the array
+        val sortedIds = listOf(myUserId, targetUserId).sorted()
+        //make a unique string from the sorted array for roomId
+        val roomId = "${sortedIds[0]}_${sortedIds[1]}"
+
+        //Query to FireBase to get massages related to roomId
+        db.collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .orderBy("timestamp")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val messages = snapshot.documents.mapNotNull {
+                    it.toObject(Message::class.java)?.copy(id = it.id)
+                }
+                callback(messages)
+            }
+            .addOnFailureListener { exception ->
+                callback(emptyList())
+            }
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
