@@ -1,10 +1,12 @@
-package com.example.chatapplication
+package com.example.chatapplication.adapter
 
 import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import android.widget.TextView
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.chatapplication.data.ChatRoom
+import com.example.chatapplication.R
 
 class RecentChatsRecyclerAdapter : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 

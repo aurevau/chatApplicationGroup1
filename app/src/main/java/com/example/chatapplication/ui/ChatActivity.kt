@@ -1,10 +1,12 @@
-package com.example.chatapplication.ui.chat
+package com.example.chatapplication.ui
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapplication.databinding.ActivityChatBinding
+import com.example.chatapplication.adapter.ChatRecyclerAdapter
+import com.example.chatapplication.viewmodel.ChatViewModel
 
 class ChatActivity : AppCompatActivity() {
 
@@ -33,7 +35,7 @@ class ChatActivity : AppCompatActivity() {
             viewModel.start(roomId)
         }
 
-        val adapter = ChatAdapter()
+        val adapter = ChatRecyclerAdapter()
         binding.recyclerMessages.adapter = adapter
         binding.recyclerMessages.layoutManager = LinearLayoutManager(this).apply {
             reverseLayout = false

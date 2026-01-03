@@ -1,4 +1,4 @@
-package com.example.chatapplication.ui.chat
+package com.example.chatapplication.util
 
 import java.text.SimpleDateFormat
 import java.util.*
