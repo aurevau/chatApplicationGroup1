@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication">
         <activity
-            android:name=".ui.chat.ChatActivity"
+            android:name=".ui.ChatActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity

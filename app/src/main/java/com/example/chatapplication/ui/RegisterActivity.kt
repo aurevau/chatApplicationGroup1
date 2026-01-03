@@ -1,5 +1,6 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,18 +34,27 @@ class RegisterActivity : AppCompatActivity() {
             val fullNameLower = fullName.lowercase()
             // Enkel validering
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                binding.etFullName.editText?.error = "Field cannot be empty"
+                binding.etEmail.editText?.error = "Field cannot be empty"
                 Toast.makeText(this, "Fyll i alla fält", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (password.length < 6) {
-                Toast.makeText(this, "Lösenordet måste vara minst 6 tecken", Toast.LENGTH_SHORT)
+                binding.etPassword.editText?.error = "Password needs to be at least 6 characters"
+                Toast.makeText(this, "Password needs to be at least 6 characters", Toast.LENGTH_SHORT)
                     .show()
                 return@setOnClickListener
             }
 
             authViewModel.register(fullName, fullNameLower,email, password)
-            finish()  // Gå tillbaka till föregående skärm
+            val intent = Intent(this, WelcomeActivity::class.java)
+            intent.putExtra("EMAIL", email)
+            intent.putExtra("PASSWORD", password)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+//            finish()  // Gå tillbaka till föregående skärm
         }
     }
 }

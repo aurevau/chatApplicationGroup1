@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentUsersBinding
-import com.example.chatapplication.ui.chat.ChatActivity
+import com.example.chatapplication.ui.ChatActivity
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
