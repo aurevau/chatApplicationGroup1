@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapplication.databinding.FragmentRecentChatsBinding
+import com.example.chatapplication.viewmodel.AuthViewModel
 
 class RecentChatsFragment : Fragment() {
 
@@ -17,7 +18,7 @@ class RecentChatsFragment : Fragment() {
     private lateinit var adapter: RecentChatsRecyclerAdapter
 
     // Use activityViewModels to share data between fragments if needed, or viewModels for just this fragment
-    private val viewModel: AllChatsViewModel by activityViewModels()
+    private lateinit var  viewModel: AllChatsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,10 +33,12 @@ class RecentChatsFragment : Fragment() {
 
         adapter = RecentChatsRecyclerAdapter()
 
-//        binding.recyclerViewRecentChats.apply {
-//            layoutManager = LinearLayoutManager(context)
-//            adapter = this@RecentChatsFragment.adapter
-//        }
+        viewModel = ViewModelProvider(this)[AllChatsViewModel::class.java]
+
+        binding.recyclerViewRecentChats.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@RecentChatsFragment.adapter
+        }
 
         viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
             adapter.setChats(chatList)
