@@ -48,21 +48,5 @@ class MessageRepository {
             .add(msg)
     }
 
-    //To get the target user's details
-    fun getUserDetailsById(userId: String, callback: (User?) -> Unit) {
-        db.collection("users")
-            .document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val user = document.toObject(User::class.java)
-                    callback(user?.copy(id = document.id))
-                } else {
-                    callback(null)
-                }
-            }
-            .addOnFailureListener { exception ->
-                callback(null)
-            }
-    }
+
 }

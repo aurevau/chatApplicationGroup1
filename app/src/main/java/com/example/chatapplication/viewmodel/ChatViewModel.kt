@@ -28,7 +28,7 @@ class ChatViewModel : ViewModel() {
     fun getUserDetailsById(userID:String?){
         if(userID == null) return
 
-        messageRepository.getUserDetailsById(
+        userRepository.getUserDetailsById(
             userId = userID ,
             { user->
                targetUser.value = user
