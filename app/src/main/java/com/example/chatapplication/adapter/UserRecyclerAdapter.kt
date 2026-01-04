@@ -1,9 +1,11 @@
 package com.example.chatapplication.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
@@ -16,8 +18,13 @@ class UserRecyclerAdapter(
     val onItemClick: (User) -> Unit,
     val onButtonClick: (User) -> Unit,
     val onAddFriendClick: (User) -> Unit,
-    val onDeleteFriendClick: (User) -> Unit
+    val onDeleteFriendClick: (User) -> Unit,
+    val onCheckButtonClick: (List<User>) -> Unit
 ): RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
+
+
+
+    private val selectedUsers = mutableSetOf<User>()
 
     private var users = emptyList<User>()
     private val db = UserRepository()
@@ -44,6 +51,8 @@ class UserRecyclerAdapter(
         users = userList
         notifyDataSetChanged()
     }
+
+    fun getSelectedUsers(): List<User> = selectedUsers.toList()
 
     override fun onBindViewHolder(
         holder: UserRecyclerAdapter.UserViewHolder,
@@ -81,8 +90,19 @@ class UserRecyclerAdapter(
         }
 
 
+        holder.checkBox.isChecked = selectedUsers.contains(user)
+
+
+        holder.checkBox.setOnClickListener {
+            if(holder.checkBox.isChecked) selectedUsers.add(user)
+            else selectedUsers.remove(user)
+            onCheckButtonClick(selectedUsers.toList())
+            Log.d("!!!", "selected users ${selectedUsers.size}")
+        }
+
         holder.itemView.setOnClickListener {
             onItemClick(user)
+
         }
 
         holder.button.setOnClickListener {
@@ -101,5 +121,6 @@ class UserRecyclerAdapter(
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials)
         val name: TextView = itemView.findViewById(R.id.tv_name)
 
+        val checkBox: CheckBox = itemView.findViewById(R.id.checkbox)
     }
 }

@@ -12,7 +12,16 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp">
+        android:padding="10dp">
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:buttonTint="@color/off_white"/>
 
         <TextView
             android:id="@+id/tv_initials"
@@ -20,7 +29,7 @@
             android:layout_height="40dp"
             tools:text="AV"
             android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/checkbox"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/circle_image"

@@ -10,15 +10,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
+import com.example.chatapplication.adapter.SelectedUsersRecyclerAdapter
 import com.example.chatapplication.adapter.UserRecyclerAdapter
+import com.example.chatapplication.data.User
 import com.example.chatapplication.databinding.FragmentUsersBinding
 import com.example.chatapplication.ui.ChatActivity
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.selects.select
 
 class UsersFragment : Fragment() {
 
@@ -26,12 +30,17 @@ class UsersFragment : Fragment() {
 
     private lateinit  var adapter: UserRecyclerAdapter
 
+    private lateinit var selectedUsersAdapter: SelectedUsersRecyclerAdapter
+
     private lateinit var viewModel: UserViewModel
 
     private lateinit var searchInput: TextInputEditText
     private lateinit var searchButton: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
 
+    private lateinit var rvSelectedUsers: RecyclerView
+
+    private var selectedUsers: List<User> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +48,9 @@ class UsersFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         val currentUserId = viewModel.getCurrentUserId()
 
-        adapter = UserRecyclerAdapter( viewModel, {user ->
+        selectedUsersAdapter = SelectedUsersRecyclerAdapter()
+
+        adapter = UserRecyclerAdapter( viewModel, {user->
             // Se mer information om användaren och kunna lägga till vän?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
@@ -55,6 +66,11 @@ class UsersFragment : Fragment() {
             viewModel.addFriend(currentUserId, user)
         }, {user ->
             viewModel.removeFriend(currentUserId, user.id)
+        }, {selectedList ->
+            selectedUsers =selectedList
+            selectedUsersAdapter.submitList(selectedUsers)
+            binding.btnStartGroupChat.visibility = if (selectedUsers.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility = if (selectedUsers.size > 1) View.VISIBLE else View.GONE
         })
 
     }
@@ -73,6 +89,10 @@ class UsersFragment : Fragment() {
         recyclerView = binding.rvUsers
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+
+        rvSelectedUsers = binding.rvSelectedUsers
+        rvSelectedUsers.layoutManager = GridLayoutManager(requireContext(), 4)
+        rvSelectedUsers.adapter = selectedUsersAdapter
 
         searchButton = binding.btnSearchUser
         searchInput = binding.etSearchUser
