@@ -38,8 +38,6 @@ class UserRepository {
     private val recentList = mutableListOf<User>()
 
 
-
-
     fun searchUsers(searchTerm: String) {
         val term = searchTerm.lowercase()
         if (term.isBlank()) {
@@ -61,11 +59,11 @@ class UserRepository {
     }
 
 
-    fun allUsers() : CollectionReference =db.collection("users")
+    fun allUsers(): CollectionReference = db.collection("users")
 
     fun getCurrentUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
 
-    fun currentUserDetails() : DocumentReference {
+    fun currentUserDetails(): DocumentReference {
         val uid = getCurrentUserId() ?: throw Exception("User not logged in")
         return FirebaseFirestore.getInstance().collection("users").document(uid)
     }
@@ -102,12 +100,12 @@ class UserRepository {
             }
     }
 
-    fun addRecentSearch(user: User){
+    fun addRecentSearch(user: User) {
         val currentUserId = getCurrentUserId() ?: return
 
         recentList.removeAll { it.id == user.id }
         recentList.add(0, user)
-        if(recentList.size > 10) recentList.removeLast()
+        if (recentList.size > 10) recentList.removeLast()
         _recentSearchedUsers.value = recentList
 
         addRecentSearchToFirebase(currentUserId, user)
@@ -157,10 +155,10 @@ class UserRepository {
     }
 
     fun isSelected(currentUserId: String?, other: User) {
-        val selectedData = mapOf (
+        val selectedData = mapOf(
             "fullName" to other.fullName,
 
-        )
+            )
 
         if (currentUserId != null) {
             db.collection("users")
@@ -241,13 +239,15 @@ class UserRepository {
             .collection("friends")
             .document(friendId)
             .delete()
-            .addOnSuccessListener { Log.d("SOUT", "Friend removed")
-                getFriends(currentUserId)}
+            .addOnSuccessListener {
+                Log.d("SOUT", "Friend removed")
+                getFriends(currentUserId)
+            }
             .addOnFailureListener { exception -> Log.e("SOUT", "Error removing friend", exception) }
 
     }
 
-    fun getFriends(currentUserId: String){
+    fun getFriends(currentUserId: String) {
         db.collection("users")
             .document(currentUserId)
             .collection("friends")
@@ -272,12 +272,11 @@ class UserRepository {
 
         db.collection("users").document(uid).set(fields)
             .addOnSuccessListener {
-            Log.i("SOUT", "added user to database with id:  ${uid}")
-        }.addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to add user to database, error: " + exception.message )
-        }
+                Log.i("SOUT", "added user to database with id:  ${uid}")
+            }.addOnFailureListener { exception ->
+                Log.e("SOUT", "failed to add user to database, error: " + exception.message)
+            }
     }
-
 
 
     fun updateCurrentUser(fullName: String) {
@@ -286,10 +285,11 @@ class UserRepository {
             "fullName" to fullName
         )
 
-        db.collection("users").document(uid).update(fields).addOnSuccessListener { documentReference ->
-            Log.i("SOUT", "updated user to database with id: ${uid}")
-        }.addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to update user to database, error: " + exception.message )
+        db.collection("users").document(uid).update(fields)
+            .addOnSuccessListener { documentReference ->
+                Log.i("SOUT", "updated user to database with id: ${uid}")
+            }.addOnFailureListener { exception ->
+            Log.e("SOUT", "failed to update user to database, error: " + exception.message)
         }
     }
 
@@ -299,11 +299,11 @@ class UserRepository {
             user.delete().addOnSuccessListener {
                 Log.i("SOUT", "deleted user from database and auth with id:${user.uid}")
             }.addOnFailureListener {
-                Log.e("SOUT", "Auth delete failed: ${it.message}" )
+                Log.e("SOUT", "Auth delete failed: ${it.message}")
             }
         }
             .addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
-        }
+                Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
+            }
     }
 }

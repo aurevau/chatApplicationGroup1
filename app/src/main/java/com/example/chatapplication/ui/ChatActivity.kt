@@ -107,7 +107,6 @@ class ChatActivity : AppCompatActivity() {
         viewModel.start(currentRoomId)
 
 
-
         val adapter = ChatRecyclerAdapter()
         binding.recyclerMessages.adapter = adapter
         binding.recyclerMessages.layoutManager = LinearLayoutManager(this).apply {
@@ -132,9 +131,9 @@ class ChatActivity : AppCompatActivity() {
             val selectedImage = viewModel.selectedImageUri.value
 
             if (selectedImage != null) {
-                // Bild finns → skicka bild + text när upload är klar
                 binding.progressCircular.visibility = View.VISIBLE
-                viewModel.uploadChatImage(selectedImage, roomId,
+                viewModel.uploadChatImage(
+                    selectedImage, roomId,
                     onSuccess = { imageUrl ->
                         viewModel.sendImageMessage(roomId, imageUrl, text)
                         viewModel.selectedImageUri.value = null
@@ -142,11 +141,14 @@ class ChatActivity : AppCompatActivity() {
                         binding.progressCircular.visibility = View.GONE
                     },
                     onError = { e ->
-                        Toast.makeText(this, "Failed to send image: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Failed to send image: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 )
             } else if (text != null) {
-                // Ingen bild → skicka bara text
                 viewModel.sendTextMessage(roomId, text)
                 binding.etMessage.text.clear()
             }
@@ -173,10 +175,6 @@ class ChatActivity : AppCompatActivity() {
                     .show()
             }
         }
-
-
-
-
 
 
     private fun requestMediaPermissions() {
@@ -248,9 +246,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
 
-
     }
-
 
 
 }

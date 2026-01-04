@@ -9,18 +9,19 @@ import com.example.chatapplication.R
 import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.UserRepository
 
-class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter<SelectedUsersRecyclerAdapter.UserViewHolder>() {
+class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
+    RecyclerView.Adapter<SelectedUsersRecyclerAdapter.UserViewHolder>() {
 
     private var users = listOf<User>()
     private val db = UserRepository()
-
 
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): SelectedUsersRecyclerAdapter.UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_selected_users, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.list_item_selected_users, parent, false)
         return UserViewHolder(view)
     }
 
@@ -28,7 +29,6 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerVie
         users = userList
         notifyDataSetChanged()
     }
-
 
 
     override fun onBindViewHolder(
@@ -46,7 +46,7 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerVie
 
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.tv_name_selected_users)
         val initials: TextView = itemView.findViewById(R.id.tv_initials_selected_users)
 

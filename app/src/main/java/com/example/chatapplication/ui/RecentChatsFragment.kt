@@ -19,7 +19,7 @@ class RecentChatsFragment : Fragment() {
     private lateinit var adapter: RecentChatsRecyclerAdapter
 
     // Use activityViewModels to share data between fragments if needed, or viewModels for just this fragment
-    private lateinit var  viewModel: AllChatsViewModel
+    private lateinit var viewModel: AllChatsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

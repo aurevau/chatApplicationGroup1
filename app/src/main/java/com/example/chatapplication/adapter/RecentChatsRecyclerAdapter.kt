@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
-class RecentChatsRecyclerAdapter : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
+class RecentChatsRecyclerAdapter :
+    RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
     private var chats = emptyList<ChatRoom>()  // Ersätt ChatRoom med er model-klass
 

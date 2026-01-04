@@ -20,8 +20,7 @@ class UserRecyclerAdapter(
     val onAddFriendClick: (User) -> Unit,
     val onDeleteFriendClick: (User) -> Unit,
     val onCheckButtonClick: (User, Boolean) -> Unit
-): RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
-
+) : RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
 
 
 //    private val selectedUsers = mutableListOf<User>()
@@ -33,15 +32,14 @@ class UserRecyclerAdapter(
 
     private var selection = emptyList<User>()
 
-    private val selectedUsersSet =  mutableSetOf<User>()
-
+    private val selectedUsersSet = mutableSetOf<User>()
 
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): UserRecyclerAdapter.UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_user, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.list_item_user, parent, false)
         return UserViewHolder(view)
 
 
@@ -65,18 +63,16 @@ class UserRecyclerAdapter(
     fun getSelectedUsers(): List<User> = selectedUsersSet.toList()
 
     override fun onBindViewHolder(
-        holder: UserRecyclerAdapter.UserViewHolder,
-        position: Int
+        holder: UserRecyclerAdapter.UserViewHolder, position: Int
     ) {
 
 
         val user = users[position]
 
-        val isSelected = selection.any {it.id == user.id}
+        val isSelected = selection.any { it.id == user.id }
 
 
         val isFriend = friends.any { it.id == user.id }
-
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = isSelected
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -100,8 +96,8 @@ class UserRecyclerAdapter(
 
 
 
-        holder.initialCircle.text = user.initials.ifBlank {  "?"}
-        holder.name.text = if(user.id == db.getCurrentUserId()) {
+        holder.initialCircle.text = user.initials.ifBlank { "?" }
+        holder.name.text = if (user.id == db.getCurrentUserId()) {
             "${user.fullName} (Me)"
         } else {
             user.fullName
@@ -121,11 +117,10 @@ class UserRecyclerAdapter(
     }
 
 
-
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val deleteFriend:TextView = itemView.findViewById(R.id.tv_delete_friend)
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)
         val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend)
         val button: Button = itemView.findViewById(R.id.btn_start_chat)
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials)

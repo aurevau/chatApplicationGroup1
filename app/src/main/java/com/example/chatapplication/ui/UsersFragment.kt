@@ -27,7 +27,7 @@ class UsersFragment : Fragment() {
 
     private lateinit var binding: FragmentUsersBinding
 
-    private lateinit  var adapter: UserRecyclerAdapter
+    private lateinit var adapter: UserRecyclerAdapter
 
     private lateinit var selectedUsersAdapter: SelectedUsersRecyclerAdapter
 
@@ -40,7 +40,7 @@ class UsersFragment : Fragment() {
 
     private lateinit var rvSelectedUsers: RecyclerView
 
-    private val selectedUsersSet =  mutableSetOf<User>()
+    private val selectedUsersSet = mutableSetOf<User>()
 
     private lateinit var groupChatButton: Button
 
@@ -52,7 +52,7 @@ class UsersFragment : Fragment() {
 
         val currentUserId = viewModel.getCurrentUserId()
 
-        selectedUsersAdapter = SelectedUsersRecyclerAdapter({removedUser ->
+        selectedUsersAdapter = SelectedUsersRecyclerAdapter({ removedUser ->
             selectedUsersSet.remove(removedUser)
             viewModel.isNotSelected(currentUserId, removedUser.id)
 
@@ -60,19 +60,19 @@ class UsersFragment : Fragment() {
             adapter.notifyDataSetChanged()
 
             groupChatButton.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
-            rvSelectedUsers.visibility = if (selectedUsersSet.isNotEmpty()) View.VISIBLE else View.GONE
-
+            rvSelectedUsers.visibility =
+                if (selectedUsersSet.isNotEmpty()) View.VISIBLE else View.GONE
 
 
         })
 
-        adapter = UserRecyclerAdapter( viewModel, {user->
+        adapter = UserRecyclerAdapter(viewModel, { user ->
             // Se mer information om användaren och kunna lägga till vän?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
             viewModel.addRecentSearch(user)
 
-        }, {user ->
+        }, { user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
             val chatIntent = Intent(activity, ChatActivity::class.java)
             chatIntent.putExtra("USER_ID", user.id)
@@ -80,24 +80,28 @@ class UsersFragment : Fragment() {
 
         }, { user ->
             viewModel.addFriend(currentUserId, user)
-        }, {user ->
+        }, { user ->
             viewModel.removeFriend(currentUserId, user.id)
-        }, {user, isChecked ->
+        }, { user, isChecked ->
             if (isChecked) {
                 selectedUsersSet.add(user)
                 viewModel.isSelected(currentUserId, user)
-            }
-
-            else {selectedUsersSet.remove(user)
+            } else {
+                selectedUsersSet.remove(user)
                 viewModel.isNotSelected(currentUserId, user.id)
             }
 
             selectedUsersAdapter.submitList(selectedUsersSet.toList())
-            if(selectedUsersSet.size <= 1) Toast.makeText(requireContext(), "Choose another user to start group chat", Toast.LENGTH_SHORT).show()
-            binding.btnStartGroupChat.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
-            binding.rvSelectedUsers.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+            if (selectedUsersSet.size <= 1) Toast.makeText(
+                requireContext(),
+                "Choose another user to start group chat",
+                Toast.LENGTH_SHORT
+            ).show()
+            binding.btnStartGroupChat.visibility =
+                if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility =
+                if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
         })
-
 
 
     }
@@ -140,7 +144,7 @@ class UsersFragment : Fragment() {
                 roomId = groupRoomId,
                 userIds = memberIds,
                 groupName = groupName
-            ) {roomId ->
+            ) { roomId ->
                 val chatIntent = Intent(requireContext(), ChatActivity::class.java)
                 chatIntent.putExtra("ROOM_ID", roomId)
                 chatIntent.putExtra("GROUP_NAME", groupName)
@@ -159,7 +163,7 @@ class UsersFragment : Fragment() {
         }
 
 
-        viewModel.recentSearchedUsers.observe(viewLifecycleOwner) {recentSearchList ->
+        viewModel.recentSearchedUsers.observe(viewLifecycleOwner) { recentSearchList ->
             adapter.submitList(recentSearchList)
         }
 
@@ -168,48 +172,45 @@ class UsersFragment : Fragment() {
         }
 
 
-        viewModel.friends.observe(viewLifecycleOwner) {friendsList ->
+        viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
 
             adapter.updateFriendList(friendsList)
         }
 
-        viewModel.selection.observe(viewLifecycleOwner) {selectionList ->
+        viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
 
             adapter.updateSelectionList(selectionList)
             val selectedUsers = adapter.getSelectedUsers()
             selectedUsersAdapter.submitList(selectedUsers.toList())
             // Visa/hide knappar
-            binding.btnStartGroupChat.visibility = if (selectedUsers.size > 1) View.VISIBLE else View.GONE
-            binding.rvSelectedUsers.visibility = if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.btnStartGroupChat.visibility =
+                if (selectedUsers.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility =
+                if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
 
 
         viewModel.getFriends(currentUserId)
 
-
-
         searchButton.setOnClickListener {
-
             binding.cvSearchUser.visibility = View.VISIBLE
 
             val searchTerm = searchInput.text.toString()
             if (searchTerm.isNotEmpty()) {
                 viewModel.searchUsers(searchTerm)
             }
-
         }
 
         searchInput.addTextChangedListener { text ->
             val query = text.toString().trim()
 
-            if(query.isNotEmpty()){
+            if (query.isNotEmpty()) {
                 viewModel.searchUsers(query)
             } else {
                 val recent = viewModel.recentSearchedUsers.value ?: emptyList()
                 adapter.submitList(recent)
             }
-
         }
     }
 

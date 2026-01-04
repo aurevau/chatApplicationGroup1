@@ -18,13 +18,13 @@ class MessageRepository {
     private val _message = MutableLiveData<List<Message>>()
     val messages: LiveData<List<Message>> get() = _message
 
-    fun listenToChat(roomId: String){
+    fun listenToChat(roomId: String) {
         db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
             .orderBy("timestamp")
-            .addSnapshotListener {snapshot, _ ->
-                if (snapshot != null){
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null) {
                     _message.value = snapshot.documents.mapNotNull {
                         it.toObject(Message::class.java)?.copy(id = it.id)
                     }
@@ -88,8 +88,12 @@ class MessageRepository {
     }
 
 
-
-    fun createGroupChat(roomId: String, userIds: List<String>, groupName: String, onSuccess: (String) -> Unit) {
+    fun createGroupChat(
+        roomId: String,
+        userIds: List<String>,
+        groupName: String,
+        onSuccess: (String) -> Unit
+    ) {
         val chatRoomData = mapOf(
             "roomId" to roomId,
             "name" to groupName,
@@ -100,10 +104,9 @@ class MessageRepository {
         db.collection("chatRooms")
             .document(roomId)
             .set(chatRoomData)
-            .addOnSuccessListener { onSuccess(roomId)}
+            .addOnSuccessListener { onSuccess(roomId) }
             .addOnFailureListener { exception -> exception.printStackTrace() }
     }
-
 
 
 }
