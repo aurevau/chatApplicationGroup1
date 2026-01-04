@@ -3,6 +3,7 @@ package com.example.chatapplication.repository
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.Message
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
