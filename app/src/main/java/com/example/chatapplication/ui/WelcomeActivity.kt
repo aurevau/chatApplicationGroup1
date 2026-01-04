@@ -68,7 +68,7 @@ class WelcomeActivity : AppCompatActivity() {
             clearFields()
             val intent = Intent(this, DashboardActivity::class.java)
             startActivity(intent)
-        }, onFailure =  {
+        }, onFailure = {
             Toast.makeText(this, it.message.toString(), Toast.LENGTH_SHORT).show()
         })
 

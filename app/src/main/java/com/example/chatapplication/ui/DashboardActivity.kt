@@ -45,7 +45,7 @@ class DashboardActivity : AppCompatActivity() {
 
         val viewPagerAdapter = DashboardActivityViewPagerAdapter(this)
         viewPager.adapter = viewPagerAdapter
-        pageChangeCallback = object: ViewPager2.OnPageChangeCallback() {
+        pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 bottomNav.menu[position].isChecked = true
@@ -57,10 +57,14 @@ class DashboardActivity : AppCompatActivity() {
 
         val menuCategories = resources.getStringArray(R.array.menu_spinner)
 
-        val spinnerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, menuCategories)
+        val spinnerAdapter = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            menuCategories
+        )
         spinner.adapter = spinnerAdapter
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -90,11 +94,13 @@ class DashboardActivity : AppCompatActivity() {
                     viewPager.currentItem = 0
                     true
                 }
+
                 R.id.navigation_allUsers -> {
                     headerText.text = getString(R.string.users)
                     viewPager.currentItem = 1
                     true
                 }
+
                 else -> false
             }
         }

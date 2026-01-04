@@ -8,7 +8,8 @@ data class Message (
      //roomId is a unique key for the conversations to make the get messages queries easier
      val roomId: String = "",
      val timestamp: Long = System.currentTimeMillis(),
-     val imageUrl: String? = null,
+     val imageUrl: String? = null
+
 )
 
 

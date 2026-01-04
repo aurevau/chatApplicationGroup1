@@ -2,20 +2,23 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
+import com.example.chatapplication.adapter.SelectedUsersRecyclerAdapter
 import com.example.chatapplication.adapter.UserRecyclerAdapter
+import com.example.chatapplication.data.User
 import com.example.chatapplication.databinding.FragmentUsersBinding
-import com.example.chatapplication.ui.ChatActivity
+import com.example.chatapplication.repository.MessageRepository
+import com.example.chatapplication.viewmodel.ChatViewModel
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
@@ -24,27 +27,52 @@ class UsersFragment : Fragment() {
 
     private lateinit var binding: FragmentUsersBinding
 
-    private lateinit  var adapter: UserRecyclerAdapter
+    private lateinit var adapter: UserRecyclerAdapter
+
+    private lateinit var selectedUsersAdapter: SelectedUsersRecyclerAdapter
 
     private lateinit var viewModel: UserViewModel
+    private lateinit var chatViewModel: ChatViewModel
 
     private lateinit var searchInput: TextInputEditText
     private lateinit var searchButton: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
 
+    private lateinit var rvSelectedUsers: RecyclerView
+
+    private val selectedUsersSet = mutableSetOf<User>()
+
+    private lateinit var groupChatButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
+        chatViewModel = ViewModelProvider(requireActivity())[ChatViewModel::class.java]
+
         val currentUserId = viewModel.getCurrentUserId()
 
-        adapter = UserRecyclerAdapter( viewModel, {user ->
+        selectedUsersAdapter = SelectedUsersRecyclerAdapter({ removedUser ->
+            selectedUsersSet.remove(removedUser)
+            viewModel.isNotSelected(currentUserId, removedUser.id)
+
+            selectedUsersAdapter.submitList(selectedUsersSet.toList())
+            adapter.notifyDataSetChanged()
+
+            groupChatButton.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+            rvSelectedUsers.visibility =
+                if (selectedUsersSet.isNotEmpty()) View.VISIBLE else View.GONE
+
+
+        })
+
+        adapter = UserRecyclerAdapter(viewModel, { user ->
             // Se mer information om användaren och kunna lägga till vän?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
+            viewModel.addRecentSearch(user)
 
-        }, {user ->
+        }, { user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
             val chatIntent = Intent(activity, ChatActivity::class.java)
             chatIntent.putExtra("USER_ID", user.id)
@@ -52,9 +80,29 @@ class UsersFragment : Fragment() {
 
         }, { user ->
             viewModel.addFriend(currentUserId, user)
-        }, {user ->
+        }, { user ->
             viewModel.removeFriend(currentUserId, user.id)
+        }, { user, isChecked ->
+            if (isChecked) {
+                selectedUsersSet.add(user)
+                viewModel.isSelected(currentUserId, user)
+            } else {
+                selectedUsersSet.remove(user)
+                viewModel.isNotSelected(currentUserId, user.id)
+            }
+
+            selectedUsersAdapter.submitList(selectedUsersSet.toList())
+            if (selectedUsersSet.size <= 1) Toast.makeText(
+                requireContext(),
+                "Choose another user to start group chat",
+                Toast.LENGTH_SHORT
+            ).show()
+            binding.btnStartGroupChat.visibility =
+                if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility =
+                if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
         })
+
 
     }
 
@@ -73,56 +121,96 @@ class UsersFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
+        rvSelectedUsers = binding.rvSelectedUsers
+        rvSelectedUsers.layoutManager = GridLayoutManager(requireContext(), 2)
+        rvSelectedUsers.adapter = selectedUsersAdapter
+
         searchButton = binding.btnSearchUser
         searchInput = binding.etSearchUser
 
         val currentUserId = viewModel.getCurrentUserId() ?: return
 
+        viewModel.loadRecentSearches()
 
-        viewModel.user.observe(viewLifecycleOwner) { userList ->
-            val allUsers = viewModel.user.value ?: emptyList()
+        groupChatButton = binding.btnStartGroupChat
 
-            val searchTerm = searchInput.text.toString().trim().lowercase()
-            val displayedUsers = if (searchTerm.isNotEmpty()) {
-                allUsers.filter { it.fullName.contains(searchTerm, ignoreCase = true) }
-            } else {
-                allUsers
+        groupChatButton.setOnClickListener {
+            val memberIds = (selectedUsersSet.mapNotNull { it.id } + currentUserId)
+                .sorted()
+            val groupRoomId = memberIds.joinToString("_")
+            val groupName = selectedUsersSet.joinToString(", ") { it.fullName }
+
+            chatViewModel.createGroupChat(
+                roomId = groupRoomId,
+                userIds = memberIds,
+                groupName = groupName
+            ) { roomId ->
+                val chatIntent = Intent(requireContext(), ChatActivity::class.java)
+                chatIntent.putExtra("ROOM_ID", roomId)
+                chatIntent.putExtra("GROUP_NAME", groupName)
+                startActivity(chatIntent)
+
+                selectedUsersSet.forEach { user ->
+                    viewModel.isNotSelected(currentUserId, user.id)
+                }
+                selectedUsersSet.clear()
+                selectedUsersAdapter.submitList(emptyList())
+                binding.rvSelectedUsers.visibility = View.GONE
+                binding.btnStartGroupChat.visibility = View.GONE
+
+
             }
-            adapter.submitList(displayedUsers)
-
-            if(searchTerm.isNotEmpty() && displayedUsers.isEmpty()){
-                Toast.makeText(activity, getString(R.string.user_not_found), Toast.LENGTH_SHORT).show()
-            }
-
-
         }
 
 
-        viewModel.friends.observe(viewLifecycleOwner) {friendsList ->
+        viewModel.recentSearchedUsers.observe(viewLifecycleOwner) { recentSearchList ->
+            adapter.submitList(recentSearchList)
+        }
+
+        viewModel.searchResults.observe(viewLifecycleOwner) { searchList ->
+            adapter.submitList(searchList)
+        }
+
+
+        viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
+
             adapter.updateFriendList(friendsList)
         }
 
+        viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
+
+            adapter.updateSelectionList(selectionList)
+            val selectedUsers = adapter.getSelectedUsers()
+            selectedUsersAdapter.submitList(selectedUsers.toList())
+            // Visa/hide knappar
+            binding.btnStartGroupChat.visibility =
+                if (selectedUsers.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility =
+                if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
+
+
         viewModel.getFriends(currentUserId)
 
-
-
         searchButton.setOnClickListener {
-
             binding.cvSearchUser.visibility = View.VISIBLE
 
             val searchTerm = searchInput.text.toString()
             if (searchTerm.isNotEmpty()) {
-                viewModel.searchUsersLocally(searchTerm)
+                viewModel.searchUsers(searchTerm)
             }
-
         }
 
         searchInput.addTextChangedListener { text ->
-            if(text.isNullOrBlank()){
-                viewModel.resetToAllUsers()
+            val query = text.toString().trim()
 
+            if (query.isNotEmpty()) {
+                viewModel.searchUsers(query)
+            } else {
+                val recent = viewModel.recentSearchedUsers.value ?: emptyList()
+                adapter.submitList(recent)
             }
-
         }
     }
 

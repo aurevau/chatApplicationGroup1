@@ -12,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 
 class UserRepository {
     private val listeners = mutableListOf<ListenerRegistration>()
@@ -25,58 +26,44 @@ class UserRepository {
     private val _friends = MutableLiveData<MutableList<User>>()
     val friends: LiveData<MutableList<User>> get() = _friends
 
+    private val _selection = MutableLiveData<MutableList<User>>()
+    val selection: LiveData<MutableList<User>> get() = _selection
 
-    init {
-        listenToUsers()
-    }
+    private val _recentSearchedUsers = MutableLiveData<List<User>>()
+    val recentSearchedUsers: LiveData<List<User>> get() = _recentSearchedUsers
 
-    fun listenToUsers() {
-        db.collection("users").addSnapshotListener { snapshot, error ->
-            if(error != null) {
-                Log.e("FIRESTORE_ERROR", "Snapshot error: ${error.message}")
-                return@addSnapshotListener
-            }
+    private val _searchResults = MutableLiveData<List<User>>()
+    val searchResults: LiveData<List<User>> get() = _searchResults
 
-            if (snapshot != null)  {
-                val tempList = mutableListOf<User>()
+    private val recentList = mutableListOf<User>()
 
-                val myId = getCurrentUserId()
-                for (doc in snapshot.documents) {
-                    Log.d("FIRESTORE_DEBUG", "Doc data: ${doc.data}")  // <--- Kolla vad Firestore faktiskt returnerar
-                    val user = doc.toObject(User::class.java)
-                    if (user != null) {
-                        tempList.add(user.copy(id = doc.id))
-                    }
+
+    fun searchUsers(searchTerm: String) {
+        val term = searchTerm.lowercase()
+        if (term.isBlank()) {
+            _searchResults.value = emptyList()
+            return
+        }
+
+        allUsers()
+            .orderBy("fullNameLower")
+            .startAt(term)
+            .endAt(term + "\uf8ff")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val users = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(User::class.java)?.copy(id = doc.id)
                 }
-                _users.value = tempList
-
+                _searchResults.value = users
             }
-        }
-    }
-
-    fun searchUsersLocally(searchTerm: String) {
-        val all = _users.value ?: return
-        val term = searchTerm.trim().lowercase()
-
-        val filtered = all.filter { user ->
-            user.fullName.lowercase().contains(term)
-        }
-
-        _users.value = filtered.toMutableList()
     }
 
 
-
-    private fun updateResults(results: MutableList<User>, newList: List<User>) {
-        results.addAll(newList)
-        _users.value = results.distinctBy { it.id } as MutableList<User>?
-    }
-
-    fun allUsers() : CollectionReference =db.collection("users")
+    fun allUsers(): CollectionReference = db.collection("users")
 
     fun getCurrentUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
 
-    fun currentUserDetails() : DocumentReference {
+    fun currentUserDetails(): DocumentReference {
         val uid = getCurrentUserId() ?: throw Exception("User not logged in")
         return FirebaseFirestore.getInstance().collection("users").document(uid)
     }
@@ -113,6 +100,118 @@ class UserRepository {
             }
     }
 
+    fun addRecentSearch(user: User) {
+        val currentUserId = getCurrentUserId() ?: return
+
+        recentList.removeAll { it.id == user.id }
+        recentList.add(0, user)
+        if (recentList.size > 10) recentList.removeLast()
+        _recentSearchedUsers.value = recentList
+
+        addRecentSearchToFirebase(currentUserId, user)
+    }
+
+    fun clearRecentSearches() {
+        recentList.clear()
+        _recentSearchedUsers.value = recentList
+    }
+
+    fun loadRecentSearches(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("recentSearches")
+            .orderBy("searchedAt", Query.Direction.DESCENDING)
+            .limit(10)
+            .get()
+            .addOnSuccessListener { snapshots ->
+                val recent = snapshots.documents.mapNotNull { doc ->
+                    User(
+                        id = doc.id,
+                        fullName = doc.getString("fullName") ?: ""
+                    )
+                }
+                recentList.addAll(recent)
+                _recentSearchedUsers.value = recentList
+            }
+    }
+
+    fun addRecentSearchToFirebase(currentUserId: String, user: User) {
+        val recentRef = db.collection("users")
+            .document(currentUserId)
+            .collection("recentSearches")
+            .document(user.id!!)
+
+        val data = mapOf(
+            "fullName" to user.fullName,
+            "searchedAt" to Timestamp.now()
+        )
+
+        recentRef.set(data)
+            .addOnSuccessListener {
+                Log.d("RECENT_SEARCH", "Saved ${user.fullName}")
+            }.addOnFailureListener { e -> Log.e("RECENT_SEARCH", "Failed to save", e) }
+        _recentSearchedUsers.value = recentList
+
+    }
+
+    fun isSelected(currentUserId: String?, other: User) {
+        val selectedData = mapOf(
+            "fullName" to other.fullName,
+
+            )
+
+        if (currentUserId != null) {
+            db.collection("users")
+                .document(currentUserId)
+                .collection("isSelected")
+                .document(other.id!!)
+                .set(selectedData)
+                .addOnSuccessListener {
+                    Log.d("SOUT", "User is selected")
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("SOUT", "Error selecting user", exception)
+                }
+        }
+    }
+
+    fun isNotSelected(currentUserId: String?, otherUserId: String?) {
+        if (currentUserId != null) {
+            if (otherUserId != null) {
+                db.collection("users")
+                    .document(currentUserId)
+                    .collection("isSelected")
+                    .document(otherUserId)
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.d("SOUT", "User not selected")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e("SOUT", "Error unselecting user", exception)
+
+                    }
+            }
+        }
+    }
+
+    fun getSelection(currentUserId: String, otherUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("isSelected")
+            .get()
+            .addOnSuccessListener { snapshots ->
+                val selectionList = snapshots.documents.mapNotNull { document ->
+                    val userId = document.id
+                    val fullName = document.getString("fullName") ?: ""
+                    User(
+                        id = userId,
+                        fullName = fullName,
+                    )
+                }
+                _selection.value = selectionList as MutableList<User>?
+            }
+    }
+
     fun addFriend(currentUserId: String, friend: User) {
         val friendData = mapOf(
             "friendId" to friend.id,
@@ -140,13 +239,15 @@ class UserRepository {
             .collection("friends")
             .document(friendId)
             .delete()
-            .addOnSuccessListener { Log.d("SOUT", "Friend removed")
-                getFriends(currentUserId)}
+            .addOnSuccessListener {
+                Log.d("SOUT", "Friend removed")
+                getFriends(currentUserId)
+            }
             .addOnFailureListener { exception -> Log.e("SOUT", "Error removing friend", exception) }
 
     }
 
-    fun getFriends(currentUserId: String){
+    fun getFriends(currentUserId: String) {
         db.collection("users")
             .document(currentUserId)
             .collection("friends")
@@ -171,12 +272,11 @@ class UserRepository {
 
         db.collection("users").document(uid).set(fields)
             .addOnSuccessListener {
-            Log.i("SOUT", "added user to database with id:  ${uid}")
-        }.addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to add user to database, error: " + exception.message )
-        }
+                Log.i("SOUT", "added user to database with id:  ${uid}")
+            }.addOnFailureListener { exception ->
+                Log.e("SOUT", "failed to add user to database, error: " + exception.message)
+            }
     }
-
 
 
     fun updateCurrentUser(fullName: String) {
@@ -185,10 +285,11 @@ class UserRepository {
             "fullName" to fullName
         )
 
-        db.collection("users").document(uid).update(fields).addOnSuccessListener { documentReference ->
-            Log.i("SOUT", "updated user to database with id: ${uid}")
-        }.addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to update user to database, error: " + exception.message )
+        db.collection("users").document(uid).update(fields)
+            .addOnSuccessListener { documentReference ->
+                Log.i("SOUT", "updated user to database with id: ${uid}")
+            }.addOnFailureListener { exception ->
+            Log.e("SOUT", "failed to update user to database, error: " + exception.message)
         }
     }
 
@@ -198,17 +299,11 @@ class UserRepository {
             user.delete().addOnSuccessListener {
                 Log.i("SOUT", "deleted user from database and auth with id:${user.uid}")
             }.addOnFailureListener {
-                Log.e("SOUT", "Auth delete failed: ${it.message}" )
+                Log.e("SOUT", "Auth delete failed: ${it.message}")
             }
         }
             .addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
-        }
-    }
-
-    fun resetToAllUsers(){
-        listeners.forEach { it.remove() }
-        listeners.clear()
-        listenToUsers()
+                Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
+            }
     }
 }

@@ -14,9 +14,15 @@ class UserViewModel: ViewModel() {
 
     val user: LiveData<MutableList<User>> = dataManager.users
     val friends: LiveData<MutableList<User>> = dataManager.friends
+    val selection: LiveData<MutableList<User>> = dataManager.selection
 
-    
-    
+    val recentSearchedUsers: LiveData<List<User>> = dataManager.recentSearchedUsers
+    val searchResults: LiveData<List<User>> = dataManager.searchResults
+
+
+
+
+
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
@@ -28,6 +34,20 @@ class UserViewModel: ViewModel() {
         if (currentUserId != null) {
             dataManager.addFriend(currentUserId, friend)
         }
+    }
+
+    fun searchUsers(searchTerm: String) {
+        dataManager.searchUsers(searchTerm)
+    }
+
+    fun getUserDetailsById(userId: String, callback: (User?) -> Unit) {
+        dataManager.getUserDetailsById(userId, callback)
+    }
+
+
+    fun loadRecentSearches() {
+        val currentUserId = getCurrentUserId() ?: return
+        dataManager.loadRecentSearches(currentUserId)
     }
 
     fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
@@ -46,6 +66,18 @@ class UserViewModel: ViewModel() {
         dataManager.getFriends(currentUserId)
     }
 
+    fun isSelected(currentUserId: String?, other: User) {
+        dataManager.isSelected(currentUserId, other)
+    }
+
+    fun isNotSelected(currentUserId: String?, otherUserId: String?) {
+        dataManager.isNotSelected(currentUserId, otherUserId)
+    }
+
+    fun getSelection(currentUserId: String, otherUserId: String) {
+        dataManager.getSelection(currentUserId, otherUserId)
+    }
+
 
 
 
@@ -54,9 +86,6 @@ class UserViewModel: ViewModel() {
         dataManager.updateCurrentUser(fullName)
     }
 
-    fun searchUsersLocally(searchTerm: String) {
-        dataManager.searchUsersLocally(searchTerm)
-    }
 
 
     fun deleteCurrentUser() {
@@ -64,9 +93,14 @@ class UserViewModel: ViewModel() {
         dataManager.deleteCurrentUser()
     }
 
-
-    fun resetToAllUsers(){
-        dataManager.resetToAllUsers()
+    fun addRecentSearch(user: User) {
+        dataManager.addRecentSearch(user)
     }
+
+    fun clearRecentSearches() {
+        dataManager.clearRecentSearches()
+    }
+
+
 
 }
