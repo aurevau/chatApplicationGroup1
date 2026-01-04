@@ -1,14 +1,12 @@
-package com.example.chatapplication.ui
+package com.example.chatapplication
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatapplication.viewmodel.AllChatsViewModel
-import com.example.chatapplication.adapter.RecentChatsRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentRecentChatsBinding
 
 class RecentChatsFragment : Fragment() {
@@ -19,7 +17,7 @@ class RecentChatsFragment : Fragment() {
     private lateinit var adapter: RecentChatsRecyclerAdapter
 
     // Use activityViewModels to share data between fragments if needed, or viewModels for just this fragment
-    private lateinit var viewModel: AllChatsViewModel
+    private val viewModel: AllChatsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,15 +30,17 @@ class RecentChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 1. Skapa adaptern
         adapter = RecentChatsRecyclerAdapter()
 
-        viewModel = ViewModelProvider(this)[AllChatsViewModel::class.java]
-
+        // 2. Koppla RecyclerView till LayoutManager och Adapter
         binding.recyclerViewRecentChats.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = this@RecentChatsFragment.adapter
+            // HÄR ÄR FIXEN: Vi måste tilldela adaptern till RecyclerView
+            this.adapter = this@RecentChatsFragment.adapter
         }
 
+        // 3. Lyssna på data
         viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
             adapter.setChats(chatList)
         }
