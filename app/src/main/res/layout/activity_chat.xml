@@ -64,7 +64,7 @@
             android:layout_gravity="center_vertical|end"
             android:layout_marginEnd="@dimen/margin_16dp"
             android:backgroundTint="@color/off_white"
-            android:minHeight="@dimen/size_48dp"
+            android:minHeight="@dimen/spinner_height_48dp"
             android:spinnerMode="dropdown" />
     </FrameLayout>
 

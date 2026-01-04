@@ -25,5 +25,7 @@
     <dimen name="send_button_size_48dp">48dp</dimen>
     <dimen name="menu_icons_size">48dp</dimen>
     <dimen name="edit_text_max_width">448dp</dimen>
+    <dimen name="nav_icon_size_32dp">32dp</dimen>
+    <dimen name="spinner_height_48dp">48dp</dimen>
 
 </resources>

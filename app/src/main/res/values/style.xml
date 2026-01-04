@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/selected_icon_overlap</item>
+        <item name="android:width">72dp</item>
+        <item name="android:height">56dp</item>
+
+        <item name="shapeAppearanceOverlay">@style/IndicatorShape</item>
+    </style>
+
+    <style name="IndicatorShape">
+        <item name="cornerFamily">rounded</item>
+    </style>
+</resources>

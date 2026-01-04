@@ -8,10 +8,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerViewRecentChats"/>
-  
-  
-  
+        android:id="@+id/recyclerViewRecentChats"
+        tools:listitem="@layout/list_item_user"/>
 
 </FrameLayout>
 

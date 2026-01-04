@@ -27,4 +27,6 @@
     <string name="add_photo_button_description">add photo</string>
     <string name="chat_header_text">Chat</string>
     <string name="image_preview_description">image preview</string>
+    <string name="header_chats_text">Chats</string>
+    <string name="launching_chatApp_text">Launching\nChatApp...</string>
 </resources>
