@@ -21,4 +21,20 @@
     <string name="add_friend">Add Friend</string>
     <string name="friends">Friends</string>
     <string name="user_not_found">User not found</string>
+    <string name="back_arrow_button_description">back arrow</string>
+    <string name="message_hint_text">Message</string>
+    <string name="send_button_description">Send</string>
+    <string name="add_photo_button_description">add photo</string>
+    <string name="chat_header_text">Chat</string>
+    <string name="image_preview_description">image preview</string>
+    <string name="header_chats_text">Chats</string>
+    <string name="launching_chatApp_text">Launching\nChatApp...</string>
+    <string name="message_preview_text">Message</string>
+    <string name="time_preview_text">10:30 AM</string>
+    <string name="received_picture_description">received picture</string>
+    <string name="sent_picture_description">sent picture</string>
+    <string name="search_for_a_user_hint_text">Search for a user</string>
+    <string name="search_floating_button">search</string>
+    <string name="initials_default_text">AV</string>
+    <string name="list_item_name_default_text">Name</string>
 </resources>
