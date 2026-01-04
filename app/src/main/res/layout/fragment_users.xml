@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.UsersFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_users"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/list_item_user"
+        tools:itemCount="4"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:layout_gravity="bottom">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_search_user"
+            android:visibility="gone"
+            android:layout_marginStart="16dp"
+            android:layout_weight="0.85"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_green"
+            app:cardCornerRadius="30dp"
+            android:layout_gravity="start|center_vertical"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_search_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:hint="Search for a user"
+                android:textColor="@color/off_white"
+                android:textColorHint="@color/off_white" />
+
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_search_user"
+            android:layout_width="1dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_weight="0.15"
+            android:backgroundTint="@color/dark_green"
+            android:src="@drawable/search_icon"
+            app:tint="@color/off_white" />
+    </LinearLayout>
+
+
+</FrameLayout>

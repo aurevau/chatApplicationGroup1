@@ -2,5 +2,6 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/bagel_fat_one</item>
+        <item>@font/quantico_bold</item>
     </array>
 </resources>
