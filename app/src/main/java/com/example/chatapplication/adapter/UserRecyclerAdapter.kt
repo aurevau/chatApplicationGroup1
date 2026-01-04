@@ -19,17 +19,22 @@ class UserRecyclerAdapter(
     val onButtonClick: (User) -> Unit,
     val onAddFriendClick: (User) -> Unit,
     val onDeleteFriendClick: (User) -> Unit,
-    val onCheckButtonClick: (List<User>) -> Unit
+    val onCheckButtonClick: (User, Boolean) -> Unit
 ): RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
 
 
 
-    private val selectedUsers = mutableSetOf<User>()
+//    private val selectedUsers = mutableListOf<User>()
 
     private var users = emptyList<User>()
     private val db = UserRepository()
 
     private var friends = emptyList<User>()
+
+    private var selection = emptyList<User>()
+
+    private val selectedUsersSet =  mutableSetOf<User>()
+
 
 
     override fun onCreateViewHolder(
@@ -47,12 +52,17 @@ class UserRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateSelectionList(newSelection: List<User>) {
+        selection = newSelection
+        notifyDataSetChanged()
+    }
+
     fun submitList(userList: List<User>) {
         users = userList
         notifyDataSetChanged()
     }
 
-    fun getSelectedUsers(): List<User> = selectedUsers.toList()
+    fun getSelectedUsers(): List<User> = selectedUsersSet.toList()
 
     override fun onBindViewHolder(
         holder: UserRecyclerAdapter.UserViewHolder,
@@ -62,8 +72,16 @@ class UserRecyclerAdapter(
 
         val user = users[position]
 
+        val isSelected = selection.any {it.id == user.id}
+
+
         val isFriend = friends.any { it.id == user.id }
 
+        holder.checkBox.setOnCheckedChangeListener(null)
+        holder.checkBox.isChecked = isSelected
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            onCheckButtonClick(user, isChecked)
+        }
         holder.addFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
         holder.addFriend.isEnabled = !isFriend
 
@@ -90,15 +108,7 @@ class UserRecyclerAdapter(
         }
 
 
-        holder.checkBox.isChecked = selectedUsers.contains(user)
 
-
-        holder.checkBox.setOnClickListener {
-            if(holder.checkBox.isChecked) selectedUsers.add(user)
-            else selectedUsers.remove(user)
-            onCheckButtonClick(selectedUsers.toList())
-            Log.d("!!!", "selected users ${selectedUsers.size}")
-        }
 
         holder.itemView.setOnClickListener {
             onItemClick(user)

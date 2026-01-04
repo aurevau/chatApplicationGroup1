@@ -14,8 +14,11 @@ class UserViewModel: ViewModel() {
 
     val user: LiveData<MutableList<User>> = dataManager.users
     val friends: LiveData<MutableList<User>> = dataManager.friends
+    val selection: LiveData<MutableList<User>> = dataManager.selection
+
     val recentSearchedUsers: LiveData<List<User>> = dataManager.recentSearchedUsers
     val searchResults: LiveData<List<User>> = dataManager.searchResults
+
 
 
 
@@ -57,6 +60,18 @@ class UserViewModel: ViewModel() {
 
     fun getFriends(currentUserId: String) {
         dataManager.getFriends(currentUserId)
+    }
+
+    fun isSelected(currentUserId: String?, other: User) {
+        dataManager.isSelected(currentUserId, other)
+    }
+
+    fun isNotSelected(currentUserId: String?, otherUserId: String?) {
+        dataManager.isNotSelected(currentUserId, otherUserId)
+    }
+
+    fun getSelection(currentUserId: String, otherUserId: String) {
+        dataManager.getSelection(currentUserId, otherUserId)
     }
 
 

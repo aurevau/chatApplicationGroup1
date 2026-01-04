@@ -9,9 +9,9 @@ import com.example.chatapplication.R
 import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.UserRepository
 
-class SelectedUsersRecyclerAdapter: RecyclerView.Adapter<SelectedUsersRecyclerAdapter.UserViewHolder>() {
-    val selectedUsers = mutableSetOf<User>()
-    private var users = emptyList<User>()
+class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit): RecyclerView.Adapter<SelectedUsersRecyclerAdapter.UserViewHolder>() {
+
+    private var users = listOf<User>()
     private val db = UserRepository()
 
 
@@ -36,13 +36,19 @@ class SelectedUsersRecyclerAdapter: RecyclerView.Adapter<SelectedUsersRecyclerAd
         position: Int
     ) {
         val user = users[position]
-        holder.textViewSelectedUser.text = user.fullName
+        holder.name.text = user.fullName
+        holder.initials.text = user.initials
+
+        holder.itemView.setOnClickListener {
+            onItemClick(user)
+        }
     }
 
     override fun getItemCount(): Int = users.size
 
     inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val textViewSelectedUser: TextView = itemView.findViewById(R.id.tv_selected_user)
+        val name: TextView = itemView.findViewById(R.id.tv_name_selected_users)
+        val initials: TextView = itemView.findViewById(R.id.tv_initials_selected_users)
 
     }
 }

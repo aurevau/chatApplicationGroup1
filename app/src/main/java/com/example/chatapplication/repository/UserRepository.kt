@@ -13,7 +13,6 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import java.util.zip.ZipFile
 
 class UserRepository {
     private val listeners = mutableListOf<ListenerRegistration>()
@@ -26,6 +25,9 @@ class UserRepository {
 
     private val _friends = MutableLiveData<MutableList<User>>()
     val friends: LiveData<MutableList<User>> get() = _friends
+
+    private val _selection = MutableLiveData<MutableList<User>>()
+    val selection: LiveData<MutableList<User>> get() = _selection
 
     private val _recentSearchedUsers = MutableLiveData<List<User>>()
     val recentSearchedUsers: LiveData<List<User>> get() = _recentSearchedUsers
@@ -152,6 +154,64 @@ class UserRepository {
             }.addOnFailureListener { e -> Log.e("RECENT_SEARCH", "Failed to save", e) }
         _recentSearchedUsers.value = recentList
 
+    }
+
+    fun isSelected(currentUserId: String?, other: User) {
+        val selectedData = mapOf (
+            "fullName" to other.fullName,
+
+        )
+
+        if (currentUserId != null) {
+            db.collection("users")
+                .document(currentUserId)
+                .collection("isSelected")
+                .document(other.id!!)
+                .set(selectedData)
+                .addOnSuccessListener {
+                    Log.d("SOUT", "User is selected")
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("SOUT", "Error selecting user", exception)
+                }
+        }
+    }
+
+    fun isNotSelected(currentUserId: String?, otherUserId: String?) {
+        if (currentUserId != null) {
+            if (otherUserId != null) {
+                db.collection("users")
+                    .document(currentUserId)
+                    .collection("isSelected")
+                    .document(otherUserId)
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.d("SOUT", "User not selected")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e("SOUT", "Error unselecting user", exception)
+
+                    }
+            }
+        }
+    }
+
+    fun getSelection(currentUserId: String, otherUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("isSelected")
+            .get()
+            .addOnSuccessListener { snapshots ->
+                val selectionList = snapshots.documents.mapNotNull { document ->
+                    val userId = document.id
+                    val fullName = document.getString("fullName") ?: ""
+                    User(
+                        id = userId,
+                        fullName = fullName,
+                    )
+                }
+                _selection.value = selectionList as MutableList<User>?
+            }
     }
 
     fun addFriend(currentUserId: String, friend: User) {

@@ -2,7 +2,6 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,16 +12,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
 import com.example.chatapplication.adapter.SelectedUsersRecyclerAdapter
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.data.User
 import com.example.chatapplication.databinding.FragmentUsersBinding
-import com.example.chatapplication.ui.ChatActivity
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.selects.select
 
 class UsersFragment : Fragment() {
 
@@ -40,7 +36,7 @@ class UsersFragment : Fragment() {
 
     private lateinit var rvSelectedUsers: RecyclerView
 
-    private var selectedUsers: List<User> = emptyList()
+    private val selectedUsersSet =  mutableSetOf<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +44,19 @@ class UsersFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         val currentUserId = viewModel.getCurrentUserId()
 
-        selectedUsersAdapter = SelectedUsersRecyclerAdapter()
+        selectedUsersAdapter = SelectedUsersRecyclerAdapter({removedUser ->
+            selectedUsersSet.remove(removedUser)
+            viewModel.isNotSelected(currentUserId, removedUser.id)
+
+            selectedUsersAdapter.submitList(selectedUsersSet.toList())
+            adapter.notifyDataSetChanged()
+
+            binding.btnStartGroupChat.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility = if (selectedUsersSet.isNotEmpty()) View.VISIBLE else View.GONE
+
+
+
+        })
 
         adapter = UserRecyclerAdapter( viewModel, {user->
             // Se mer information om användaren och kunna lägga till vän?
@@ -66,11 +74,20 @@ class UsersFragment : Fragment() {
             viewModel.addFriend(currentUserId, user)
         }, {user ->
             viewModel.removeFriend(currentUserId, user.id)
-        }, {selectedList ->
-            selectedUsers =selectedList
-            selectedUsersAdapter.submitList(selectedUsers)
-            binding.btnStartGroupChat.visibility = if (selectedUsers.size > 1) View.VISIBLE else View.GONE
-            binding.rvSelectedUsers.visibility = if (selectedUsers.size > 1) View.VISIBLE else View.GONE
+        }, {user, isChecked ->
+            if (isChecked) {
+                selectedUsersSet.add(user)
+                viewModel.isSelected(currentUserId, user)
+            }
+
+            else {selectedUsersSet.remove(user)
+                viewModel.isNotSelected(currentUserId, user.id)
+            }
+
+            selectedUsersAdapter.submitList(selectedUsersSet.toList())
+            if(selectedUsersSet.size <= 1) Toast.makeText(requireContext(), "Choose another user to start group chat", Toast.LENGTH_SHORT).show()
+            binding.btnStartGroupChat.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility = if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
         })
 
     }
@@ -91,7 +108,7 @@ class UsersFragment : Fragment() {
         recyclerView.adapter = adapter
 
         rvSelectedUsers = binding.rvSelectedUsers
-        rvSelectedUsers.layoutManager = GridLayoutManager(requireContext(), 4)
+        rvSelectedUsers.layoutManager = GridLayoutManager(requireContext(), 2)
         rvSelectedUsers.adapter = selectedUsersAdapter
 
         searchButton = binding.btnSearchUser
@@ -115,6 +132,18 @@ class UsersFragment : Fragment() {
 
             adapter.updateFriendList(friendsList)
         }
+
+        viewModel.selection.observe(viewLifecycleOwner) {selectionList ->
+
+            adapter.updateSelectionList(selectionList)
+            val selectedUsers = adapter.getSelectedUsers()
+            selectedUsersAdapter.submitList(selectedUsers.toList())
+            // Visa/hide knappar
+            binding.btnStartGroupChat.visibility = if (selectedUsers.size > 1) View.VISIBLE else View.GONE
+            binding.rvSelectedUsers.visibility = if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
+
 
         viewModel.getFriends(currentUserId)
 
