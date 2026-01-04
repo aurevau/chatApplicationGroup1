@@ -1,9 +1,11 @@
 package com.example.chatapplication.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
@@ -16,20 +18,28 @@ class UserRecyclerAdapter(
     val onItemClick: (User) -> Unit,
     val onButtonClick: (User) -> Unit,
     val onAddFriendClick: (User) -> Unit,
-    val onDeleteFriendClick: (User) -> Unit
-): RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
+    val onDeleteFriendClick: (User) -> Unit,
+    val onCheckButtonClick: (User, Boolean) -> Unit
+) : RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
+
+
+//    private val selectedUsers = mutableListOf<User>()
 
     private var users = emptyList<User>()
     private val db = UserRepository()
 
     private var friends = emptyList<User>()
 
+    private var selection = emptyList<User>()
+
+    private val selectedUsersSet = mutableSetOf<User>()
+
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): UserRecyclerAdapter.UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_user, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.list_item_user, parent, false)
         return UserViewHolder(view)
 
 
@@ -40,21 +50,34 @@ class UserRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateSelectionList(newSelection: List<User>) {
+        selection = newSelection
+        notifyDataSetChanged()
+    }
+
     fun submitList(userList: List<User>) {
         users = userList
         notifyDataSetChanged()
     }
 
+    fun getSelectedUsers(): List<User> = selectedUsersSet.toList()
+
     override fun onBindViewHolder(
-        holder: UserRecyclerAdapter.UserViewHolder,
-        position: Int
+        holder: UserRecyclerAdapter.UserViewHolder, position: Int
     ) {
 
 
         val user = users[position]
 
-        val isFriend = friends.any { it.id == user.id }
+        val isSelected = selection.any { it.id == user.id }
 
+
+        val isFriend = friends.any { it.id == user.id }
+        holder.checkBox.setOnCheckedChangeListener(null)
+        holder.checkBox.isChecked = isSelected
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            onCheckButtonClick(user, isChecked)
+        }
         holder.addFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
         holder.addFriend.isEnabled = !isFriend
 
@@ -72,17 +95,20 @@ class UserRecyclerAdapter(
 
 
 
-        if (user.fullName.isBlank()) return
-        holder.initialCircle.text = user.initials
-        holder.name.text = if(user.id == db.getCurrentUserId()) {
+
+        holder.initialCircle.text = user.initials.ifBlank { "?" }
+        holder.name.text = if (user.id == db.getCurrentUserId()) {
             "${user.fullName} (Me)"
         } else {
             user.fullName
         }
 
 
+
+
         holder.itemView.setOnClickListener {
             onItemClick(user)
+
         }
 
         holder.button.setOnClickListener {
@@ -91,15 +117,15 @@ class UserRecyclerAdapter(
     }
 
 
-
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val deleteFriend:TextView = itemView.findViewById(R.id.tv_delete_friend)
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)
         val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend)
         val button: Button = itemView.findViewById(R.id.btn_start_chat)
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials)
         val name: TextView = itemView.findViewById(R.id.tv_name)
 
+        val checkBox: CheckBox = itemView.findViewById(R.id.checkbox)
     }
 }

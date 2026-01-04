@@ -1,35 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.UsersFragment">
+    tools:context=".ui.UsersFragment"
+    android:orientation="vertical"
+    android:weightSum="1"
+    >
+
+
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_users"
+        android:id="@+id/rv_selected_users"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/list_item_user"
-        tools:itemCount="4"
-        />
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:listitem="@layout/list_item_selected_users"/>
+    <Button
+        android:id="@+id/btn_start_group_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/open_chat"
+        android:visibility="gone"
+        android:layout_gravity="end"
+        android:backgroundTint="@color/dark_green"
+        android:textColor="@color/off_white"
+        android:layout_marginEnd="15dp"/>
+
+
+
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_gravity="bottom">
+        android:layout_gravity="top">
 
 
         <androidx.cardview.widget.CardView
+
             android:id="@+id/cv_search_user"
-            android:visibility="gone"
             android:layout_marginStart="16dp"
             android:layout_weight="0.85"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/dark_green"
+            android:backgroundTint="@color/off_white"
             app:cardCornerRadius="30dp"
             android:layout_gravity="start|center_vertical"
             >
@@ -38,10 +55,12 @@
                 android:id="@+id/et_search_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginHorizontal="20dp"
                 android:hint="Search for a user"
-                android:textColor="@color/off_white"
-                android:textColorHint="@color/off_white" />
+
+                android:textColor="@color/dark_green"
+                android:textColorHint="@color/dark_green" />
 
 
         </androidx.cardview.widget.CardView>
@@ -53,10 +72,21 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:layout_weight="0.15"
-            android:backgroundTint="@color/dark_green"
+            android:backgroundTint="@color/off_white"
             android:src="@drawable/search_icon"
-            app:tint="@color/off_white" />
+            app:tint="@color/dark_green" />
     </LinearLayout>
 
 
-</FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_users"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:listitem="@layout/list_item_user"
+        tools:itemCount="4"
+        android:layout_weight="1"
+        />
+
+
+</LinearLayout>

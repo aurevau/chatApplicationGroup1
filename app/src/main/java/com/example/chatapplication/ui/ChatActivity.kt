@@ -82,21 +82,30 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val userId = intent.getStringExtra("USER_ID")
+        val groupRoomId = intent.getStringExtra("ROOM_ID")
 
-        viewModel.getUserDetailsById(userId)
+        val groupName = intent.getStringExtra("GROUP_NAME")
 
-        //receive target user
-        viewModel.targetUser.observe(this) { user ->
-            binding.tvHeader.text = user?.fullName
-            binding.tvInitials.text = user?.initials
+        val currentRoomId = groupRoomId ?: run {
+            val myId = viewModel.myUserId ?: ""
+            listOf(myId, userId ?: "").sorted().joinToString("_")
 
-            // Calculate roomId from the two user IDs
-            val myUserId = viewModel.myUserId ?: ""
-            val targetUserId = user?.id ?: ""
-            val sortedIds = listOf(myUserId, targetUserId).sorted()
-            val roomId = "${sortedIds[0]}_${sortedIds[1]}"
-            viewModel.start(roomId)
         }
+
+        if (!groupName.isNullOrEmpty()) {
+            binding.tvHeader.text = groupName
+            binding.tvInitials.visibility = View.GONE
+        } else if (userId != null) {
+            viewModel.getUserDetailsById(userId)
+            viewModel.targetUser.observe(this) { user ->
+                binding.tvHeader.text = user?.fullName
+                binding.tvInitials.text = user?.initials
+            }
+        }
+
+
+        viewModel.start(currentRoomId)
+
 
         val adapter = ChatRecyclerAdapter()
         binding.recyclerMessages.adapter = adapter
@@ -116,37 +125,33 @@ class ChatActivity : AppCompatActivity() {
         }
 
         binding.btnSend.setOnClickListener {
+            val roomId = currentRoomId ?: return@setOnClickListener
             val text = binding.etMessage.text.toString()
-            val myUserId = viewModel.myUserId ?: ""
-            val targetUserId = viewModel.targetUser.value?.id ?: return@setOnClickListener
-            val roomId = listOf(myUserId, targetUserId).sorted().joinToString("_")
-            if (text.isNotBlank()) {
-                viewModel.send(text)
-                binding.etMessage.text.clear()
+            binding.etMessage.text.clear()
+            val selectedImage = viewModel.selectedImageUri.value
 
-
-            }
-
-            binding.progressCircular.visibility = View.VISIBLE
-
-
-            viewModel.selectedImageUri.value?.let { uri ->
-                viewModel.uploadChatImage(uri, roomId,
+            if (selectedImage != null) {
+                binding.progressCircular.visibility = View.VISIBLE
+                viewModel.uploadChatImage(
+                    selectedImage, roomId,
                     onSuccess = { imageUrl ->
-                        viewModel.sendImageMessage(targetUserId, imageUrl)
+                        viewModel.sendImageMessage(roomId, imageUrl, text)
                         viewModel.selectedImageUri.value = null
                         binding.ivPhoto.visibility = View.GONE
                         binding.progressCircular.visibility = View.GONE
-
                     },
                     onError = { e ->
-                        Toast.makeText(this, "Failed to send image: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Failed to send image: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 )
+            } else if (text != null) {
+                viewModel.sendTextMessage(roomId, text)
+                binding.etMessage.text.clear()
             }
-
-
-
         }
 
         binding.btnBack.setOnClickListener {
@@ -170,10 +175,6 @@ class ChatActivity : AppCompatActivity() {
                     .show()
             }
         }
-
-
-
-
 
 
     private fun requestMediaPermissions() {
@@ -219,8 +220,6 @@ class ChatActivity : AppCompatActivity() {
         val file = File(externalCacheDir, "chat_image_${System.currentTimeMillis()}.jpg")
         cameraImageUri = FileProvider.getUriForFile(this, "${packageName}.provider", file)
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, cameraImageUri)
-
-        // Ge rättigheter till alla kameraappar
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
 
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
@@ -247,9 +246,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
 
-
     }
-
 
 
 }

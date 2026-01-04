@@ -1,55 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="10dp"
+    app:cardCornerRadius="18dp"
     android:layout_margin="6dp"
-    android:backgroundTint="@color/dark_green">
+    android:backgroundTint="@color/dark_green"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:layout_marginHorizontal="16dp">
 
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:buttonTint="@color/off_white"/>
+
 
         <TextView
-            android:id="@+id/tv_initials"
+            android:layout_marginStart="6dp"
+            android:id="@+id/tv_initials_selected_users"
             android:layout_width="@dimen/initials_circle_background_40dp"
             android:layout_height="40dp"
             tools:text="AV"
             android:gravity="center"
-            app:layout_constraintLeft_toRightOf="@id/checkbox"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/circle_image"
             android:textColor="@color/dark_green"/>
 
 
-
         <TextView
-            android:id="@+id/tv_name"
+            android:id="@+id/tv_name_selected_users"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="10dp"
             android:gravity="center_vertical"
+            android:textColor="@color/off_white"
             android:textSize="@dimen/normal_text_size_16sp"
             android:textStyle="bold"
-            android:textColor="@color/off_white"
-            android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_selected_users"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="name"/>
+            tools:text="name" />
 
         <TextView
             android:id="@+id/tv_add_friend"
@@ -58,8 +55,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/off_white"
             android:layout_marginStart="16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_selected_users"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_selected_users"
             android:text="@string/add_friend"/>
 
         <TextView
@@ -69,22 +66,12 @@
             android:layout_height="wrap_content"
             android:textColor="@color/off_white"
             android:layout_marginStart="16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_selected_users"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_selected_users"
             android:text="@string/friends"/>
 
 
-        <Button
-            android:id="@+id/btn_start_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:backgroundTint="@color/off_white"
-            android:text="@string/open_chat"
-            android:textColor="@color/dark_green"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:clickable="true"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
