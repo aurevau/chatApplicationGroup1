@@ -43,6 +43,7 @@ class UsersFragment : Fragment() {
             // Se mer information om användaren och kunna lägga till vän?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
+            viewModel.addRecentSearch(user)
 
         }, {user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
@@ -78,13 +79,15 @@ class UsersFragment : Fragment() {
 
         val currentUserId = viewModel.getCurrentUserId() ?: return
 
-
-        viewModel.user.observe(viewLifecycleOwner) { userList ->
-            Log.d("USERS_FRAGMENT", "users.size = ${userList.size}")
-
-            adapter.submitList(userList)
+        viewModel.loadRecentSearches()
 
 
+        viewModel.recentSearchedUsers.observe(viewLifecycleOwner) {recentSearchList ->
+            adapter.submitList(recentSearchList)
+        }
+
+        viewModel.searchResults.observe(viewLifecycleOwner) { searchList ->
+            adapter.submitList(searchList)
         }
 
 
@@ -109,9 +112,13 @@ class UsersFragment : Fragment() {
         }
 
         searchInput.addTextChangedListener { text ->
-            if(text.isNullOrBlank()){
-                viewModel.resetToAllUsers()
+            val query = text.toString().trim()
 
+            if(query.isNotEmpty()){
+                viewModel.searchUsers(query)
+            } else {
+                val recent = viewModel.recentSearchedUsers.value ?: emptyList()
+                adapter.submitList(recent)
             }
 
         }

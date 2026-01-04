@@ -14,9 +14,12 @@ class UserViewModel: ViewModel() {
 
     val user: LiveData<MutableList<User>> = dataManager.users
     val friends: LiveData<MutableList<User>> = dataManager.friends
+    val recentSearchedUsers: LiveData<List<User>> = dataManager.recentSearchedUsers
+    val searchResults: LiveData<List<User>> = dataManager.searchResults
 
-    
-    
+
+
+
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
@@ -32,6 +35,12 @@ class UserViewModel: ViewModel() {
 
     fun searchUsers(searchTerm: String) {
         dataManager.searchUsers(searchTerm)
+    }
+
+
+    fun loadRecentSearches() {
+        val currentUserId = getCurrentUserId() ?: return
+        dataManager.loadRecentSearches(currentUserId)
     }
 
     fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
@@ -58,9 +67,6 @@ class UserViewModel: ViewModel() {
         dataManager.updateCurrentUser(fullName)
     }
 
-    fun searchUsersLocally(searchTerm: String) {
-        dataManager.searchUsersLocally(searchTerm)
-    }
 
 
     fun deleteCurrentUser() {
@@ -68,9 +74,14 @@ class UserViewModel: ViewModel() {
         dataManager.deleteCurrentUser()
     }
 
-
-    fun resetToAllUsers(){
-        dataManager.resetToAllUsers()
+    fun addRecentSearch(user: User) {
+        dataManager.addRecentSearch(user)
     }
+
+    fun clearRecentSearches() {
+        dataManager.clearRecentSearches()
+    }
+
+
 
 }

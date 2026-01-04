@@ -12,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import java.util.zip.ZipFile
 
 class UserRepository {
@@ -26,80 +27,37 @@ class UserRepository {
     private val _friends = MutableLiveData<MutableList<User>>()
     val friends: LiveData<MutableList<User>> get() = _friends
 
-    
+    private val _recentSearchedUsers = MutableLiveData<List<User>>()
+    val recentSearchedUsers: LiveData<List<User>> get() = _recentSearchedUsers
+
+    private val _searchResults = MutableLiveData<List<User>>()
+    val searchResults: LiveData<List<User>> get() = _searchResults
+
+    private val recentList = mutableListOf<User>()
 
 
-    init {
-        listenToUsers()
-    }
 
-    fun listenToUsers() {
-        db.collection("users").addSnapshotListener { snapshot, error ->
-            if(error != null) {
-                Log.e("FIRESTORE_ERROR", "Snapshot error: ${error.message}")
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null)  {
-                val tempList = mutableListOf<User>()
-
-                val myId = getCurrentUserId()
-                for (doc in snapshot.documents) {
-                    Log.d("FIRESTORE_DEBUG", "Doc data: ${doc.data}")  // <--- Kolla vad Firestore faktiskt returnerar
-                    val user = doc.toObject(User::class.java)
-                    if (user != null) {
-                        tempList.add(user.copy(id = doc.id))
-                    }
-                }
-                _users.value = tempList
-
-            }
-        }
-    }
 
     fun searchUsers(searchTerm: String) {
-        listeners.forEach { it.remove() }
-        listeners.clear()
-
         val term = searchTerm.lowercase()
-        val results = mutableListOf<User>()
+        if (term.isBlank()) {
+            _searchResults.value = emptyList()
+            return
+        }
 
-        val query = allUsers()
+        allUsers()
             .orderBy("fullNameLower")
             .startAt(term)
             .endAt(term + "\uf8ff")
-
-
-        val listenerQuery = query.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                return@addSnapshotListener
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val users = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(User::class.java)?.copy(id = doc.id)
+                }
+                _searchResults.value = users
             }
-
-            val list = snapshot?.documents?.mapNotNull { doc ->
-                doc.toObject(User::class.java)?.copy(id = doc.id)
-            } ?: emptyList()
-            updateResults(results, list)
-        }
-        listeners.add(listenerQuery)
     }
 
-    fun searchUsersLocally(searchTerm: String) {
-        val all = _users.value ?: return
-        val term = searchTerm.trim().lowercase()
-
-        val filtered = all.filter { user ->
-            user.fullName.lowercase().contains(term)
-        }
-
-        _users.value = filtered.toMutableList()
-    }
-
-
-
-    private fun updateResults(results: MutableList<User>, newList: List<User>) {
-        results.addAll(newList)
-        _users.value = results.distinctBy { it.id } as MutableList<User>?
-    }
 
     fun allUsers() : CollectionReference =db.collection("users")
 
@@ -140,6 +98,60 @@ class UserRepository {
             .addOnFailureListener { exception ->
                 callback(null)
             }
+    }
+
+    fun addRecentSearch(user: User){
+        val currentUserId = getCurrentUserId() ?: return
+
+        recentList.removeAll { it.id == user.id }
+        recentList.add(0, user)
+        if(recentList.size > 10) recentList.removeLast()
+        _recentSearchedUsers.value = recentList
+
+        addRecentSearchToFirebase(currentUserId, user)
+    }
+
+    fun clearRecentSearches() {
+        recentList.clear()
+        _recentSearchedUsers.value = recentList
+    }
+
+    fun loadRecentSearches(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("recentSearches")
+            .orderBy("searchedAt", Query.Direction.DESCENDING)
+            .limit(10)
+            .get()
+            .addOnSuccessListener { snapshots ->
+                val recent = snapshots.documents.mapNotNull { doc ->
+                    User(
+                        id = doc.id,
+                        fullName = doc.getString("fullName") ?: ""
+                    )
+                }
+                recentList.addAll(recent)
+                _recentSearchedUsers.value = recentList
+            }
+    }
+
+    fun addRecentSearchToFirebase(currentUserId: String, user: User) {
+        val recentRef = db.collection("users")
+            .document(currentUserId)
+            .collection("recentSearches")
+            .document(user.id!!)
+
+        val data = mapOf(
+            "fullName" to user.fullName,
+            "searchedAt" to Timestamp.now()
+        )
+
+        recentRef.set(data)
+            .addOnSuccessListener {
+                Log.d("RECENT_SEARCH", "Saved ${user.fullName}")
+            }.addOnFailureListener { e -> Log.e("RECENT_SEARCH", "Failed to save", e) }
+        _recentSearchedUsers.value = recentList
+
     }
 
     fun addFriend(currentUserId: String, friend: User) {
@@ -233,11 +245,5 @@ class UserRepository {
             .addOnFailureListener { exception ->
             Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
         }
-    }
-
-    fun resetToAllUsers(){
-        listeners.forEach { it.remove() }
-        listeners.clear()
-        listenToUsers()
     }
 }
