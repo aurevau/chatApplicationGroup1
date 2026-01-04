@@ -40,6 +40,10 @@ class UserViewModel: ViewModel() {
         dataManager.searchUsers(searchTerm)
     }
 
+    fun getUserDetailsById(userId: String, callback: (User?) -> Unit) {
+        dataManager.getUserDetailsById(userId, callback)
+    }
+
 
     fun loadRecentSearches() {
         val currentUserId = getCurrentUserId() ?: return

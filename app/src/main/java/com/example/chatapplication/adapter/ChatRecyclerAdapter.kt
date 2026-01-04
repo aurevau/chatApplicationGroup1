@@ -52,12 +52,7 @@ class ChatRecyclerAdapter :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            if (!message.text.isNullOrEmpty()) {
-                binding.tvMessage.visibility = View.VISIBLE
-                binding.tvMessage.text = message.text
-            } else {
-                binding.tvMessage.visibility = View.GONE
-            }
+
 
             if (!message.imageUrl.isNullOrEmpty()) {
                 binding.imgMessage.visibility = View.VISIBLE
@@ -67,9 +62,16 @@ class ChatRecyclerAdapter :
             } else {
                 binding.imgMessage.visibility = View.GONE
             }
-//            binding.tvMessage.text = message.text
+
+            if (!message.text.isNullOrEmpty()) {
+                binding.tvMessage.visibility = View.VISIBLE
+                binding.tvMessage.text = message.text
+            } else {
+                binding.tvMessage.visibility = View.GONE
+            }
             binding.tvTimestamp.text = DateUtils.formatTimestamp(message.timestamp)
         }
+
     }
 
     class ReceivedViewHolder(
@@ -77,9 +79,26 @@ class ChatRecyclerAdapter :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            binding.tvMessage.text = message.text
+
+
+            if (!message.imageUrl.isNullOrEmpty()) {
+                binding.imgMessage.visibility = View.VISIBLE
+                Glide.with(binding.imgMessage.context)
+                    .load(message.imageUrl)
+                    .into(binding.imgMessage)
+            } else {
+                binding.imgMessage.visibility = View.GONE
+            }
+
+            if (!message.text.isNullOrEmpty()) {
+                binding.tvMessage.visibility = View.VISIBLE
+                binding.tvMessage.text = message.text
+            } else {
+                binding.tvMessage.visibility = View.GONE
+            }
             binding.tvTimestamp.text = DateUtils.formatTimestamp(message.timestamp)
         }
+
     }
 
     class Diff : DiffUtil.ItemCallback<Message>() {

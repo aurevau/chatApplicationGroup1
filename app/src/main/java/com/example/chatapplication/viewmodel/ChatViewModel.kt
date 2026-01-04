@@ -22,9 +22,7 @@ class ChatViewModel : ViewModel() {
     val targetUser = MutableLiveData<User?>()
 
     fun start(roomId: String) = messageRepository.listenToChat(roomId)
-    fun send(text: String) {
-         messageRepository.sendMessage( targetUserId = targetUser.value?.id ?: "" , text = text)
-    }
+
 
     //get target user details
     fun getUserDetailsById(userID:String?){
@@ -38,8 +36,8 @@ class ChatViewModel : ViewModel() {
         )
     }
 
-    fun sendImageMessage(targetUserId: String, imageUrl: String){
-        messageRepository.sendImageMessage(targetUserId, imageUrl)
+    fun sendImageMessage(roomId: String, imageUrl: String, text: String?){
+        messageRepository.sendImageMessage(roomId, imageUrl, text)
     }
 
     fun uploadChatImage(
@@ -51,40 +49,33 @@ class ChatViewModel : ViewModel() {
         messageRepository.uploadChatImage(imageUri, roomId, onSuccess, onError)
     }
 
-    fun uploadAndSendImage(
-        imageUri: Uri,
-        roomId: String,
-        targetUserId: String
-    ) {
-        messageRepository.uploadChatImage(
-            imageUri = imageUri,
-            roomId = roomId,
-            onSuccess = { downloadUrl ->
-                messageRepository.sendImageMessage(targetUserId, downloadUrl)
-            },
-            onError = {
-                Log.e("ChatImage", "Upload failed", it)
-            }
-        )
-    }
-
     val selectedImageUri = MutableLiveData<Uri?>()
 
-    fun sendImageMessageIfExists(roomId: String) {
+
+
+    fun sendTextMessage(roomId: String, text: String) {
+        messageRepository.sendTextMessage(roomId, text)
+    }
+
+
+    fun createGroupChat(roomId: String, userIds: List<String>, groupName: String, onSuccess: (String) -> Unit) {
+        messageRepository.createGroupChat(roomId, userIds, groupName, onSuccess)
+    }
+
+    fun sendImageIfSelected(roomId: String, text: String? = null) {
         selectedImageUri.value?.let { uri ->
             uploadChatImage(uri, roomId,
                 onSuccess = { imageUrl ->
-                    val targetUserId = targetUser.value?.id ?: return@uploadChatImage
-                    sendImageMessage(targetUserId, imageUrl)
-                    selectedImageUri.value = null // nollställ efter skick
+                    // Skicka både bild + text i samma meddelande
+                    messageRepository.sendImageMessage(roomId, imageUrl, text)
+                    selectedImageUri.value = null
                 },
                 onError = { e ->
-                    // visa toast eller logga
+                    Log.e("ChatImage", "Failed to send image", e)
                 }
             )
         }
     }
-
 
 
 

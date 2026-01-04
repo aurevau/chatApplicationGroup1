@@ -33,45 +33,6 @@ class MessageRepository {
             }
     }
 
-    fun sendMessage(targetUserId: String, text: String){
-        val user = Firebase.auth.currentUser ?: return
-
-        val sortedIds = listOf(user.uid, targetUserId).sorted()
-        val roomId = "${sortedIds[0]}_${sortedIds[1]}"
-
-        val msg = Message(
-            senderId = user.uid,
-            receiverId = targetUserId,
-            roomId = roomId,
-            text = text,
-            timestamp = System.currentTimeMillis()
-        )
-        db.collection("chatRooms")
-            .document(roomId)
-            .collection("messages")
-            .add(msg)
-    }
-
-    fun sendImageMessage(targetUserId: String, imageUrl: String) {
-        val user = Firebase.auth.currentUser ?: return
-
-        val sortedIds = listOf(user.uid, targetUserId).sorted()
-        val roomId = "${sortedIds[0]}_${sortedIds[1]}"
-
-        val msg = Message(
-            senderId = user.uid,
-            receiverId = targetUserId,
-            roomId = roomId,
-            timestamp = System.currentTimeMillis(),
-            imageUrl = imageUrl,
-        )
-
-        db.collection("chatRooms")
-            .document(roomId)
-            .collection("messages")
-            .add(msg)
-
-    }
 
     fun uploadChatImage(
         imageUri: Uri,
@@ -92,6 +53,57 @@ class MessageRepository {
                 onError(e)
             }
     }
+
+    fun sendTextMessage(roomId: String, text: String) {
+        val user = Firebase.auth.currentUser ?: return
+
+        val msg = Message(
+            senderId = user.uid,
+            roomId = roomId,
+            text = text,
+            timestamp = System.currentTimeMillis()
+        )
+
+        db.collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .add(msg)
+    }
+
+    fun sendImageMessage(roomId: String, imageUrl: String, text: String?) {
+        val user = Firebase.auth.currentUser ?: return
+
+        val msg = Message(
+            senderId = user.uid,
+            roomId = roomId,
+            text = text.orEmpty(),
+            imageUrl = imageUrl,
+            timestamp = System.currentTimeMillis()
+        )
+
+        db.collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .add(msg)
+    }
+
+
+
+    fun createGroupChat(roomId: String, userIds: List<String>, groupName: String, onSuccess: (String) -> Unit) {
+        val chatRoomData = mapOf(
+            "roomId" to roomId,
+            "name" to groupName,
+            "members" to userIds,
+            "createdAt" to System.currentTimeMillis()
+        )
+
+        db.collection("chatRooms")
+            .document(roomId)
+            .set(chatRoomData)
+            .addOnSuccessListener { onSuccess(roomId)}
+            .addOnFailureListener { exception -> exception.printStackTrace() }
+    }
+
 
 
 }
