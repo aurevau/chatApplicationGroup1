@@ -10,4 +10,5 @@
     <color name="sender">#03A9F4</color>
     <color name="receiver">#0C1756</color>
     <color name="selected_icon_overlap">#40FDFCF8</color>
+    <color name="time_stamp_color">#5A5E5A</color>
 </resources>

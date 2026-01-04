@@ -27,5 +27,12 @@
     <dimen name="edit_text_max_width">448dp</dimen>
     <dimen name="nav_icon_size_32dp">32dp</dimen>
     <dimen name="spinner_height_48dp">48dp</dimen>
+    <dimen name="chat_bubble_max_width_280dp">280dp</dimen>
+    <dimen name="chat_time_text_size_12sp">12sp</dimen>
+    <dimen name="margin_4dp">4dp</dimen>
+    <dimen name="chat_bubble_padding_start_end_14dp">14dp</dimen>
+    <dimen name="chat_bubble_padding_top_button_10dp">10dp</dimen>
+    <dimen name="size_4dp">4dp</dimen>
+    <dimen name="sent_image_size_200dp">200dp</dimen>
 
 </resources>

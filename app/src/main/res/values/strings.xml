@@ -29,4 +29,8 @@
     <string name="image_preview_description">image preview</string>
     <string name="header_chats_text">Chats</string>
     <string name="launching_chatApp_text">Launching\nChatApp...</string>
+    <string name="message_preview_text">Message</string>
+    <string name="time_preview_text">10:30 AM</string>
+    <string name="received_picture_description">received picture</string>
+    <string name="sent_picture_description">sent picture</string>
 </resources>
