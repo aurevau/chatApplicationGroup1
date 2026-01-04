@@ -12,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import java.util.zip.ZipFile
 
 class UserRepository {
     private val listeners = mutableListOf<ListenerRegistration>()
@@ -24,6 +25,8 @@ class UserRepository {
 
     private val _friends = MutableLiveData<MutableList<User>>()
     val friends: LiveData<MutableList<User>> get() = _friends
+
+    
 
 
     init {
@@ -52,6 +55,32 @@ class UserRepository {
 
             }
         }
+    }
+
+    fun searchUsers(searchTerm: String) {
+        listeners.forEach { it.remove() }
+        listeners.clear()
+
+        val term = searchTerm.lowercase()
+        val results = mutableListOf<User>()
+
+        val query = allUsers()
+            .orderBy("fullNameLower")
+            .startAt(term)
+            .endAt(term + "\uf8ff")
+
+
+        val listenerQuery = query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+
+            val list = snapshot?.documents?.mapNotNull { doc ->
+                doc.toObject(User::class.java)?.copy(id = doc.id)
+            } ?: emptyList()
+            updateResults(results, list)
+        }
+        listeners.add(listenerQuery)
     }
 
     fun searchUsersLocally(searchTerm: String) {

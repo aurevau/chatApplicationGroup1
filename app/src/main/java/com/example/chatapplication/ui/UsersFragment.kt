@@ -80,25 +80,16 @@ class UsersFragment : Fragment() {
 
 
         viewModel.user.observe(viewLifecycleOwner) { userList ->
-            val allUsers = viewModel.user.value ?: emptyList()
+            Log.d("USERS_FRAGMENT", "users.size = ${userList.size}")
 
-            val searchTerm = searchInput.text.toString().trim().lowercase()
-            val displayedUsers = if (searchTerm.isNotEmpty()) {
-                allUsers.filter { it.fullName.contains(searchTerm, ignoreCase = true) }
-            } else {
-                allUsers
-            }
-            adapter.submitList(displayedUsers)
-
-            if(searchTerm.isNotEmpty() && displayedUsers.isEmpty()){
-                Toast.makeText(activity, getString(R.string.user_not_found), Toast.LENGTH_SHORT).show()
-            }
+            adapter.submitList(userList)
 
 
         }
 
 
         viewModel.friends.observe(viewLifecycleOwner) {friendsList ->
+
             adapter.updateFriendList(friendsList)
         }
 
@@ -112,7 +103,7 @@ class UsersFragment : Fragment() {
 
             val searchTerm = searchInput.text.toString()
             if (searchTerm.isNotEmpty()) {
-                viewModel.searchUsersLocally(searchTerm)
+                viewModel.searchUsers(searchTerm)
             }
 
         }

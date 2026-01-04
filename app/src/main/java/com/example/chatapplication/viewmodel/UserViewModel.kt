@@ -30,6 +30,10 @@ class UserViewModel: ViewModel() {
         }
     }
 
+    fun searchUsers(searchTerm: String) {
+        dataManager.searchUsers(searchTerm)
+    }
+
     fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
         dataManager.isFriend(currentUserId,otherUserId, callback)
     }

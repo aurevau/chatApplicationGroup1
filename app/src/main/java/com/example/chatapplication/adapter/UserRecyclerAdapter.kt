@@ -72,8 +72,8 @@ class UserRecyclerAdapter(
 
 
 
-        if (user.fullName.isBlank()) return
-        holder.initialCircle.text = user.initials
+
+        holder.initialCircle.text = user.initials.ifBlank {  "?"}
         holder.name.text = if(user.id == db.getCurrentUserId()) {
             "${user.fullName} (Me)"
         } else {
