@@ -21,4 +21,10 @@
     <string name="add_friend">Add Friend</string>
     <string name="friends">Friends</string>
     <string name="user_not_found">User not found</string>
+    <string name="back_arrow_button_description">back arrow</string>
+    <string name="message_hint_text">Message</string>
+    <string name="send_button_description">Send</string>
+    <string name="add_photo_button_description">add photo</string>
+    <string name="chat_header_text">Chat</string>
+    <string name="image_preview_description">image preview</string>
 </resources>
