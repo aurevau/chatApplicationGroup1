@@ -19,5 +19,6 @@ class WelcomeActivity : AppCompatActivity() {
         }
 
 
+
     }
 }
