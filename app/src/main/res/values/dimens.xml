@@ -34,5 +34,9 @@
     <dimen name="chat_bubble_padding_top_button_10dp">10dp</dimen>
     <dimen name="size_4dp">4dp</dimen>
     <dimen name="sent_image_size_200dp">200dp</dimen>
+    <dimen name="size_6dp">6dp</dimen>
+    <dimen name="corner_radius_30dp">30dp</dimen>
+    <dimen name="list_item_corner_radius_10dp">10dp</dimen>
+    <dimen name="margin_6dp">6dp</dimen>
 
 </resources>

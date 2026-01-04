@@ -33,4 +33,8 @@
     <string name="time_preview_text">10:30 AM</string>
     <string name="received_picture_description">received picture</string>
     <string name="sent_picture_description">sent picture</string>
+    <string name="search_for_a_user_hint_text">Search for a user</string>
+    <string name="search_floating_button">search</string>
+    <string name="initials_default_text">AV</string>
+    <string name="list_item_name_default_text">Name</string>
 </resources>
