@@ -37,7 +37,7 @@ class RegisterActivity : AppCompatActivity() {
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 binding.etFullName.editText?.error = "Field cannot be empty"
                 binding.etEmail.editText?.error = "Field cannot be empty"
-                Toast.makeText(this, "Fyll i alla fält", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

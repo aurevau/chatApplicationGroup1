@@ -5,13 +5,10 @@
     <string name="register_text">Register</string>
     <string name="hint_text_email">Email</string>
     <string name="hint_text_password">Password</string>
+    <string name="menu_item_profile">Profile</string>
+    <string name="menu_item_log_out">Log out</string>
     <string name="back_button_text">Back</string>
 
-
-    <string-array name="menu_spinner">
-        <item>Profile</item>
-        <item>Logout</item>
-    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="chats">Chats</string>
@@ -43,4 +40,6 @@
     <string name="default_time_13_37">13:37</string>
     <string name="developer_text">Developed by Group One</string>
     <string name="start_group_chat">Start Group chat</string>
+    <string name="menu_arrow">Menu arrow</string>
+    <string name="menu">Menu</string>
 </resources>

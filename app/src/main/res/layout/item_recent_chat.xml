@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:background="@color/medium_green"
     android:padding="@dimen/margin_16dp"
-    android:layout_marginBottom="@dimen/margin_6dp">
+    android:layout_marginTop="@dimen/margin_6dp">
 
     <!-- Rund profilbild med initialer – coolare version -->
     <TextView
