@@ -17,7 +17,7 @@
     <string name="chats">Chats</string>
     <string name="users">Users</string>
     <string name="hint_text_full_name">Full name</string>
-    <string name="open_chat">Open Chat</string>
+    <string name="open_chat">Chat</string>
     <string name="add_friend">Add Friend</string>
     <string name="friends">Friends</string>
     <string name="user_not_found">User not found</string>
@@ -28,8 +28,8 @@
     <string name="chat_header_text">Chat</string>
     <string name="image_preview_description">image preview</string>
     <string name="header_chats_text">Chats</string>
-    <string name="launching_chatApp_text">Launching\nChatApp...</string>
-    <string name="message_preview_text">Message</string>
+    <string name="launching_chatApp_text">Launching\nChatApp</string>
+    <string name="message_preview_text">Chat message</string>
     <string name="time_preview_text">10:30 AM</string>
     <string name="received_picture_description">received picture</string>
     <string name="sent_picture_description">sent picture</string>
@@ -37,4 +37,10 @@
     <string name="search_floating_button">search</string>
     <string name="initials_default_text">AV</string>
     <string name="list_item_name_default_text">Name</string>
+    <string name="default_name">Name</string>
+    <string name="hint_search_for_a_user">Search for a user</string>
+    <string name="default_last_message">Last message shown here</string>
+    <string name="default_time_13_37">13:37</string>
+    <string name="developer_text">Developed by Group One</string>
+    <string name="start_group_chat">Start Group chat</string>
 </resources>

@@ -12,8 +12,9 @@
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height_100dp"
-        android:background="@color/dark_turquoise"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_12dp"
+        android:background="@color/header_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,8 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <TextView
+                android:textAlignment="center"
                 android:id="@+id/front_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +108,7 @@
             android:backgroundTint="@color/button_color"
             android:fontFamily="@font/bagel_fat_one"
             android:text="@string/log_in_button_text"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -119,7 +120,7 @@
             android:backgroundTint="@color/button_color"
             android:fontFamily="@font/bagel_fat_one"
             android:text="@string/register_text"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_log_in" />
