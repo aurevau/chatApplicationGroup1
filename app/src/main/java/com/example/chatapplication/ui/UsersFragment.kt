@@ -172,6 +172,7 @@ class UsersFragment : Fragment() {
 
 
             }
+            binding.etSearchUser.text?.clear()
         }
 
 
