@@ -3,6 +3,7 @@ package com.example.chatapplication.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +45,7 @@ class RecentChatsRecyclerAdapter(
         private val time = itemView.findViewById<TextView>(R.id.tvTimestamp)
 
         private val chatIcon = itemView.findViewById<ImageView>(R.id.ivChatIcon)
+        private val fLChatIcon = itemView.findViewById<FrameLayout>(R.id.fl_ChatIcon)
 
         fun bind(chat: ChatRoom, onChatClick: (ChatRoom) -> Unit) {
             // Fyll i data här – anpassa efter er ChatRoom-modell
@@ -51,9 +53,12 @@ class RecentChatsRecyclerAdapter(
             if(chat.isGroup) {
                 chatIcon.setImageResource(R.drawable.group_icon)
                 chatIcon.visibility = View.VISIBLE
+                fLChatIcon.visibility = View.VISIBLE
+
                 initials.visibility = View.GONE
             } else {
                 chatIcon.visibility = View.GONE
+                fLChatIcon.visibility = View.GONE
                 initials.visibility = View.VISIBLE
             }
             initials.text = chat.userName?.take(2)  // T.ex. första bokstäverna i namnet

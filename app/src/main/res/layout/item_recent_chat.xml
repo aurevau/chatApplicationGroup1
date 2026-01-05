@@ -9,22 +9,35 @@
     android:padding="@dimen/margin_16dp"
     android:layout_marginTop="@dimen/margin_6dp">
 
-    <ImageView
-        android:id="@+id/ivChatIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:scaleType="center"
-        android:background="@drawable/circle_background_green"
-        android:src="@drawable/group_icon"
-        android:visibility="gone"/>
+    <FrameLayout
+        android:id="@+id/fl_ChatIcon"
+        android:visibility="gone"
+        android:layout_width="@dimen/size_60dp"
+        android:layout_height="@dimen/size_60dp">
+
+        <!-- Rund bakgrund -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_background_green"/>
+
+        <!-- Bild -->
+        <ImageView
+            android:id="@+id/ivChatIcon"
+            android:layout_width="@dimen/initials_circle_background_40dp"
+            android:layout_height="@dimen/initials_circle_background_40dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:src="@drawable/group_icon"/>
+    </FrameLayout>
 
     <!-- Rund profilbild med initialer – coolare version -->
     <TextView
+
         android:id="@+id/tvProfileInitials"
         android:visibility="visible"
-        android:layout_width="@dimen/initials_circle_background_40dp"
-        android:layout_height="@dimen/initials_circle_background_40dp"
+        android:layout_width="@dimen/size_60dp"
+        android:layout_height="@dimen/size_60dp"
         android:background="@drawable/circle_image"
         android:gravity="center"
         android:shadowColor="#80000000"
@@ -47,17 +60,19 @@
 
         <TextView
             android:id="@+id/tvChatName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bagel_fat_one"
             android:textColor="@color/white"
             android:textSize="@dimen/name_text_size_list_item_20sp"
             android:textStyle="bold"
+            android:maxLines="4"
+            android:ellipsize="end"
             tools:text="@string/default_name" />
 
         <TextView
             android:id="@+id/tvLastMessage"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/default_last_message"
             android:textColor="@color/off_white"
