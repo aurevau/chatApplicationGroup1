@@ -1,6 +1,7 @@
 package com.example.chatapplication.repository
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.ChatRoom
@@ -158,6 +159,21 @@ class MessageRepository {
                 }
             }
     }
+
+    fun deleteChatRoom(chatRoom: ChatRoom) {
+        chatRoom.roomId?.let {
+            db.collection("chatRooms")
+                .document(it)
+        }
+            ?.delete()
+            ?.addOnSuccessListener {
+                Log.d("DELETE_CHAT", "Chat room $chatRoom.id deleted successfully")
+            }
+            ?.addOnFailureListener { e ->
+                Log.e("DELETE_CHAT", "Error deleting chat room", e)
+            }
+    }
+
 
     //fetch Firebase and return a list of chat rooms
     fun getRecentChats() {
