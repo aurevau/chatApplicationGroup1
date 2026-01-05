@@ -194,7 +194,8 @@ class MessageRepository {
                                     lastMessage = doc.getString("lastMessage"),
                                     timestamp = DateUtils.formatTimestamp(
                                         doc.getLong("lastMessageTimestamp") ?: 0
-                                    )
+                                    ),
+                                    isGroup = true
                                 )
                         )
                         processedCount++

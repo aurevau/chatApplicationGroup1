@@ -9,9 +9,18 @@
     android:padding="@dimen/margin_16dp"
     android:layout_marginTop="@dimen/margin_6dp">
 
+    <ImageView
+        android:id="@+id/ivChatIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:src="@drawable/group_icon"
+        android:visibility="gone" />
+
     <!-- Rund profilbild med initialer – coolare version -->
     <TextView
         android:id="@+id/tvProfileInitials"
+        android:visibility="visible"
         android:layout_width="@dimen/initials_circle_background_40dp"
         android:layout_height="@dimen/initials_circle_background_40dp"
         android:background="@drawable/circle_image"
