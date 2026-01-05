@@ -36,8 +36,8 @@ class ChatViewModel : ViewModel() {
         )
     }
 
-    fun sendImageMessage(roomId: String, imageUrl: String, text: String?){
-        messageRepository.sendImageMessage(roomId, imageUrl, text)
+    fun sendImageMessage(roomId: String, imageUrl: String, text: String?, otherUserId: String? = null){
+        messageRepository.sendImageMessage(roomId, imageUrl, text, otherUserId)
     }
 
     fun uploadChatImage(
@@ -53,8 +53,8 @@ class ChatViewModel : ViewModel() {
 
 
 
-    fun sendTextMessage(roomId: String, text: String) {
-        messageRepository.sendTextMessage(roomId, text)
+    fun sendTextMessage(roomId: String, text: String, otherUserId: String? = null) {
+        messageRepository.sendTextMessage(roomId, text, otherUserId)
     }
 
 
@@ -67,7 +67,7 @@ class ChatViewModel : ViewModel() {
             uploadChatImage(uri, roomId,
                 onSuccess = { imageUrl ->
                     // Skicka både bild + text i samma meddelande
-                    messageRepository.sendImageMessage(roomId, imageUrl, text)
+                    messageRepository.sendImageMessage(roomId, imageUrl, text, null)
                     selectedImageUri.value = null
                 },
                 onError = { e ->

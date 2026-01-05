@@ -21,6 +21,9 @@ class MessageRepository {
     private val _message = MutableLiveData<List<Message>>()
     val messages: LiveData<List<Message>> get() = _message
 
+    private val _recentChats = MutableLiveData<List<ChatRoom>>()
+    val recentChats: LiveData<List<ChatRoom>> get() = _recentChats
+
     fun listenToChat(roomId: String) {
         db.collection("chatRooms")
             .document(roomId)
@@ -57,7 +60,8 @@ class MessageRepository {
             }
     }
 
-    fun sendTextMessage(roomId: String, text: String) {
+    fun sendTextMessage(roomId: String, text: String, otherUserId: String? = null) {
+        ensureChatRoomExists(roomId, otherUserId)
         val user = Firebase.auth.currentUser ?: return
 
         val msg = Message(
@@ -70,10 +74,13 @@ class MessageRepository {
         db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
-            .add(msg)
+            .add(msg).addOnSuccessListener {
+                updateChatRoomLastMessage(roomId, text)
+            }
     }
 
-    fun sendImageMessage(roomId: String, imageUrl: String, text: String?) {
+    fun sendImageMessage(roomId: String, imageUrl: String, text: String?, otherUserId: String? = null) {
+        ensureChatRoomExists(roomId, otherUserId)
         val user = Firebase.auth.currentUser ?: return
 
         val msg = Message(
@@ -87,7 +94,9 @@ class MessageRepository {
         db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
-            .add(msg)
+            .add(msg).addOnSuccessListener {
+                updateChatRoomLastMessage(roomId, text ?: "Image")
+            }
     }
 
     fun allChatRoomCollectionReference(): CollectionReference =
@@ -124,6 +133,90 @@ class MessageRepository {
             .addOnFailureListener { e ->
                 onError(e)
             }
+    }
+
+
+    private fun ensureChatRoomExists(roomId: String, otherUserId: String? = null) {
+        db.collection("chatRooms").document(roomId).get()
+            .addOnSuccessListener { doc ->
+                if (!doc.exists()) {
+                    val currentUserId = Firebase.auth.currentUser?.uid ?: return@addOnSuccessListener
+                    val members = if (otherUserId != null) {
+                        listOf(currentUserId, otherUserId)
+                    } else {
+                        listOf(currentUserId)
+                    }
+
+                    db.collection("chatRooms").document(roomId).set(mapOf(
+                        "members" to members,
+                        "createdAt" to System.currentTimeMillis(),
+                        "lastMessage" to "",
+                        "lastMessageTimestamp" to System.currentTimeMillis(),
+                        "isGroup" to false
+                    ))
+                }
+            }
+    }
+
+    //fetch Firebase and return a list of chat rooms
+    fun getRecentChats() {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: return
+
+        db.collection("chatRooms")
+            .whereArrayContains("members", currentUserId)
+            .orderBy("lastMessageTimestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot == null) {
+                    _recentChats.value = emptyList()
+                    return@addSnapshotListener
+                }
+
+                val chatList = mutableListOf<ChatRoom>()
+                var processedCount = 0
+                val totalDocs = snapshot.documents.size
+
+                if (totalDocs == 0) {
+                    _recentChats.value = emptyList()
+                    return@addSnapshotListener
+                }
+
+                snapshot.documents.forEach { doc ->
+                    val members = doc.get("members") as? List<*>
+                    val otherUserId = members?.firstOrNull { it != currentUserId } as? String
+
+                    if (otherUserId != null) {
+                        db.collection("users").document(otherUserId).get()
+                            .addOnSuccessListener { userDoc ->
+                                chatList.add(ChatRoom(
+                                    roomId = doc.id,
+                                    userName = userDoc.getString("fullName") ?: "Unknown User",
+                                    lastMessage = doc.getString("lastMessage"),
+                                    timestamp = com.example.chatapplication.util.DateUtils.formatTimestamp(
+                                        doc.getLong("lastMessageTimestamp") ?: 0
+                                    )
+                                ))
+                                processedCount++
+                                if (processedCount == totalDocs) {
+                                    _recentChats.value = chatList
+                                }
+                            }
+                    } else {
+                        processedCount++
+                        if (processedCount == totalDocs) {
+                            _recentChats.value = chatList
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun updateChatRoomLastMessage(roomId: String, message: String) {
+        db.collection("chatRooms").document(roomId).update(
+            mapOf(
+                "lastMessage" to message,
+                "lastMessageTimestamp" to System.currentTimeMillis()
+            )
+        )
     }
 
 
