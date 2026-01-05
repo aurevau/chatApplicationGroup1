@@ -82,6 +82,7 @@ class UsersFragment : Fragment() {
             val chatIntent = Intent(activity, ChatActivity::class.java)
             chatIntent.putExtra("USER_ID", user.id)
             startActivity(chatIntent)
+            binding.etSearchUser.text?.clear()
 
         }, { user ->
             viewModel.addFriend(currentUserId, user)
