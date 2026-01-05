@@ -38,5 +38,9 @@
     <dimen name="corner_radius_30dp">30dp</dimen>
     <dimen name="list_item_corner_radius_10dp">10dp</dimen>
     <dimen name="margin_6dp">6dp</dimen>
+    <dimen name="list_item_radius_12dp">12dp</dimen>
+    <dimen name="name_text_size_list_item_20sp">20sp</dimen>
+    <dimen name="add_friend_text_size_list_item_12sp">12sp</dimen>
+    <dimen name="last_chat_text_size_recent_list_item_14sp">14sp</dimen>
 
 </resources>

@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RecentChatsFragment2">
+    android:background="@color/dark_green"
+    tools:context=".ui.RecentChatsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recyclerViewRecentChats"
-        tools:listitem="@layout/list_item_user"
+        tools:listitem="@layout/item_recent_chat"
         tools:itemCount="6"/>
 
 </FrameLayout>

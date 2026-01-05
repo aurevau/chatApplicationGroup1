@@ -37,4 +37,8 @@
     <string name="search_floating_button">search</string>
     <string name="initials_default_text">AV</string>
     <string name="list_item_name_default_text">Name</string>
+    <string name="default_name">Name</string>
+    <string name="hint_search_for_a_user">Search for a user</string>
+    <string name="default_last_message">Last message here...</string>
+    <string name="default_time_13_37">13:37</string>
 </resources>
