@@ -22,6 +22,7 @@ import com.example.chatapplication.viewmodel.ChatViewModel
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class UsersFragment : Fragment() {
 
@@ -34,7 +35,7 @@ class UsersFragment : Fragment() {
     private lateinit var viewModel: UserViewModel
     private lateinit var chatViewModel: ChatViewModel
 
-    private lateinit var searchInput: TextInputEditText
+    private lateinit var searchInput: TextInputLayout
     private lateinit var searchButton: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
 
@@ -69,7 +70,7 @@ class UsersFragment : Fragment() {
         adapter = UserRecyclerAdapter(viewModel, { user ->
             // Se mer information om användaren och kunna lägga till vän?
             binding.cvSearchUser.visibility = View.GONE
-            binding.etSearchUser.text?.clear()
+            binding.etSearchUser.editText?.text?.clear()
             viewModel.addRecentSearch(user)
 
         }, { user ->
@@ -196,22 +197,22 @@ class UsersFragment : Fragment() {
         searchButton.setOnClickListener {
             binding.cvSearchUser.visibility = View.VISIBLE
 
-            val searchTerm = searchInput.text.toString()
-            if (searchTerm.isNotEmpty()) {
+            val searchTerm = searchInput.editText?.text?.toString()
+            if (searchTerm?.isNotEmpty() == true) {
                 viewModel.searchUsers(searchTerm)
             }
         }
 
-        searchInput.addTextChangedListener { text ->
-            val query = text.toString().trim()
-
-            if (query.isNotEmpty()) {
-                viewModel.searchUsers(query)
-            } else {
-                val recent = viewModel.recentSearchedUsers.value ?: emptyList()
-                adapter.submitList(recent)
-            }
-        }
+//        searchInput.addTextChangedListener { text ->
+//            val query = text.toString().trim()
+//
+//            if (query.isNotEmpty()) {
+//                viewModel.searchUsers(query)
+//            } else {
+//                val recent = viewModel.recentSearchedUsers.value ?: emptyList()
+//                adapter.submitList(recent)
+//            }
+//        }
     }
 
     override fun onResume() {

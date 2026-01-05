@@ -14,4 +14,7 @@
     <color name="time_stamp_color">#5A5E5A</color>
     <color name="medium_green">#4E653F</color>
     <color name="header_color">#3A443C</color>
+    <color name="message_sent">#007307</color>
+    <color name="message_received">#294229</color>
+    <color name="stroke_chat_bubble">#929292</color>
 </resources>

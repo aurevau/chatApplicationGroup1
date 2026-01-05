@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/dark_turquoise">
+        android:background="@color/header_color">
         <TextView
             android:id="@+id/tv_header"
             android:layout_margin="@dimen/margin_16dp"
@@ -49,7 +49,7 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_green"
+        android:background="@color/header_color"
         app:itemTextColor="@color/white"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@color/off_white"

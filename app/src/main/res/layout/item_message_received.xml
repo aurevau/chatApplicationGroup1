@@ -22,13 +22,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:layout_marginTop="@dimen/margin_6dp"
         android:background="@drawable/message_bubble_received"
         android:maxWidth="@dimen/chat_bubble_max_width_280dp"
         android:paddingStart="@dimen/chat_bubble_padding_start_end_14dp"
         android:paddingTop="@dimen/chat_bubble_padding_top_button_10dp"
         android:paddingEnd="@dimen/chat_bubble_padding_start_end_14dp"
         android:paddingBottom="@dimen/chat_bubble_padding_top_button_10dp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/normal_text_size_16sp"
         tools:text="@string/message_preview_text" />
 
