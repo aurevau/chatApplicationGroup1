@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.Message
 import com.example.chatapplication.data.User
+import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
@@ -112,7 +113,7 @@ class MessageRepository {
     ) {
         val chatRoomData = mapOf(
             "roomId" to roomId,
-            "name" to groupName,
+            "groupName" to groupName,
             "members" to userIds,
             "createdAt" to System.currentTimeMillis(),
             "lastMessage" to "",
@@ -184,31 +185,57 @@ class MessageRepository {
                     val members = doc.get("members") as? List<*>
                     val otherUserId = members?.firstOrNull { it != currentUserId } as? String
 
-                    if (otherUserId != null) {
-                        db.collection("users").document(otherUserId).get()
-                            .addOnSuccessListener { userDoc ->
-                                chatList.add(ChatRoom(
+                    val isGroup = doc.getBoolean("isGroup") == true
+                    if(isGroup) {
+                        chatList.add(
+                                ChatRoom(
+                                    roomId = doc.id,
+                                    userName = doc.getString("groupName") ?: "Grupp",
+                                    lastMessage = doc.getString("lastMessage"),
+                                    timestamp = DateUtils.formatTimestamp(
+                                        doc.getLong("lastMessageTimestamp") ?: 0
+                                    )
+                                )
+                        )
+                        processedCount++
+
+                    } else {
+                        val members = doc.get("members") as? List<*>
+                    val otherUserId =
+                        members?.firstOrNull { it != currentUserId } as? String
+
+                    if (otherUserId == null) {
+                        processedCount++
+                        return@forEach
+                    }
+
+                    db.collection("users").document(otherUserId).get()
+                        .addOnSuccessListener { userDoc ->
+                            chatList.add(
+                                ChatRoom(
                                     roomId = doc.id,
                                     userName = userDoc.getString("fullName") ?: "Unknown User",
                                     lastMessage = doc.getString("lastMessage"),
-                                    timestamp = com.example.chatapplication.util.DateUtils.formatTimestamp(
+                                    timestamp = DateUtils.formatTimestamp(
                                         doc.getLong("lastMessageTimestamp") ?: 0
                                     )
-                                ))
-                                processedCount++
-                                if (processedCount == totalDocs) {
-                                    _recentChats.value = chatList
-                                }
+                                )
+                            )
+                            processedCount++
+                            if (processedCount == totalDocs) {
+                                _recentChats.value = chatList
                             }
-                    } else {
-                        processedCount++
-                        if (processedCount == totalDocs) {
-                            _recentChats.value = chatList
                         }
-                    }
+                    return@forEach
+                }
+
+                if (processedCount == totalDocs) {
+                    _recentChats.value = chatList
                 }
             }
     }
+}
+
 
     private fun updateChatRoomLastMessage(roomId: String, message: String) {
         db.collection("chatRooms").document(roomId).update(

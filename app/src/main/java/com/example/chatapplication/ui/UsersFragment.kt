@@ -138,7 +138,11 @@ class UsersFragment : Fragment() {
             val memberIds = (selectedUsersSet.mapNotNull { it.id } + currentUserId)
                 .sorted()
             val groupRoomId = memberIds.joinToString("_")
-            val groupName = selectedUsersSet.joinToString(", ") { it.fullName }
+            val groupName = selectedUsersSet
+                .filter { it.id != currentUserId }
+                .joinToString(", ") {
+                    it.fullName.substringBefore(" ")
+                }
 
             chatViewModel.createGroupChat(
                 roomId = groupRoomId,
