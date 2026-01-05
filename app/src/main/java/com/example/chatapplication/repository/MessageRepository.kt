@@ -8,6 +8,8 @@ import com.example.chatapplication.data.Message
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
@@ -88,25 +90,40 @@ class MessageRepository {
             .add(msg)
     }
 
+    fun allChatRoomCollectionReference(): CollectionReference =
+        FirebaseFirestore.getInstance().collection("chatRooms")
+
 
     fun createGroupChat(
         roomId: String,
         userIds: List<String>,
         groupName: String,
-        onSuccess: (String) -> Unit
+        onSuccess: (String) -> Unit,
+        onError: (Exception) -> Unit = {}
     ) {
         val chatRoomData = mapOf(
             "roomId" to roomId,
             "name" to groupName,
             "members" to userIds,
-            "createdAt" to System.currentTimeMillis()
+            "createdAt" to System.currentTimeMillis(),
+            "lastMessage" to "",
+            "lastMessageTimestamp" to System.currentTimeMillis(),
+            "lastMessageSenderId" to "",
+            "isGroup" to true
         )
 
-        db.collection("chatRooms")
-            .document(roomId)
-            .set(chatRoomData)
-            .addOnSuccessListener { onSuccess(roomId) }
-            .addOnFailureListener { exception -> exception.printStackTrace() }
+        val ref = db.collection("chatRooms").document(roomId)
+
+        ref.get()
+            .addOnSuccessListener { doc ->
+                if (!doc.exists()) {
+                    ref.set(chatRoomData)
+                }
+                onSuccess(roomId)
+            }
+            .addOnFailureListener { e ->
+                onError(e)
+            }
     }
 
 
