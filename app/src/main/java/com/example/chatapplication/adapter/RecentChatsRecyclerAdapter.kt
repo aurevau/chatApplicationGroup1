@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
-class RecentChatsRecyclerAdapter :
-    RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
+class RecentChatsRecyclerAdapter(
+    private val onChatClick: (ChatRoom) -> Unit
+) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
     private var chats = emptyList<ChatRoom>()  // Ersätt ChatRoom med er model-klass
 
@@ -31,7 +32,7 @@ class RecentChatsRecyclerAdapter :
 
     // Fyll i data i varje rad
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(chats[position])
+        holder.bind(chats[position], onChatClick)
     }
 
     // ViewHolder = håller widgets i varje rad
@@ -41,12 +42,15 @@ class RecentChatsRecyclerAdapter :
         private val message = itemView.findViewById<TextView>(R.id.tvLastMessage)
         private val time = itemView.findViewById<TextView>(R.id.tvTimestamp)
 
-        fun bind(chat: ChatRoom) {
+        fun bind(chat: ChatRoom, onChatClick: (ChatRoom) -> Unit) {
             // Fyll i data här – anpassa efter er ChatRoom-modell
-            initials.text = "AB"  // T.ex. första bokstäverna i namnet
+            initials.text = chat.userName?.take(2)  // T.ex. första bokstäverna i namnet
             name.text = chat.userName ?: "Okänd"
             message.text = chat.lastMessage ?: "Inget meddelande"
             time.text = chat.timestamp ?: "Nu"
+            itemView.setOnClickListener {
+                onChatClick(chat)
+            }
         }
     }
 }

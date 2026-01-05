@@ -135,7 +135,7 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.uploadChatImage(
                     selectedImage, roomId,
                     onSuccess = { imageUrl ->
-                        viewModel.sendImageMessage(roomId, imageUrl, text)
+                        viewModel.sendImageMessage(roomId, imageUrl, text, userId)
                         viewModel.selectedImageUri.value = null
                         binding.ivPhoto.visibility = View.GONE
                         binding.progressCircular.visibility = View.GONE
@@ -149,7 +149,7 @@ class ChatActivity : AppCompatActivity() {
                     }
                 )
             } else if (text != null) {
-                viewModel.sendTextMessage(roomId, text)
+                viewModel.sendTextMessage(roomId, text, userId)
                 binding.etMessage.text.clear()
             }
         }

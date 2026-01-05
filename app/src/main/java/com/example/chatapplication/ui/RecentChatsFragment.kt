@@ -1,6 +1,8 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +35,14 @@ class RecentChatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 1. Skapa adaptern
-        adapter = RecentChatsRecyclerAdapter()
+        adapter = RecentChatsRecyclerAdapter(){ chat ->
+            val intent = Intent(requireContext(), ChatActivity::class.java)
+            intent.putExtra("ROOM_ID", chat.roomId)
+            if (chat.userName != null) {
+                intent.putExtra("GROUP_NAME", chat.userName)
+            }
+            startActivity(intent)
+        }
 
         // 2. Koppla RecyclerView till LayoutManager och Adapter
         binding.recyclerViewRecentChats.apply {
