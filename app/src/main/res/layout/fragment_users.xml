@@ -11,13 +11,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_selected_users"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             android:orientation="horizontal"
             tools:listitem="@layout/list_item_selected_users"
             tools:itemCount="3">
@@ -27,10 +28,11 @@
             android:id="@+id/btn_start_group_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/open_chat"
-            android:visibility="visible"
+            android:text="@string/start_group_chat"
+            android:fontFamily="@font/quantico_bold"
+            android:visibility="gone"
             android:layout_gravity="end"
-            android:backgroundTint="@color/dark_green"
+            android:backgroundTint="@color/button_color"
             android:textColor="@color/off_white"
             android:layout_marginEnd="@dimen/margin_16dp"/>
     </LinearLayout>
@@ -43,16 +45,14 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_search_user"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/margin_16dp"
             android:layout_weight="0.85"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/button_color"
-            app:cardCornerRadius="30dp"
-            android:layout_gravity="start|center_vertical"
-            >
+            app:cardCornerRadius="@dimen/corner_radius_30dp"
+            android:layout_gravity="start|center_vertical">
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/et_search_user"
                 style="?attr/textInputFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,11 +65,12 @@
                 app:layout_constraintTop_toBottomOf="@id/frameLayout">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_search_user"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:maxWidth="@dimen/edit_text_max_width"
                 android:textColor="@color/white"
-                android:shadowColor="@color/button_color"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/header_color"
                 android:fontFamily="@font/bagel_fat_one"
                 android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -95,8 +96,6 @@
         android:layout_height="0dp"
         tools:listitem="@layout/list_item_user"
         tools:itemCount="4"
-        android:layout_weight="1"
-        />
-
+        android:layout_weight="1" />
 
 </LinearLayout>

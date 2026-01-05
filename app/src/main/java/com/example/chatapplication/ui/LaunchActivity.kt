@@ -42,6 +42,6 @@ class LaunchActivity : AppCompatActivity() {
 
             finish()
 
-        }, 2000) // 2 second delay
+        }, 2500) // 2.5 second delay
     }
 }

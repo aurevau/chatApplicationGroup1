@@ -50,7 +50,9 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         binding.buttonLogIn.setOnClickListener {
-            login()
+            if (binding.editTextEmail.editText?.text?.isNotEmpty() == true) {
+                login()
+            }
         }
 
         binding.buttonRegister.setOnClickListener {
