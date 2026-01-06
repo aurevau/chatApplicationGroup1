@@ -62,10 +62,14 @@ class DashboardActivity : AppCompatActivity() {
             val popupMenu = PopupMenu(wrapper, it)
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.menu_profile -> {false}
+                    R.id.menu_menu -> {false}
+                    R.id.menu_profile -> {
+                        val intent = Intent(this@DashboardActivity, ProfileActivity::class.java)
+                        startActivity(intent)
+                        true
+                    }
                     R.id.menu_logout -> {
                         authViewModel.logOut()
-
                         // Start WelcomeActivity with CLEAR_TASK
                         val intent = Intent(this@DashboardActivity, WelcomeActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

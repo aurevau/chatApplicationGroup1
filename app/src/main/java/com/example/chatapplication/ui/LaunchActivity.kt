@@ -27,7 +27,6 @@ class LaunchActivity : AppCompatActivity() {
 
 
 
-
         Handler(Looper.getMainLooper()).postDelayed({
 
             if (authViewModel.isLoggedIn()) {

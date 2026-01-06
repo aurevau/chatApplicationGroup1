@@ -34,7 +34,7 @@ class UserViewModel: ViewModel() {
 
     fun addFriend(currentUserId: String?, friend: User) {
         if (currentUserId != null) {
-            dataManager.addFriend(currentUserId, friend)
+            dataManager.addFriendToFirebase(currentUserId, friend)
         }
     }
 
@@ -51,16 +51,15 @@ class UserViewModel: ViewModel() {
         dataManager.isFriend(currentUserId,otherUserId, callback)
     }
 
-        fun removeFriend(currentUserId: String?, friendId: String?) {
+        fun removeFriend(currentUserId: String?, friend: User) {
             if (currentUserId != null) {
-                if (friendId != null) {
-                    dataManager.removeFriend(currentUserId, friendId)
-                }
+                    dataManager.deleteFriendFromFirebase(friend)
+
             }
     }
 
     fun getFriends(currentUserId: String) {
-        dataManager.getFriends(currentUserId)
+        dataManager.loadFriendsRealtime(currentUserId)
     }
 
     fun isSelected(currentUserId: String?, other: User) {

@@ -13,18 +13,8 @@
         android:layout_height="match_parent"
         android:padding="@dimen/margin_12dp">
 
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/off_white"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
-            android:id="@+id/tv_initials"
+            android:id="@+id/tv_initials_friend"
             android:layout_width="@dimen/initials_circle_background_40dp"
             android:layout_height="@dimen/initials_circle_background_40dp"
             android:background="@drawable/circle_image"
@@ -37,13 +27,13 @@
             android:textColor="@color/off_white"
             android:textSize="@dimen/name_text_size_list_item_20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/checkbox"
-            app:layout_constraintStart_toEndOf="@+id/checkbox"
-            app:layout_constraintTop_toTopOf="@+id/checkbox"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="@string/initials_default_text" />
 
         <TextView
-            android:id="@+id/tv_name"
+            android:id="@+id/tv_name_friend"
             android:fontFamily="@font/bagel_fat_one"
             android:layout_width="@dimen/size_0dp"
             android:layout_height="wrap_content"
@@ -52,49 +42,34 @@
             android:textStyle="bold"
             android:textColor="@color/off_white"
             android:layout_marginStart="@dimen/margin_16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toTopOf="@id/tv_initials"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toTopOf="@id/tv_initials_friend"
             tools:text="@string/default_name"/>
 
         <TextView
-            android:id="@+id/tv_add_friend"
+            android:id="@+id/tv_add_friend_friend"
             android:visibility="gone"
-            android:fontFamily="@font/quantico_bold"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:textColor="@color/off_white"
             android:layout_marginStart="@dimen/margin_16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
             android:text="@string/add_friend"/>
 
         <TextView
-            android:id="@+id/tv_delete_friend"
+            android:id="@+id/tv_delete_friend_friend"
             android:fontFamily="@font/quantico_bold"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/off_white"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:layout_marginStart="@dimen/margin_16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
             android:text="@string/friends"/>
-
-        <Button
-            android:id="@+id/btn_start_chat"
-            android:layout_width="wrap_content"
-            android:fontFamily="@font/quantico_bold"
-            android:layout_height="@dimen/size_48dp"
-            android:backgroundTint="@color/button_color"
-            android:text="@string/open_chat"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:clickable="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

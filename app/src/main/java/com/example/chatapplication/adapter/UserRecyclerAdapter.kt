@@ -29,6 +29,7 @@ class UserRecyclerAdapter(
     private var users = emptyList<User>()
     private val db = UserRepository()
 
+
     private var friends = emptyList<User>()
 
     private var selection = emptyList<User>()
@@ -47,6 +48,8 @@ class UserRecyclerAdapter(
     }
 
     fun updateFriendList(newFriends: List<User>) {
+        Log.d("Adapter", "Friends list updated: ${newFriends.map { it.fullName }}")
+
         friends = newFriends
         notifyDataSetChanged()
     }
@@ -73,24 +76,36 @@ class UserRecyclerAdapter(
         val isSelected = selection.any { it.id == user.id }
 
 
-        val isFriend = friends.any { it.id == user.id }
+
+
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = isSelected
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             onCheckButtonClick(user, isChecked)
         }
-        holder.addFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
-        holder.addFriend.isEnabled = !isFriend
 
+        val isFriend = friends.any { it.id == user.id }
+
+        holder.addFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
         holder.deleteFriend.visibility = if (isFriend) View.VISIBLE else View.GONE
-        holder.deleteFriend.isEnabled = isFriend
+
+
+
 
         holder.addFriend.setOnClickListener {
-            onAddFriendClick(user) // ändrar Firebase och LiveData
+            onAddFriendClick(user)
+
+
+
+
+
         }
 
         holder.deleteFriend.setOnClickListener {
             onDeleteFriendClick(user)
+
+
+
         }
 
 
