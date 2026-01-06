@@ -19,6 +19,7 @@ import com.example.chatapplication.databinding.ActivityWelcomeBinding
 import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.ui.DashboardActivity
 import com.example.chatapplication.viewmodel.AuthViewModel
+import com.google.android.gms.common.SignInButton
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -86,7 +87,7 @@ class WelcomeActivity : AppCompatActivity() {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
-
+        binding.btnGoogleLogin.setSize(SignInButton.SIZE_WIDE)
         binding.btnGoogleLogin.setOnClickListener {
             loginWithGoogle()
         }
