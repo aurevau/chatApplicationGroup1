@@ -70,7 +70,6 @@ class DashboardActivity : AppCompatActivity() {
                     }
                     R.id.menu_logout -> {
                         authViewModel.logOut()
-
                         // Start WelcomeActivity with CLEAR_TASK
                         val intent = Intent(this@DashboardActivity, WelcomeActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
