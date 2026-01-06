@@ -42,4 +42,6 @@
     <string name="start_group_chat">Start Group chat</string>
     <string name="menu_arrow">Menu arrow</string>
     <string name="menu">Menu</string>
+    <string name="registration_success_img">registration_success</string>
+    <string name="registration_success">Registration\nsuccess</string>
 </resources>

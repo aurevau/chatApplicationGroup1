@@ -12,60 +12,56 @@ class AuthViewModel : ViewModel() {
 
     private val firestore = Firebase.firestore
 
-    private lateinit var authViewModel: AuthViewModel
-
-    fun register(fullName: String, fullNameLower: String, email: String, password: String) {
+    fun register(
+        fullName: String,
+        fullNameLower: String,
+        email: String,
+        password: String,
+        onResult: (Boolean, String?) -> Unit
+    ) {
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
-
-                    // Förbered extra data som ska sparas i Firestore
-                    val userData = HashMap<String, Any>()
-                    userData["fullName"] = fullName
-                    userData["fullNameLower"] = fullNameLower
-                    userData["email"] = email
-
-                    // Spara till Firestore
-                    firestore.collection("users").document(userId)
-                        .set(userData)
-
-
-                    /**
-                     * Kommenterade ut alla TOAST för att det egentligen inte ska ligga här i viewmodel,
-                     * men vet inte hur jag ska få till det i aktiviteten.
-                     */
-//                        .addOnSuccessListener {
-//                            Toast.makeText(this, "Registrering lyckades!", Toast.LENGTH_LONG)
-//                                .show()
-//                        }
-//                        .addOnFailureListener { e ->
-//                            Toast.makeText(
-//                                this,
-//                                "Fel vid sparande av data: ${e.message}",
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
-//
-//                } else {
-//                    Toast.makeText(
-//                        this,
-//                        "Registrering misslyckades: ${task.exception?.message}",
-//                        Toast.LENGTH_LONG
-//                    ).show()
+                if (!task.isSuccessful) {
+                    onResult(false, task.exception?.message)
+                    return@addOnCompleteListener
                 }
+
+                val userId = auth.currentUser?.uid ?: return@addOnCompleteListener onResult(
+                    false,
+                    "User ID missing"
+                )
+
+                // Förbered extra data som ska sparas i Firestore
+                val userData = HashMap<String, Any>()
+                userData["fullName"] = fullName
+                userData["fullNameLower"] = fullNameLower
+                userData["email"] = email
+
+                // Spara till Firestore
+                firestore.collection("users").document(userId)
+                    .set(userData)
+                    .addOnSuccessListener {
+                        onResult(true, null)
+                    }
+                    .addOnFailureListener { e ->
+                        onResult(false, e.message)
+                    }
             }
     }
 
-    fun isLoggeedIn() : Boolean = auth.currentUser != null
+    fun isLoggedIn(): Boolean = auth.currentUser != null
 
     fun logOut() {
         FirebaseAuth.getInstance().signOut()
     }
 
-
-    fun login(email: String, password: String, onSuccess: ()-> Unit, onFailure: (Exception)-> Unit) {
+    fun login(
+        email: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
 
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             onSuccess()
