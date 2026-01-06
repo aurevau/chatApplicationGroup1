@@ -1,60 +1,68 @@
 package com.example.chatapplication.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
 
 class AuthViewModel : ViewModel() {
 
     private val auth = Firebase.auth
-
     private val firestore = Firebase.firestore
+    private val storage = FirebaseStorage.getInstance()
 
-    private lateinit var authViewModel: AuthViewModel
-
-    fun register(fullName: String, fullNameLower: String, email: String, password: String) {
+    fun register(fullName: String, fullNameLower: String, email: String, password: String, imageUri: Uri?, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
-                    // Förbered extra data som ska sparas i Firestore
-                    val userData = HashMap<String, Any>()
-                    userData["fullName"] = fullName
-                    userData["fullNameLower"] = fullNameLower
-                    userData["email"] = email
-
-                    // Spara till Firestore
-                    firestore.collection("users").document(userId)
-                        .set(userData)
-
-
-                    /**
-                     * Kommenterade ut alla TOAST för att det egentligen inte ska ligga här i viewmodel,
-                     * men vet inte hur jag ska få till det i aktiviteten.
-                     */
-//                        .addOnSuccessListener {
-//                            Toast.makeText(this, "Registrering lyckades!", Toast.LENGTH_LONG)
-//                                .show()
-//                        }
-//                        .addOnFailureListener { e ->
-//                            Toast.makeText(
-//                                this,
-//                                "Fel vid sparande av data: ${e.message}",
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
-//
-//                } else {
-//                    Toast.makeText(
-//                        this,
-//                        "Registrering misslyckades: ${task.exception?.message}",
-//                        Toast.LENGTH_LONG
-//                    ).show()
+                    if (imageUri != null) {
+                        uploadProfileImage(imageUri, userId) { downloadUrl ->
+                            saveUserToFirestore(fullName, fullNameLower, email, userId, downloadUrl, onSuccess, onFailure)
+                        }
+                    } else {
+                        saveUserToFirestore(fullName, fullNameLower, email, userId, null, onSuccess, onFailure)
+                    }
+                } else {
+                    onFailure(task.exception?.message ?: "Registration failed")
                 }
+            }
+    }
+
+    private fun uploadProfileImage(imageUri: Uri, userId: String, onSuccess: (String) -> Unit) {
+        val ref = storage.reference.child("profile_images/$userId")
+        ref.putFile(imageUri)
+            .addOnSuccessListener {
+                ref.downloadUrl.addOnSuccessListener { uri ->
+                    onSuccess(uri.toString())
+                }
+            }
+    }
+
+    private fun saveUserToFirestore(fullName: String, fullNameLower: String, email: String, userId: String, profileImageUrl: String?, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+        // Step 9: Uppdatera User-klassen och spara till Firestore
+        // Using the User data class instead of a HashMap for cleaner code and type safety
+        val user = User(
+            id = userId,
+            fullName = fullName,
+            email = email,
+            profileImageUrl = profileImageUrl,
+            fullNameLower = fullNameLower
+        )
+
+        firestore.collection("users").document(userId)
+            .set(user)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e.message ?: "Failed to save user data")
             }
     }
 

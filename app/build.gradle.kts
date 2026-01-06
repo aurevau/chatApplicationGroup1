@@ -43,7 +43,7 @@ android {
 
 dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.5")
-
+    implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation(libs.piximagepicker)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
