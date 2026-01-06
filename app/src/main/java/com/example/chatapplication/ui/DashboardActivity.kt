@@ -17,10 +17,14 @@ import com.example.chatapplication.adapter.DashboardActivityViewPagerAdapter
 import com.example.chatapplication.databinding.ActivityDashboardBinding
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class DashboardActivity : AppCompatActivity() {
     private val usersFragment = UsersFragment()
     private lateinit var binding: ActivityDashboardBinding
+
+    private val auth = Firebase.auth
 
     private lateinit var viewPager: ViewPager2
     private lateinit var pageChangeCallback: ViewPager2.OnPageChangeCallback
@@ -72,6 +76,8 @@ class DashboardActivity : AppCompatActivity() {
                     else -> false
                 }
             }
+
+            binding.loggedInUser.text = auth.currentUser?.email
 
             popupMenu.inflate(R.menu.menu_dropdown)
 

@@ -8,6 +8,9 @@
     android:background="@color/off_white"
     tools:context=".ui.DashboardActivity">
 
+
+
+
     <FrameLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
@@ -15,9 +18,22 @@
         android:background="@color/header_and_edit_text_color"
         app:layout_constraintTop_toTopOf="parent">
 
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/logged_in_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quantico_bold"
+                android:text="This is me logged in"
+                android:textColor="@color/off_white"
+                android:gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"/>
+
 
             <TextView
                 android:id="@+id/tv_header"
@@ -29,7 +45,7 @@
                 android:text="@string/header_chats_text"
                 android:textColor="@color/off_white"
                 android:textSize="@dimen/header_text_size_48sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logged_in_user"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
