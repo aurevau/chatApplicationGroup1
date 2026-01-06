@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityProfileBinding
+import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +32,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var authViewModel: AuthViewModel
     private lateinit var binding: ActivityProfileBinding
     private lateinit var auth: FirebaseAuth
+
 
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -124,6 +126,7 @@ class ProfileActivity : AppCompatActivity() {
         currentUserId?.let { userId ->
             viewModel.getUserDetailsById(userId = userId) { user ->
 
+
                 if (user != null) {
                     val fullName = user.fullName
                     val email = user.email
@@ -171,6 +174,20 @@ class ProfileActivity : AppCompatActivity() {
                                 })
                         }
                     }
+                } else {
+                    authViewModel.saveUserToFirestore(
+                        fullName = binding.etFullName.editText?.text.toString(),
+                        fullNameLower = binding.etFullName.editText?.text.toString().lowercase(),
+                        email = auth.currentUser?.email ?: "",
+                        userId = auth.currentUser?.uid!!,
+                        profileImageUrl = user?.profileImageUrl,
+                        onSuccess = {
+                            // success
+                        },
+                        onFailure = { error ->
+                            // error
+                        }
+                    )
                 }
 
 

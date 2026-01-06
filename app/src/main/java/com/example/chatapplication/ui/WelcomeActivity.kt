@@ -122,8 +122,20 @@ class WelcomeActivity : AppCompatActivity() {
 
             val idToken = googleIdTokenCredential.idToken
             authViewModel.loginWithGoogle(idToken, {
-                val intent = Intent(this, DashboardActivity::class.java)
-                startActivity(intent)
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                    ?: return@loginWithGoogle
+                val user = userRepository.getUserDetailsById(userId) {user ->
+
+                    if (user?.fullName.isNullOrEmpty()) {
+                        intent = Intent(this, ProfileActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        intent = Intent(this, DashboardActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+
+
             }, {
                 Toast.makeText(this, "not successfully: ${it.message}", Toast.LENGTH_SHORT).show()
             })
