@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.chatapplication.data.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
@@ -34,6 +35,16 @@ class AuthViewModel : ViewModel() {
                         saveUserToFirestore(fullName, fullNameLower, email, userId, null, onSuccess, onFailure)
                     }
                 }
+            }
+    }
+
+    fun loginWithGoogle(idToken: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnSuccessListener {
+                onSuccess()
+            }.addOnFailureListener {exception ->
+                onFailure(exception)
             }
     }
 
@@ -79,7 +90,7 @@ class AuthViewModel : ViewModel() {
     fun isLoggedIn() : Boolean = auth.currentUser != null
 
     fun logOut() {
-        FirebaseAuth.getInstance().signOut()
+        auth.signOut()
     }
 
     fun login(
