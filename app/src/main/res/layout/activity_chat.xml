@@ -112,18 +112,12 @@
         android:layout_height="@dimen/size_0dp"
         android:background="@color/dark_green"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/size_8dp"
         app:layout_constraintBottom_toTopOf="@id/inputContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_container"
         tools:listitem="@layout/item_message_sent" />
 
-    <!--    <FrameLayout-->
-    <!--        android:id="@+id/container"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/inputContainer"/>-->
 
     <ProgressBar
         android:id="@+id/progress_circular"
@@ -161,8 +155,8 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_4dp"
+            app:cardElevation="@dimen/size_0dp"
+            android:layout_height="@dimen/size_48dp"
             android:layout_weight="1"
             android:backgroundTint="@color/medium_green"
             app:cardCornerRadius="12dp">
@@ -170,15 +164,15 @@
             <EditText
                 android:id="@+id/etMessage"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_6dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/margin_6dp"
                 android:autofillHints=""
                 android:background="@color/medium_green"
                 android:gravity="center_vertical"
                 android:hint="@string/message_hint_text"
                 android:imeOptions="actionSend"
                 android:inputType="text"
-                android:maxWidth="@dimen/edit_text_max_width"
+                android:maxWidth="260dp"
                 android:minHeight="@dimen/size_48dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/hint_text_color" />
