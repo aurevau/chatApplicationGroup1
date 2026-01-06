@@ -77,6 +77,10 @@ class ChatViewModel : ViewModel() {
         }
     }
 
+    fun deleteMessage(messageId: String, roomId: String, senderId: String) {
+        messageRepository.deleteMessage(messageId, roomId, senderId)
+    }
+
 
 
 }

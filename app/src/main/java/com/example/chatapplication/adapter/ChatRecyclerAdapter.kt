@@ -14,7 +14,9 @@ import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
-class ChatRecyclerAdapter :
+class ChatRecyclerAdapter(
+    private val onMessageClick: (Message) -> Unit
+) :
     ListAdapter<Message, RecyclerView.ViewHolder>(Diff()) {
 
     companion object {
@@ -42,7 +44,7 @@ class ChatRecyclerAdapter :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val message = getItem(position)
         when (holder) {
-            is SentViewHolder -> holder.bind(message)
+            is SentViewHolder -> holder.bind(message,onMessageClick)
             is ReceivedViewHolder -> holder.bind(message)
         }
     }
@@ -51,7 +53,10 @@ class ChatRecyclerAdapter :
         private val binding: ItemMessageSentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(message: Message) {
+        fun bind(message: Message, onMessageClick: (Message) -> Unit ) {
+            binding.root.setOnClickListener {
+                onMessageClick(message)
+            }
             if (!message.imageUrl.isNullOrEmpty()) {
                 binding.imgMessage.visibility = View.VISIBLE
                 Glide.with(binding.imgMessage.context)
