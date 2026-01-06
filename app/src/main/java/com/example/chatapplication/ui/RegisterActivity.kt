@@ -1,26 +1,50 @@
 package com.example.chatapplication.ui
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityRegisterBinding
 import com.example.chatapplication.popup.RegisterPopupFragment
 import com.example.chatapplication.viewmodel.AuthViewModel
+import com.google.firebase.storage.FirebaseStorage
+import de.hdodenhof.circleimageview.CircleImageView
 
 class RegisterActivity : AppCompatActivity() {
 
+    private lateinit var ivProfilePicture: CircleImageView
+    private var imageUri: Uri? = null
     private lateinit var authViewModel: AuthViewModel
 
     private lateinit var binding: ActivityRegisterBinding
+
+    // Result launcher for picking an image
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            imageUri = it
+            ivProfilePicture.setImageURI(it)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Steg 5: Koppla bilden i onCreate()
+        ivProfilePicture = findViewById(R.id.ivProfilePicture)
+
+        // Klicka på bilden för att välja ny
+        ivProfilePicture.setOnClickListener {
+            chooseImage()
+        }
 
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
@@ -35,6 +59,7 @@ class RegisterActivity : AppCompatActivity() {
             val fullName = binding.etFullName.editText?.text.toString().trim()
             val email = binding.etEmail.editText?.text.toString().trim()
             val password = binding.etPassword.editText?.text.toString().trim()
+
             val fullNameLower = fullName.lowercase()
             // Enkel validering
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -56,28 +81,31 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            authViewModel.register(fullName, fullNameLower, email, password) { success, error ->
-                if (success) {
+            // Anropa nya register-funktionen med imageUri och callbacks
+            authViewModel.register(
+                fullName, 
+                fullNameLower, 
+                email, 
+                password, 
+                imageUri,
+                onSuccess = {
+                    // Om registreringen lyckades
+                    Toast.makeText(this, "Registrering lyckades!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, WelcomeActivity::class.java)
                     intent.putExtra("EMAIL", email)
                     intent.putExtra("PASSWORD", password)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
-                    showPopup()
-
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        startActivity(intent)
-                    }, 2500)
-
-                } else {
-                    Toast.makeText(this, "Registration failed: $error", Toast.LENGTH_LONG).show()
+                    startActivity(intent)
+                },
+                onFailure = { errorMessage ->
+                    // Om registreringen misslyckades
+                    Toast.makeText(this, "Fel: $errorMessage", Toast.LENGTH_LONG).show()
                 }
-            }
+            )
         }
     }
 
-    fun showPopup() {
-        val fragment = RegisterPopupFragment()
-        fragment.show(supportFragmentManager, "RegisterPopupFragment")
+    private fun chooseImage() {
+        pickImageLauncher.launch("image/*")
     }
 }

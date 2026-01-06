@@ -54,19 +54,31 @@
 
     </FrameLayout>
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfilePicture"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_profile_placeholder"
+        app:civ_border_width="4dp"
+        app:civ_border_color="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frameLayout" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_full_name"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="16dp"
         android:hint="@string/hint_text_full_name"
         android:textColor="@color/black"
         android:textColorHint="@color/hint_text_color"
         app:errorTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frameLayout">
+        app:layout_constraintTop_toBottomOf="@id/ivProfilePicture">
 
 
         <com.google.android.material.textfield.TextInputEditText
@@ -89,8 +101,7 @@
         app:errorTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_full_name"
-        app:layout_constraintBottom_toTopOf="@id/et_password">
+        app:layout_constraintTop_toBottomOf="@id/et_full_name">
 
 
         <com.google.android.material.textfield.TextInputEditText
