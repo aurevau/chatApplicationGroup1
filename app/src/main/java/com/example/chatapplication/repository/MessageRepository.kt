@@ -263,5 +263,19 @@ class MessageRepository {
         )
     }
 
+    fun deleteMessage(messageId: String, roomId: String, senderId: String) {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: return
+
+        // Only delete if current user is the sender
+        if (senderId != currentUserId) return
+
+        db.collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .document(messageId)
+            .delete()
+    }
+
+
 
 }

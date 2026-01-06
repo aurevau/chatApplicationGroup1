@@ -111,7 +111,15 @@ class ChatActivity : AppCompatActivity() {
         viewModel.start(currentRoomId)
 
 
-        val adapter = ChatRecyclerAdapter()
+        val adapter = ChatRecyclerAdapter{ message ->
+            android.app.AlertDialog.Builder(this)
+                .setMessage("Do you want to delete this message?")
+                .setPositiveButton("Yes") { _, _ ->
+                    viewModel.deleteMessage(message.id, message.roomId, message.senderId)
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
         binding.recyclerMessages.adapter = adapter
         binding.recyclerMessages.layoutManager = LinearLayoutManager(this).apply {
             reverseLayout = false
