@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.UsersFragment"
+    android:background="@color/dark_green"
     android:orientation="vertical"
     android:weightSum="1"
-    android:background="@color/dark_green">
+    tools:context=".ui.UsersFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,74 +18,75 @@
             android:id="@+id/rv_selected_users"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:orientation="horizontal"
-            tools:listitem="@layout/list_item_selected_users"
-            tools:itemCount="3">
-        </androidx.recyclerview.widget.RecyclerView>
+            android:visibility="gone"
+            tools:itemCount="3"
+            tools:listitem="@layout/list_item_selected_users"/>
 
         <Button
             android:id="@+id/btn_start_group_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start_group_chat"
-            android:fontFamily="@font/quantico_bold"
-            android:visibility="gone"
             android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/margin_16dp"
             android:backgroundTint="@color/button_color"
+            android:fontFamily="@font/quantico_bold"
+            android:text="@string/start_group_chat"
             android:textColor="@color/off_white"
-            android:layout_marginEnd="@dimen/margin_16dp"/>
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_search_user"
-            android:layout_marginStart="@dimen/margin_16dp"
-            android:layout_weight="0.85"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/corner_radius_30dp"
-            android:layout_gravity="start|center_vertical">
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/margin_16dp"
+            android:layout_weight="0.85"
+            app:cardCornerRadius="@dimen/corner_radius_30dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_search_for_a_user"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/hint_text_color"
+                app:boxStrokeColor="@color/hint_text_color"
+                app:cursorColor="@color/off_white"
                 app:errorTextColor="@color/white"
+                app:hintTextColor="@color/hint_text_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/frameLayout">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_search_user"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:maxWidth="@dimen/edit_text_max_width"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/header_color"
-                android:fontFamily="@font/bagel_fat_one"
-                android:inputType="text" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_search_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/header_and_edit_text_color"
+                    android:fontFamily="@font/bagel_fat_one"
+                    android:inputType="text"
+                    android:maxWidth="@dimen/edit_text_max_width"
+                    android:textColor="@color/off_white" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_search_user"
-            android:contentDescription="@string/search_floating_button"
             android:layout_width="@dimen/size_0dp"
-            android:layout_gravity="end|center_vertical"
             android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
             android:layout_margin="@dimen/margin_16dp"
             android:layout_weight="0.15"
             android:backgroundTint="@color/button_color"
+            android:contentDescription="@string/search_floating_button"
             android:src="@drawable/search_icon"
             app:tint="@color/white" />
     </LinearLayout>
@@ -94,8 +95,8 @@
         android:id="@+id/rv_users"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:listitem="@layout/list_item_user"
+        android:layout_weight="1"
         tools:itemCount="4"
-        android:layout_weight="1" />
+        tools:listitem="@layout/list_item_user" />
 
 </LinearLayout>

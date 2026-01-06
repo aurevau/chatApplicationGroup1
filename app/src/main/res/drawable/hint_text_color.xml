@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Floating label when focused -->
+    <item android:color="@color/hint_text_color_focused" android:state_focused="true" />
+    <!-- Floating label when active but not focused -->
+    <item android:color="@color/hint_text_color_focused" android:state_activated="true" />
+    <!-- Default hint -->
+    <item android:color="@color/hint_text_color" />
+</selector>

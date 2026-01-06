@@ -12,7 +12,7 @@
         android:id="@+id/header_container"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        android:background="@color/header_color"
+        android:background="@color/header_and_edit_text_color"
         android:paddingTop="@dimen/size_16dp"
         android:paddingBottom="@dimen/size_16dp"
         app:layout_constraintEnd_toEndOf="parent"
