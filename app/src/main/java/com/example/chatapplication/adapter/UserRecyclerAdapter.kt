@@ -19,7 +19,8 @@ class UserRecyclerAdapter(
     val onButtonClick: (User) -> Unit,
     val onAddFriendClick: (User) -> Unit,
     val onDeleteFriendClick: (User) -> Unit,
-    val onCheckButtonClick: (User, Boolean) -> Unit
+    val onCheckButtonClick: (User, Boolean) -> Unit,
+    val onItemLongClick: (User) -> Unit,
 ) : RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
 
 
@@ -104,6 +105,10 @@ class UserRecyclerAdapter(
         }
 
 
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick(user)
+            true
+        }
 
 
         holder.itemView.setOnClickListener {

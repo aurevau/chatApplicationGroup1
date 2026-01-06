@@ -23,6 +23,8 @@ class UserViewModel: ViewModel() {
 
 
 
+
+
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
@@ -44,11 +46,6 @@ class UserViewModel: ViewModel() {
         dataManager.getUserDetailsById(userId, callback)
     }
 
-
-    fun loadRecentSearches() {
-        val currentUserId = getCurrentUserId() ?: return
-        dataManager.loadRecentSearches(currentUserId)
-    }
 
     fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
         dataManager.isFriend(currentUserId,otherUserId, callback)
@@ -88,13 +85,20 @@ class UserViewModel: ViewModel() {
 
 
 
+
+
     fun deleteCurrentUser() {
         val id = getCurrentUserId() ?: return
         dataManager.deleteCurrentUser()
     }
 
-    fun addRecentSearch(user: User) {
-        dataManager.addRecentSearch(user)
+    fun addRecentSearchToFirebase(currentUserId: String, user: User) {
+        dataManager.addRecentSearchToFirebase(currentUserId, user)
+    }
+
+    fun loadRecentSearches() {
+        val currentUserId = dataManager.getCurrentUserId() ?: return
+        dataManager.loadRecentSearchesRealtime(currentUserId)
     }
 
     fun clearRecentSearches() {

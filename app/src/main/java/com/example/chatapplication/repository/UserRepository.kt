@@ -3,10 +3,13 @@ package com.example.chatapplication.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.User
+import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -100,40 +103,12 @@ class UserRepository {
             }
     }
 
-    fun addRecentSearch(user: User) {
-        val currentUserId = getCurrentUserId() ?: return
-
-        recentList.removeAll { it.id == user.id }
-        recentList.add(0, user)
-        if (recentList.size > 10) recentList.removeLast()
-        _recentSearchedUsers.value = recentList
-
-        addRecentSearchToFirebase(currentUserId, user)
-    }
 
     fun clearRecentSearches() {
         recentList.clear()
         _recentSearchedUsers.value = recentList
     }
 
-    fun loadRecentSearches(currentUserId: String) {
-        db.collection("users")
-            .document(currentUserId)
-            .collection("recentSearches")
-            .orderBy("searchedAt", Query.Direction.DESCENDING)
-            .limit(10)
-            .get()
-            .addOnSuccessListener { snapshots ->
-                val recent = snapshots.documents.mapNotNull { doc ->
-                    User(
-                        id = doc.id,
-                        fullName = doc.getString("fullName") ?: ""
-                    )
-                }
-                recentList.addAll(recent)
-                _recentSearchedUsers.value = recentList
-            }
-    }
 
     fun addRecentSearchToFirebase(currentUserId: String, user: User) {
         val recentRef = db.collection("users")
@@ -263,6 +238,23 @@ class UserRepository {
             }
     }
 
+    fun deleteRecentSearch(user: User) {
+        val currentUserId = getCurrentUserId()
+        if (currentUserId != null && user.id != null) {
+            db.collection("users")
+                .document(currentUserId)
+                .collection("recentSearches") // ⚠️ korrekt collection
+                .document(user.id)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("RECENT_SEARCH", "Deleted ${user.fullName}")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("RECENT_SEARCH", "Failed to delete ${user.fullName}", e)
+                }
+        }
+    }
+
     fun addUser(fullName: String) {
         val uid = getCurrentUserId() ?: return
 
@@ -304,6 +296,21 @@ class UserRepository {
         }
             .addOnFailureListener { exception ->
                 Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
+            }
+    }
+
+    fun loadRecentSearchesRealtime(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("recentSearches")
+            .addSnapshotListener { snapshots, _ ->
+                val recent = snapshots?.documents?.mapNotNull { doc ->
+                    User(
+                        id = doc.id,
+                        fullName = doc.getString("fullName") ?: ""
+                    )
+                } ?: emptyList()
+                _recentSearchedUsers.value = recent
             }
     }
 }

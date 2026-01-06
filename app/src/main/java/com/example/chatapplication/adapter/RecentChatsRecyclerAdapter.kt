@@ -11,7 +11,8 @@ import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
 class RecentChatsRecyclerAdapter(
-    private val onChatClick: (ChatRoom) -> Unit
+    private val onChatClick: (ChatRoom) -> Unit,
+    val onChatLongClick: (ChatRoom) -> Unit,
 ) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
     private var chats = emptyList<ChatRoom>()  // Ersätt ChatRoom med er model-klass
@@ -34,7 +35,9 @@ class RecentChatsRecyclerAdapter(
 
     // Fyll i data i varje rad
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(chats[position], onChatClick)
+        holder.bind(chats[position], onChatClick, onChatLongClick )
+
+
     }
 
     // ViewHolder = håller widgets i varje rad
@@ -47,7 +50,16 @@ class RecentChatsRecyclerAdapter(
         private val chatIcon = itemView.findViewById<ImageView>(R.id.ivChatIcon)
         private val fLChatIcon = itemView.findViewById<FrameLayout>(R.id.fl_ChatIcon)
 
-        fun bind(chat: ChatRoom, onChatClick: (ChatRoom) -> Unit) {
+        fun bind(
+            chat: ChatRoom,
+            onChatClick: (ChatRoom) -> Unit,
+            onChatLongClick: (ChatRoom) -> Unit
+        ) {
+
+            itemView.setOnLongClickListener {
+                onChatLongClick(chat)
+                true
+            }
             // Fyll i data här – anpassa efter er ChatRoom-modell
 
             if(chat.isGroup) {
