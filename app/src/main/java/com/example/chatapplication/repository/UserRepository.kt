@@ -305,6 +305,13 @@ class UserRepository {
             }
     }
 
+    fun downloadProfilePic(currentUserId: String) {
+
+    }
+
+
+
+
     fun loadRecentSearchesRealtime(currentUserId: String) {
         db.collection("users")
             .document(currentUserId)

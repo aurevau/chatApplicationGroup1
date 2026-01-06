@@ -39,23 +39,19 @@ class AuthViewModel : ViewModel() {
 
     private fun uploadProfileImage(imageUri: Uri, userId: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
         val ref = storage.reference.child("profile_images/$userId")
+
         ref.putFile(imageUri)
             .addOnSuccessListener {
-                val ref = storage.reference.child("profile_images/$userId")
-
-                ref.putFile(imageUri)
-                    .addOnSuccessListener {
-                        ref.downloadUrl
-                            .addOnSuccessListener { uri ->
-                                onSuccess(uri.toString())
-                            }
-                            .addOnFailureListener {
-                                onError(it.message ?: "Failed to get image URL")
-                            }
+                ref.downloadUrl
+                    .addOnSuccessListener { uri ->
+                        onSuccess(uri.toString())
                     }
                     .addOnFailureListener {
-                        onError(it.message ?: "Image upload failed")
+                        onError(it.message ?: "Failed to get image URL")
                     }
+            }
+            .addOnFailureListener {
+                onError(it.message ?: "Image upload failed")
             }
     }
 
