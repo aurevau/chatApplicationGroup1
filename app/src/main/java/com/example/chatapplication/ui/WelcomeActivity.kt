@@ -53,6 +53,8 @@ class WelcomeActivity : AppCompatActivity() {
         passwordEditText = binding.editTextPassword
 
 
+
+
         val emailFromIntent = intent.getStringExtra("EMAIL")
         val passwordFromIntent = intent.getStringExtra("PASSWORD")
 
@@ -120,6 +122,8 @@ class WelcomeActivity : AppCompatActivity() {
 
             val idToken = googleIdTokenCredential.idToken
             authViewModel.loginWithGoogle(idToken, {
+                val intent = Intent(this, DashboardActivity::class.java)
+                startActivity(intent)
             }, {
                 Toast.makeText(this, "not successfully: ${it.message}", Toast.LENGTH_SHORT).show()
             })
