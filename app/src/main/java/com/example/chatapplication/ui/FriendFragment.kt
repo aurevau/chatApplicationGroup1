@@ -27,7 +27,8 @@ class FriendFragment : DialogFragment() {
 
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
-        val currentUserId = viewModel.getCurrentUserId()
+        val currentUserId = arguments?.getString("USER_ID")
+        //val currentUserId = viewModel.getCurrentUserId()
         if (currentUserId != null) {
             viewModel.getFriends(currentUserId)
         }
@@ -41,7 +42,9 @@ class FriendFragment : DialogFragment() {
         }, {user ->
             viewModel.removeFriend(currentUserId, user)
         }, {user ->
-            // Implementera om man vill komma till en persons profil?
+            val profileIntent = Intent(activity, ProfileActivity::class.java)
+            profileIntent.putExtra("USER_ID", user.id)
+            startActivity(profileIntent)
         })
 
 
