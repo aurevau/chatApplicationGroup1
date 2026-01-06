@@ -43,4 +43,5 @@
     <string name="menu_arrow">Menu arrow</string>
     <string name="menu">Menu</string>
     <string name="menu_item_menu">Menu</string>
+    <string name="header_friends_text">Friends</string>
 </resources>
