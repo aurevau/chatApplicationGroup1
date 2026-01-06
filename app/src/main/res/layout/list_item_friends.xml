@@ -14,7 +14,7 @@
         android:padding="@dimen/margin_12dp">
 
         <TextView
-            android:id="@+id/tv_initials"
+            android:id="@+id/tv_initials_friend"
             android:layout_width="@dimen/initials_circle_background_40dp"
             android:layout_height="@dimen/initials_circle_background_40dp"
             android:background="@drawable/circle_image"
@@ -33,7 +33,7 @@
             tools:text="@string/initials_default_text" />
 
         <TextView
-            android:id="@+id/tv_name"
+            android:id="@+id/tv_name_friend"
             android:fontFamily="@font/bagel_fat_one"
             android:layout_width="@dimen/size_0dp"
             android:layout_height="wrap_content"
@@ -42,24 +42,24 @@
             android:textStyle="bold"
             android:textColor="@color/off_white"
             android:layout_marginStart="@dimen/margin_16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toTopOf="@id/tv_initials"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toTopOf="@id/tv_initials_friend"
             tools:text="@string/default_name"/>
 
         <TextView
-            android:id="@+id/tv_add_friend"
+            android:id="@+id/tv_add_friend_friend"
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:textColor="@color/off_white"
             android:layout_marginStart="@dimen/margin_16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
             android:text="@string/add_friend"/>
 
         <TextView
-            android:id="@+id/tv_delete_friend"
+            android:id="@+id/tv_delete_friend_friend"
             android:fontFamily="@font/quantico_bold"
             android:visibility="visible"
             android:layout_width="wrap_content"
@@ -67,9 +67,9 @@
             android:textColor="@color/off_white"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:layout_marginStart="@dimen/margin_16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_initials"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
-            tools:text="@string/friends"/>
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
+            android:text="@string/friends"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
