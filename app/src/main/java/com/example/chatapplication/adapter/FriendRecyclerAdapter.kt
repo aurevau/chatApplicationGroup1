@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
@@ -66,6 +67,11 @@ class FriendRecyclerAdapter(
 
         }
 
+        holder.initialCircle.setOnClickListener {
+            onProfileClick(friend)
+        }
+
+
 
 
         holder.initialCircle.text = friend.initials.ifBlank { "?" }
@@ -82,6 +88,7 @@ class FriendRecyclerAdapter(
 
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials_friend)
         val name: TextView = itemView.findViewById(R.id.tv_name_friend)
+
     }
 
 
