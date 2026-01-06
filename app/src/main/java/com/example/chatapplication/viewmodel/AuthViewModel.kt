@@ -23,45 +23,38 @@ class AuthViewModel : ViewModel() {
                     val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
                     if (imageUri != null) {
-                        uploadProfileImage(imageUri, userId) { downloadUrl ->
+                        uploadProfileImage(imageUri, userId,
+                            onSuccess =  { downloadUrl ->
                             saveUserToFirestore(fullName, fullNameLower, email, userId, downloadUrl, onSuccess, onFailure)
-                        }
+                                 }, onError = {error ->
+                                     onFailure(error)
+                            }
+                        )
                     } else {
                         saveUserToFirestore(fullName, fullNameLower, email, userId, null, onSuccess, onFailure)
                     }
-                } else {
-                    onFailure(task.exception?.message ?: "Registration failed")
                 }
             }
     }
 
-    private fun uploadProfileImage(imageUri: Uri, userId: String, onSuccess: (String) -> Unit) {
+    private fun uploadProfileImage(imageUri: Uri, userId: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
         val ref = storage.reference.child("profile_images/$userId")
         ref.putFile(imageUri)
             .addOnSuccessListener {
-                ref.downloadUrl.addOnSuccessListener { uri ->
-                    onSuccess(uri.toString())
-                }
+                val ref = storage.reference.child("profile_images/$userId")
 
-                val userId = auth.currentUser?.uid ?: return@addOnCompleteListener onResult(
-                    false,
-                    "User ID missing"
-                )
-
-                // Förbered extra data som ska sparas i Firestore
-                val userData = HashMap<String, Any>()
-                userData["fullName"] = fullName
-                userData["fullNameLower"] = fullNameLower
-                userData["email"] = email
-
-                // Spara till Firestore
-                firestore.collection("users").document(userId)
-                    .set(userData)
+                ref.putFile(imageUri)
                     .addOnSuccessListener {
-                        onResult(true, null)
+                        ref.downloadUrl
+                            .addOnSuccessListener { uri ->
+                                onSuccess(uri.toString())
+                            }
+                            .addOnFailureListener {
+                                onError(it.message ?: "Failed to get image URL")
+                            }
                     }
-                    .addOnFailureListener { e ->
-                        onResult(false, e.message)
+                    .addOnFailureListener {
+                        onError(it.message ?: "Image upload failed")
                     }
             }
     }
@@ -87,7 +80,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    fun isLoggeedIn() : Boolean = auth.currentUser != null
+    fun isLoggedIn() : Boolean = auth.currentUser != null
 
     fun logOut() {
         FirebaseAuth.getInstance().signOut()
