@@ -3,13 +3,17 @@ package com.example.chatapplication.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
-class RecentChatsRecyclerAdapter :
-    RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
+class RecentChatsRecyclerAdapter(
+    private val onChatClick: (ChatRoom) -> Unit,
+    val onChatLongClick: (ChatRoom) -> Unit,
+) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
     private var chats = emptyList<ChatRoom>()  // Ersätt ChatRoom med er model-klass
 
@@ -31,7 +35,9 @@ class RecentChatsRecyclerAdapter :
 
     // Fyll i data i varje rad
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(chats[position])
+        holder.bind(chats[position], onChatClick, onChatLongClick )
+
+
     }
 
     // ViewHolder = håller widgets i varje rad
@@ -41,12 +47,39 @@ class RecentChatsRecyclerAdapter :
         private val message = itemView.findViewById<TextView>(R.id.tvLastMessage)
         private val time = itemView.findViewById<TextView>(R.id.tvTimestamp)
 
-        fun bind(chat: ChatRoom) {
+        private val chatIcon = itemView.findViewById<ImageView>(R.id.ivChatIcon)
+        private val fLChatIcon = itemView.findViewById<FrameLayout>(R.id.fl_ChatIcon)
+
+        fun bind(
+            chat: ChatRoom,
+            onChatClick: (ChatRoom) -> Unit,
+            onChatLongClick: (ChatRoom) -> Unit
+        ) {
+
+            itemView.setOnLongClickListener {
+                onChatLongClick(chat)
+                true
+            }
             // Fyll i data här – anpassa efter er ChatRoom-modell
-            initials.text = "AB"  // T.ex. första bokstäverna i namnet
+
+            if(chat.isGroup) {
+                chatIcon.setImageResource(R.drawable.group_icon)
+                chatIcon.visibility = View.VISIBLE
+                fLChatIcon.visibility = View.VISIBLE
+
+                initials.visibility = View.GONE
+            } else {
+                chatIcon.visibility = View.GONE
+                fLChatIcon.visibility = View.GONE
+                initials.visibility = View.VISIBLE
+            }
+            initials.text = chat.userName?.take(2)  // T.ex. första bokstäverna i namnet
             name.text = chat.userName ?: "Okänd"
             message.text = chat.lastMessage ?: "Inget meddelande"
             time.text = chat.timestamp ?: "Nu"
+            itemView.setOnClickListener {
+                onChatClick(chat)
+            }
         }
     }
 }

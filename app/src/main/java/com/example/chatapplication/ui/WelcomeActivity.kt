@@ -50,7 +50,19 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         binding.buttonLogIn.setOnClickListener {
-            login()
+            val email = binding.editTextEmail.editText?.text.toString().trim()
+            val password = binding.editTextPassword.editText?.text.toString().trim()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                binding.editTextEmail.editText?.error = "Field cannot be empty"
+                binding.editTextPassword.editText?.error = "Field cannot be empty"
+                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (binding.editTextEmail.editText?.text?.isNotEmpty() == true) {
+                login()
+            }
         }
 
         binding.buttonRegister.setOnClickListener {

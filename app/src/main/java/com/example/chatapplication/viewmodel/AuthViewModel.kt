@@ -42,6 +42,27 @@ class AuthViewModel : ViewModel() {
                 ref.downloadUrl.addOnSuccessListener { uri ->
                     onSuccess(uri.toString())
                 }
+
+                val userId = auth.currentUser?.uid ?: return@addOnCompleteListener onResult(
+                    false,
+                    "User ID missing"
+                )
+
+                // Förbered extra data som ska sparas i Firestore
+                val userData = HashMap<String, Any>()
+                userData["fullName"] = fullName
+                userData["fullNameLower"] = fullNameLower
+                userData["email"] = email
+
+                // Spara till Firestore
+                firestore.collection("users").document(userId)
+                    .set(userData)
+                    .addOnSuccessListener {
+                        onResult(true, null)
+                    }
+                    .addOnFailureListener { e ->
+                        onResult(false, e.message)
+                    }
             }
     }
 
@@ -72,8 +93,12 @@ class AuthViewModel : ViewModel() {
         FirebaseAuth.getInstance().signOut()
     }
 
-
-    fun login(email: String, password: String, onSuccess: ()-> Unit, onFailure: (Exception)-> Unit) {
+    fun login(
+        email: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
 
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             onSuccess()

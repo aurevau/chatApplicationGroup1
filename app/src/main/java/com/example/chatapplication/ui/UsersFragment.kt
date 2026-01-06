@@ -2,6 +2,7 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.data.User
 import com.example.chatapplication.databinding.FragmentUsersBinding
 import com.example.chatapplication.repository.MessageRepository
+import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.viewmodel.ChatViewModel
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -43,6 +45,7 @@ class UsersFragment : Fragment() {
     private val selectedUsersSet = mutableSetOf<User>()
 
     private lateinit var groupChatButton: Button
+    private val userRepository = UserRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +54,7 @@ class UsersFragment : Fragment() {
         chatViewModel = ViewModelProvider(requireActivity())[ChatViewModel::class.java]
 
         val currentUserId = viewModel.getCurrentUserId()
+        viewModel.loadRecentSearches()
 
         selectedUsersAdapter = SelectedUsersRecyclerAdapter({ removedUser ->
             selectedUsersSet.remove(removedUser)
@@ -70,18 +74,21 @@ class UsersFragment : Fragment() {
             // Se mer information om användaren och kunna lägga till vän?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
-            viewModel.addRecentSearch(user)
+            if (currentUserId != null) {
+                viewModel.addRecentSearchToFirebase(currentUserId, user)
+            }
 
         }, { user ->
             // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
             val chatIntent = Intent(activity, ChatActivity::class.java)
             chatIntent.putExtra("USER_ID", user.id)
             startActivity(chatIntent)
+            binding.etSearchUser.text?.clear()
 
         }, { user ->
             viewModel.addFriend(currentUserId, user)
         }, { user ->
-            viewModel.removeFriend(currentUserId, user.id)
+            viewModel.removeFriend(currentUserId, user)
         }, { user, isChecked ->
             if (isChecked) {
                 selectedUsersSet.add(user)
@@ -101,6 +108,8 @@ class UsersFragment : Fragment() {
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
             binding.rvSelectedUsers.visibility =
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
+        }, {user ->
+            userRepository.deleteRecentSearch(user)
         })
 
 
@@ -130,7 +139,7 @@ class UsersFragment : Fragment() {
 
         val currentUserId = viewModel.getCurrentUserId() ?: return
 
-        viewModel.loadRecentSearches()
+//        viewModel.loadRecentSearches()
 
         groupChatButton = binding.btnStartGroupChat
 
@@ -138,7 +147,11 @@ class UsersFragment : Fragment() {
             val memberIds = (selectedUsersSet.mapNotNull { it.id } + currentUserId)
                 .sorted()
             val groupRoomId = memberIds.joinToString("_")
-            val groupName = selectedUsersSet.joinToString(", ") { it.fullName }
+            val groupName = selectedUsersSet
+                .filter { it.id != currentUserId }
+                .joinToString(", ") {
+                    it.fullName.substringBefore(" ")
+                }
 
             chatViewModel.createGroupChat(
                 roomId = groupRoomId,
@@ -160,6 +173,7 @@ class UsersFragment : Fragment() {
 
 
             }
+            binding.etSearchUser.text?.clear()
         }
 
 
@@ -175,6 +189,8 @@ class UsersFragment : Fragment() {
         viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
 
             adapter.updateFriendList(friendsList)
+            Log.d("FRIENDS_OBSERVED", "Updated friends: ${friendsList.map { it.fullName }}")
+
         }
 
         viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
@@ -219,6 +235,10 @@ class UsersFragment : Fragment() {
 
         adapter.notifyDataSetChanged()
     }
+
+
+
+
 
 
 }

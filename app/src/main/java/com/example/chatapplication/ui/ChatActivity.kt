@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -12,7 +13,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatSpinner
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,37 +51,38 @@ class ChatActivity : AppCompatActivity() {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
 
-        spinner = binding.menuSpinner
-        val menuCategories = resources.getStringArray(R.array.menu_spinner)
+        binding.dropdownMenu.setOnClickListener {
+            val wrapper = ContextThemeWrapper(this, R.style.CustomPopupMenu)
+            val popupMenu = PopupMenu(wrapper, it)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.menu_profile -> {false}
+                    R.id.menu_logout -> {
+                        authViewModel.logOut()
 
-        val spinnerAdapter = ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            menuCategories
-        )
-        spinner.adapter = spinnerAdapter
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                if (position == 0) return
-                if (menuCategories[position] == "Logout") {
-                    authViewModel.logOut()
-
-                    // Starta WelcomeActivity med CLEAR_TASK
-                    val intent = Intent(this@ChatActivity, WelcomeActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-
-
+                        // Start WelcomeActivity with CLEAR_TASK
+                        val intent = Intent(this@ChatActivity, WelcomeActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        true }
+                    else -> false
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            popupMenu.inflate(R.menu.menu_dropdown)
+
+            try {
+                val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                fieldMPopup.isAccessible = true
+                val mPopup = fieldMPopup.get(popupMenu)
+                mPopup.javaClass
+                    .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                    .invoke(mPopup, true)
+            } catch (e: Exception) {
+                Log.e("SOUT", "Error showing menu icon")
+            } finally {
+                popupMenu.show()
+            }
         }
 
         val userId = intent.getStringExtra("USER_ID")
@@ -107,7 +111,15 @@ class ChatActivity : AppCompatActivity() {
         viewModel.start(currentRoomId)
 
 
-        val adapter = ChatRecyclerAdapter()
+        val adapter = ChatRecyclerAdapter{ message ->
+            android.app.AlertDialog.Builder(this)
+                .setMessage("Do you want to delete this message?")
+                .setPositiveButton("Yes") { _, _ ->
+                    viewModel.deleteMessage(message.id, message.roomId, message.senderId)
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
         binding.recyclerMessages.adapter = adapter
         binding.recyclerMessages.layoutManager = LinearLayoutManager(this).apply {
             reverseLayout = false
@@ -135,7 +147,7 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.uploadChatImage(
                     selectedImage, roomId,
                     onSuccess = { imageUrl ->
-                        viewModel.sendImageMessage(roomId, imageUrl, text)
+                        viewModel.sendImageMessage(roomId, imageUrl, text, userId)
                         viewModel.selectedImageUri.value = null
                         binding.ivPhoto.visibility = View.GONE
                         binding.progressCircular.visibility = View.GONE
@@ -149,13 +161,15 @@ class ChatActivity : AppCompatActivity() {
                     }
                 )
             } else if (text != null) {
-                viewModel.sendTextMessage(roomId, text)
+                viewModel.sendTextMessage(roomId, text, userId)
                 binding.etMessage.text.clear()
             }
         }
 
         binding.btnBack.setOnClickListener {
-            finish()
+            val intent = Intent(this, DashboardActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
         }
 
         binding.btnImage.setOnClickListener {

@@ -3,10 +3,13 @@ package com.example.chatapplication.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.User
+import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -16,6 +19,7 @@ import com.google.firebase.firestore.Query
 
 class UserRepository {
     private val listeners = mutableListOf<ListenerRegistration>()
+    private var friendsListener: ListenerRegistration? = null
 
     private val db = Firebase.firestore
 
@@ -36,6 +40,8 @@ class UserRepository {
     val searchResults: LiveData<List<User>> get() = _searchResults
 
     private val recentList = mutableListOf<User>()
+
+    private val friendList = mutableListOf<User>()
 
 
     fun searchUsers(searchTerm: String) {
@@ -100,40 +106,29 @@ class UserRepository {
             }
     }
 
-    fun addRecentSearch(user: User) {
-        val currentUserId = getCurrentUserId() ?: return
-
-        recentList.removeAll { it.id == user.id }
-        recentList.add(0, user)
-        if (recentList.size > 10) recentList.removeLast()
-        _recentSearchedUsers.value = recentList
-
-        addRecentSearchToFirebase(currentUserId, user)
-    }
 
     fun clearRecentSearches() {
         recentList.clear()
         _recentSearchedUsers.value = recentList
     }
 
-    fun loadRecentSearches(currentUserId: String) {
-        db.collection("users")
+    fun addFriendToFirebase(currentUserId: String, user: User) {
+        val recentRef = db.collection("users")
             .document(currentUserId)
-            .collection("recentSearches")
-            .orderBy("searchedAt", Query.Direction.DESCENDING)
-            .limit(10)
-            .get()
-            .addOnSuccessListener { snapshots ->
-                val recent = snapshots.documents.mapNotNull { doc ->
-                    User(
-                        id = doc.id,
-                        fullName = doc.getString("fullName") ?: ""
-                    )
-                }
-                recentList.addAll(recent)
-                _recentSearchedUsers.value = recentList
-            }
+            .collection("friends")
+            .document(user.id!!)
+
+        val data = mapOf(
+            "friendName" to user.fullName
+        )
+
+        recentRef.set(data)
+            .addOnSuccessListener {
+                Log.d("Friend", "Saved as friend ${user.fullName}")
+            }.addOnFailureListener { e -> Log.e("Friend", "Failed to save friend", e) }
+
     }
+
 
     fun addRecentSearchToFirebase(currentUserId: String, user: User) {
         val recentRef = db.collection("users")
@@ -212,55 +207,41 @@ class UserRepository {
             }
     }
 
-    fun addFriend(currentUserId: String, friend: User) {
-        val friendData = mapOf(
-            "friendId" to friend.id,
-            "friendName" to friend.fullName,
-            "addedAt" to Timestamp.now()
-        )
 
-        db.collection("users").document(currentUserId)
-            .collection("friends").document(friend.id!!)
-            .set(friendData)
-            .addOnSuccessListener {
-                getFriends(currentUserId)
-                Log.d("SOUT", "Friend added successfully")
-            }
-            .addOnFailureListener { exception ->
-                Log.e("SOUT", "Error adding friend", exception)
-
-            }
-
-    }
-
-    fun removeFriend(currentUserId: String, friendId: String) {
-        db.collection("users")
-            .document(currentUserId)
-            .collection("friends")
-            .document(friendId)
-            .delete()
-            .addOnSuccessListener {
-                Log.d("SOUT", "Friend removed")
-                getFriends(currentUserId)
-            }
-            .addOnFailureListener { exception -> Log.e("SOUT", "Error removing friend", exception) }
-
-    }
-
-    fun getFriends(currentUserId: String) {
-        db.collection("users")
-            .document(currentUserId)
-            .collection("friends")
-            .get()
-            .addOnSuccessListener { snapshots ->
-                val friendList = snapshots.documents.mapNotNull { document ->
-                    User(
-                        id = document.getString("friendId"),
-                        fullName = document.getString("friendName") ?: ""
-                    )
+    fun deleteFriendFromFirebase(user: User) {
+        val currentUserId = getCurrentUserId()
+        if (currentUserId != null && user.id != null) {
+            db.collection("users")
+                .document(currentUserId)
+                .collection("friends")
+                .document(user.id)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("Friend", "Deleted friend ${user.fullName}")
                 }
-                _friends.value = friendList as MutableList<User>?
-            }
+                .addOnFailureListener { e ->
+                    Log.e("Friend", "Failed to delete friend ${user.fullName}", e)
+                }
+        }
+    }
+
+
+
+    fun deleteRecentSearch(user: User) {
+        val currentUserId = getCurrentUserId()
+        if (currentUserId != null && user.id != null) {
+            db.collection("users")
+                .document(currentUserId)
+                .collection("recentSearches") // ⚠️ korrekt collection
+                .document(user.id)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("RECENT_SEARCH", "Deleted ${user.fullName}")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("RECENT_SEARCH", "Failed to delete ${user.fullName}", e)
+                }
+        }
     }
 
     fun addUser(fullName: String) {
@@ -304,6 +285,38 @@ class UserRepository {
         }
             .addOnFailureListener { exception ->
                 Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
+            }
+    }
+
+    fun loadFriendsRealtime(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .addSnapshotListener { snapshots, _ ->
+                val friendList = snapshots?.documents?.mapNotNull { doc ->
+                    User(
+                        id = doc.id,
+                        fullName = doc.getString("friendName") ?: ""
+                    )
+                } ?: emptyList()
+                _friends.value = friendList.toMutableList()
+                Log.d("FRIENDS", friendList.map { it.fullName }.toString())
+
+            }
+    }
+
+    fun loadRecentSearchesRealtime(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("recentSearches")
+            .addSnapshotListener { snapshots, _ ->
+                val recent = snapshots?.documents?.mapNotNull { doc ->
+                    User(
+                        id = doc.id,
+                        fullName = doc.getString("fullName") ?: ""
+                    )
+                } ?: emptyList()
+                _recentSearchedUsers.value = recent
             }
     }
 }

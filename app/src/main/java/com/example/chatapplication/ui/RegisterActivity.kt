@@ -4,12 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityRegisterBinding
+import com.example.chatapplication.popup.RegisterPopupFragment
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.google.firebase.storage.FirebaseStorage
 import de.hdodenhof.circleimageview.CircleImageView
@@ -62,7 +65,8 @@ class RegisterActivity : AppCompatActivity() {
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 binding.etFullName.editText?.error = "Field cannot be empty"
                 binding.etEmail.editText?.error = "Field cannot be empty"
-                Toast.makeText(this, "Fyll i alla fält", Toast.LENGTH_SHORT).show()
+                binding.etPassword.editText?.error = "Field cannot be empty"
+                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

@@ -4,15 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="@dimen/size_16dp"
+    android:paddingStart="@dimen/size_48dp"
     android:paddingTop="@dimen/size_4dp"
-    android:paddingEnd="@dimen/size_48dp"
+    android:paddingEnd="@dimen/size_16dp"
     android:paddingBottom="@dimen/size_4dp">
 
     <ImageView
         android:id="@+id/imgMessage"
         android:layout_width="@dimen/sent_image_size_200dp"
         android:layout_height="@dimen/sent_image_size_200dp"
+        android:layout_gravity="end"
         android:contentDescription="@string/sent_picture_description"
         android:scaleType="centerCrop"
         android:visibility="gone" />
@@ -22,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_marginTop="@dimen/margin_6dp"
         android:background="@drawable/message_bubble_sent"
         android:maxWidth="@dimen/chat_bubble_max_width_280dp"
         android:paddingStart="@dimen/chat_bubble_padding_start_end_14dp"

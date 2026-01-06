@@ -23,6 +23,8 @@ class UserViewModel: ViewModel() {
 
 
 
+
+
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
@@ -32,7 +34,7 @@ class UserViewModel: ViewModel() {
 
     fun addFriend(currentUserId: String?, friend: User) {
         if (currentUserId != null) {
-            dataManager.addFriend(currentUserId, friend)
+            dataManager.addFriendToFirebase(currentUserId, friend)
         }
     }
 
@@ -45,25 +47,19 @@ class UserViewModel: ViewModel() {
     }
 
 
-    fun loadRecentSearches() {
-        val currentUserId = getCurrentUserId() ?: return
-        dataManager.loadRecentSearches(currentUserId)
-    }
-
     fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
         dataManager.isFriend(currentUserId,otherUserId, callback)
     }
 
-        fun removeFriend(currentUserId: String?, friendId: String?) {
+        fun removeFriend(currentUserId: String?, friend: User) {
             if (currentUserId != null) {
-                if (friendId != null) {
-                    dataManager.removeFriend(currentUserId, friendId)
-                }
+                    dataManager.deleteFriendFromFirebase(friend)
+
             }
     }
 
     fun getFriends(currentUserId: String) {
-        dataManager.getFriends(currentUserId)
+        dataManager.loadFriendsRealtime(currentUserId)
     }
 
     fun isSelected(currentUserId: String?, other: User) {
@@ -88,13 +84,20 @@ class UserViewModel: ViewModel() {
 
 
 
+
+
     fun deleteCurrentUser() {
         val id = getCurrentUserId() ?: return
         dataManager.deleteCurrentUser()
     }
 
-    fun addRecentSearch(user: User) {
-        dataManager.addRecentSearch(user)
+    fun addRecentSearchToFirebase(currentUserId: String, user: User) {
+        dataManager.addRecentSearchToFirebase(currentUserId, user)
+    }
+
+    fun loadRecentSearches() {
+        val currentUserId = dataManager.getCurrentUserId() ?: return
+        dataManager.loadRecentSearchesRealtime(currentUserId)
     }
 
     fun clearRecentSearches() {

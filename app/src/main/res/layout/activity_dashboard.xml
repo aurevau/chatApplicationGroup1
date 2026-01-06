@@ -5,56 +5,89 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.DashboardActivity"
-    android:background="@color/off_white">
+    android:background="@color/off_white"
+    tools:context=".ui.DashboardActivity">
 
     <FrameLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/dark_turquoise">
-        <TextView
-            android:id="@+id/tv_header"
-            android:layout_margin="@dimen/margin_16dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/header_chats_text"
-            android:fontFamily="@font/bagel_fat_one"
-            android:textColor="@color/off_white"
-            android:textSize="@dimen/header_text_size_48sp"/>
+        android:background="@color/header_color"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/menu_spinner"
-            android:spinnerMode="dropdown"
-            android:layout_marginEnd="@dimen/margin_16dp"
-            android:layout_marginTop="@dimen/margin_16dp"
-            android:layout_width="wrap_content"
-            android:minHeight="@dimen/spinner_height_48dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/off_white"
-            android:layout_gravity="end"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margin_16dp"
+                android:fontFamily="@font/bagel_fat_one"
+                android:text="@string/header_chats_text"
+                android:textColor="@color/off_white"
+                android:textSize="@dimen/header_text_size_48sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dropdown_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/quantico_bold"
+                    android:text="@string/menu"
+                    android:layout_marginEnd="@dimen/margin_4dp"
+                    android:textColor="@color/off_white"
+                    android:textSize="@dimen/normal_text_size_16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/arrow"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/menu_arrow"
+                    android:src="@drawable/outline_arrow_drop_down_circle_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_0dp"
-        app:layout_constraintTop_toBottomOf="@id/header_container"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
-    </androidx.viewpager2.widget.ViewPager2>
+        android:background="@color/dark_green"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintTop_toBottomOf="@id/header_container"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_green"
-        app:itemTextColor="@color/white"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/off_white"
-        app:labelVisibilityMode="unlabeled"
-        app:itemIconSize="@dimen/nav_icon_size_32dp"
+        android:background="@color/header_color"
         app:itemActiveIndicatorStyle="@style/BottomNavActiveIndicator"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:itemIconSize="@dimen/nav_icon_size_32dp"
+        app:itemIconTint="@color/off_white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +11,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapplication.adapter.RecentChatsRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentRecentChatsBinding
+import com.example.chatapplication.repository.MessageRepository
 import com.example.chatapplication.viewmodel.AllChatsViewModel
 
 class RecentChatsFragment : Fragment() {
 
     private var _binding: FragmentRecentChatsBinding? = null
     private val binding get() = _binding!!
+
+    private val messageRepository =  MessageRepository()
 
     private lateinit var adapter: RecentChatsRecyclerAdapter
 
@@ -33,7 +38,17 @@ class RecentChatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 1. Skapa adaptern
-        adapter = RecentChatsRecyclerAdapter()
+        adapter = RecentChatsRecyclerAdapter({ chat ->
+            val intent = Intent(requireContext(), ChatActivity::class.java)
+            intent.putExtra("ROOM_ID", chat.roomId)
+            if (chat.userName != null) {
+                intent.putExtra("GROUP_NAME", chat.userName)
+            }
+            startActivity(intent)
+        }, {chatRoom ->
+            messageRepository.deleteChatRoom(chatRoom)
+        })
+
 
         // 2. Koppla RecyclerView till LayoutManager och Adapter
         binding.recyclerViewRecentChats.apply {

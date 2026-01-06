@@ -5,14 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/off_white"
+    android:background="@color/dark_green"
     tools:context=".ui.DashboardActivity">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="wrap_content"
-        android:background="@color/dark_green"
+        android:background="@color/header_color"
         android:paddingTop="@dimen/size_16dp"
         android:paddingBottom="@dimen/size_16dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,6 +28,9 @@
             android:background="@null"
             android:contentDescription="@string/back_arrow_button_description"
             android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/off_white" />
 
         <LinearLayout
@@ -35,7 +38,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_initials"
@@ -43,7 +50,14 @@
                 android:layout_height="@dimen/initials_circle_background_40dp"
                 android:background="@drawable/circle_image"
                 android:gravity="center"
-                android:textColor="@color/dark_green"
+                android:shadowColor="#80000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"
+                android:textAllCaps="true"
+                android:textColor="@color/off_white"
+                android:textSize="@dimen/name_text_size_list_item_20sp"
+                android:textStyle="bold"
                 tools:text="@string/initials_default_text" />
 
             <TextView
@@ -57,27 +71,53 @@
                 android:textSize="@dimen/name_header_text_size_24sp" />
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/menu_spinner"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dropdown_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="@dimen/margin_16dp"
-            android:backgroundTint="@color/off_white"
-            android:minHeight="@dimen/spinner_height_48dp"
-            android:spinnerMode="dropdown" />
-    </FrameLayout>
+            android:layout_marginEnd="@dimen/margin_20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quantico_bold"
+                android:text="@string/menu"
+                android:layout_marginEnd="@dimen/margin_4dp"
+                android:textColor="@color/off_white"
+                android:textSize="@dimen/normal_text_size_16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/menu_arrow"
+                android:src="@drawable/outline_arrow_drop_down_circle_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMessages"
         android:layout_width="@dimen/size_0dp"
         android:layout_height="@dimen/size_0dp"
+        android:background="@color/dark_green"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/size_8dp"
         app:layout_constraintBottom_toTopOf="@id/inputContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_container" />
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        tools:listitem="@layout/item_message_sent" />
 
     <!--    <FrameLayout-->
     <!--        android:id="@+id/container"-->
@@ -119,20 +159,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/etMessage"
+        <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_4dp"
             android:layout_weight="1"
-            android:autofillHints=""
-            android:gravity="center_vertical"
-            android:hint="@string/message_hint_text"
-            android:imeOptions="actionSend"
-            android:inputType="text"
-            android:maxWidth="@dimen/edit_text_max_width"
-            android:minHeight="@dimen/size_48dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/black" />
+            android:backgroundTint="@color/medium_green"
+            app:cardCornerRadius="12dp">
+
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_6dp"
+                android:autofillHints=""
+                android:background="@color/medium_green"
+                android:gravity="center_vertical"
+                android:hint="@string/message_hint_text"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:maxWidth="@dimen/edit_text_max_width"
+                android:minHeight="@dimen/size_48dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_text_color" />
+        </androidx.cardview.widget.CardView>
 
         <ImageButton
             android:id="@+id/btn_image"
@@ -140,15 +190,16 @@
             android:layout_height="@dimen/send_button_size_48dp"
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/margin_12dp"
+            android:layout_marginTop="@dimen/margin_4dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/add_photo_button_description"
-            android:src="@drawable/add_photo_icon"
-            app:tint="@color/dark_green" />
+            android:src="@drawable/add_photo_icon" />
 
         <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="@dimen/send_button_size_48dp"
             android:layout_height="@dimen/send_button_size_48dp"
+            android:layout_marginTop="@dimen/margin_4dp"
             android:background="@null"
             android:contentDescription="@string/send_button_description"
             android:src="@drawable/ic_send" />
