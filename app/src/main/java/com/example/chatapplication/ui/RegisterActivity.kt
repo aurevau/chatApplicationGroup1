@@ -101,22 +101,6 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadProfileImage(uri: Uri, userId: String, onSuccess: (String) -> Unit) {
-        val storageRef = FirebaseStorage.getInstance().reference
-            .child("profile_images/$userId.jpg")
-
-        storageRef.putFile(uri)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    onSuccess(downloadUri.toString())
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Bilduppladdning misslyckades", Toast.LENGTH_SHORT).show()
-                onSuccess("") // spara utan bild ändå
-            }
-    }
-
     private fun chooseImage() {
         pickImageLauncher.launch("image/*")
     }
