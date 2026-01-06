@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapplication.R
 import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.UserRepository
@@ -70,10 +73,17 @@ class UserRecyclerAdapter(
         holder: UserRecyclerAdapter.UserViewHolder, position: Int
     ) {
 
-
         val user = users[position]
 
+        Log.d(
+            "PROFILE_IMG",
+            "User=${user.fullName}, imageUrl=${user.profileImageUrl}"
+        )
+
+
         val isSelected = selection.any { it.id == user.id }
+
+
 
 
 
@@ -109,10 +119,20 @@ class UserRecyclerAdapter(
         }
 
 
+        val imageUrl = user.profileImageUrl
 
+        if (!imageUrl.isNullOrEmpty()) {
+            holder.initialCircle.visibility = View.GONE
+            holder.profilePic.visibility = View.VISIBLE
 
-
-        holder.initialCircle.text = user.initials.ifBlank { "?" }
+            Glide.with(holder.profilePic.context)
+                .load(imageUrl)
+                .into(holder.profilePic)
+        } else {
+            holder.initialCircle.visibility = View.VISIBLE
+            holder.profilePic.visibility = View.GONE
+            holder.initialCircle.text = user.initials
+        }
         holder.name.text = if (user.id == db.getCurrentUserId()) {
             "${user.fullName} (Me)"
         } else {
@@ -140,6 +160,8 @@ class UserRecyclerAdapter(
     override fun getItemCount(): Int = users.size
 
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)
         val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend)
         val button: Button = itemView.findViewById(R.id.btn_start_chat)
