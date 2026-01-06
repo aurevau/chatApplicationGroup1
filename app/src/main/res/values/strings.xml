@@ -44,4 +44,6 @@
     <string name="menu">Menu</string>
     <string name="menu_item_menu">Menu</string>
     <string name="header_friends_text">Friends</string>
+    <string name="registration_success_img">registration_success</string>
+    <string name="registration_success">Registration\nsuccess</string>
 </resources>

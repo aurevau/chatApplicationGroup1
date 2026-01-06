@@ -4,6 +4,6 @@
     <solid android:color="@color/message_received"/>
     <corners android:radius="12dp"/>
     <stroke
-        android:width="@dimen/stroke_chat_bubble_2dp"
+        android:width="@dimen/chat_bubble_stroke_2dp"
         android:color="@color/stroke_chat_bubble"/>
 </shape>

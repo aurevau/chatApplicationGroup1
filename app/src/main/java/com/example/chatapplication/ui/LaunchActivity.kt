@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapplication.databinding.ActivityLaunchBinding
 import com.example.chatapplication.viewmodel.AuthViewModel
-import com.example.chatapplication.viewmodel.UserViewModel
-import com.google.firebase.auth.FirebaseAuth
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -31,7 +29,7 @@ class LaunchActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
 
-            if (authViewModel.isLoggeedIn()) {
+            if (authViewModel.isLoggedIn()) {
                 // User already logged in
                 startActivity(Intent(this, DashboardActivity::class.java))
             } else {

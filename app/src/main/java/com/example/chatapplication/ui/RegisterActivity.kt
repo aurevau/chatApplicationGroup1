@@ -2,10 +2,13 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapplication.databinding.ActivityRegisterBinding
+import com.example.chatapplication.popup.RegisterPopupFragment
 import com.example.chatapplication.viewmodel.AuthViewModel
 
 class RegisterActivity : AppCompatActivity() {
@@ -37,6 +40,7 @@ class RegisterActivity : AppCompatActivity() {
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 binding.etFullName.editText?.error = "Field cannot be empty"
                 binding.etEmail.editText?.error = "Field cannot be empty"
+                binding.etPassword.editText?.error = "Field cannot be empty"
                 Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -52,14 +56,28 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            authViewModel.register(fullName, fullNameLower, email, password)
-            val intent = Intent(this, WelcomeActivity::class.java)
-            intent.putExtra("EMAIL", email)
-            intent.putExtra("PASSWORD", password)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            authViewModel.register(fullName, fullNameLower, email, password) { success, error ->
+                if (success) {
+                    val intent = Intent(this, WelcomeActivity::class.java)
+                    intent.putExtra("EMAIL", email)
+                    intent.putExtra("PASSWORD", password)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-//            finish()  // Gå tillbaka till föregående skärm
+                    showPopup()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        startActivity(intent)
+                    }, 2500)
+
+                } else {
+                    Toast.makeText(this, "Registration failed: $error", Toast.LENGTH_LONG).show()
+                }
+            }
         }
+    }
+
+    fun showPopup() {
+        val fragment = RegisterPopupFragment()
+        fragment.show(supportFragmentManager, "RegisterPopupFragment")
     }
 }

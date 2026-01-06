@@ -17,4 +17,5 @@
     <color name="message_sent">#007307</color>
     <color name="message_received">#294229</color>
     <color name="stroke_chat_bubble">#929292</color>
+    <color name="none">#00FFFFFF</color>
 </resources>
