@@ -1,4 +1,4 @@
-package com.example.chatapplication
+package com.example.chatapplication.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatapplication.adapter.RecentChatsRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentRecentChatsBinding
+import com.example.chatapplication.viewmodel.AllChatsViewModel
 
 class RecentChatsFragment : Fragment() {
 
