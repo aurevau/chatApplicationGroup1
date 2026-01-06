@@ -59,6 +59,8 @@
         <TextView
             android:id="@+id/tv_add_friend"
             android:visibility="gone"
+            android:fontFamily="@font/quantico_bold"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
@@ -71,7 +73,7 @@
         <TextView
             android:id="@+id/tv_delete_friend"
             android:fontFamily="@font/quantico_bold"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/off_white"
@@ -79,7 +81,7 @@
             android:layout_marginStart="@dimen/margin_16dp"
             app:layout_constraintStart_toEndOf="@id/tv_initials"
             app:layout_constraintTop_toBottomOf="@id/tv_name"
-            tools:text="@string/friends"/>
+            android:text="@string/friends"/>
 
         <Button
             android:id="@+id/btn_start_chat"
