@@ -3,14 +3,10 @@ package com.example.chatapplication.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.TextView
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
@@ -25,7 +21,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class DashboardActivity : AppCompatActivity() {
     private val usersFragment = UsersFragment()
     private lateinit var binding: ActivityDashboardBinding
-    private lateinit var spinner: AppCompatSpinner
 
     private lateinit var viewPager: ViewPager2
     private lateinit var pageChangeCallback: ViewPager2.OnPageChangeCallback
@@ -43,7 +38,6 @@ class DashboardActivity : AppCompatActivity() {
 
         headerText = binding.tvHeader
         bottomNav = binding.bottomNavigation
-//        spinner = binding.menuSpinner
         viewPager = binding.fragmentContainer
 
         val viewPagerAdapter = DashboardActivityViewPagerAdapter(this)

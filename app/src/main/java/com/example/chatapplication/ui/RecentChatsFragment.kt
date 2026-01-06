@@ -46,6 +46,7 @@ class RecentChatsFragment : Fragment() {
             }
             startActivity(intent)
         }, {chatRoom ->
+
             messageRepository.deleteChatRoom(chatRoom)
         })
 

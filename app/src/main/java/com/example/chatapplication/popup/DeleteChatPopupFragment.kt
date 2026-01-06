@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.example.chatapplication.databinding.FragmentRegisterPopupBinding
 import androidx.core.graphics.drawable.toDrawable
+import com.example.chatapplication.databinding.FragmentDeleteChatPopupBinding
 
-class RegisterPopupFragment : DialogFragment() {
+class DeleteChatPopupFragment : DialogFragment() {
 
-    private var _binding: FragmentRegisterPopupBinding? = null
+    private var _binding: FragmentDeleteChatPopupBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +24,7 @@ class RegisterPopupFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentRegisterPopupBinding.inflate(inflater, container, false)
+        _binding = FragmentDeleteChatPopupBinding.inflate(inflater, container, false)
 
         return binding.root
     }

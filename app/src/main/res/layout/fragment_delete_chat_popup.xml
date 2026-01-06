@@ -7,22 +7,30 @@
     android:layout_gravity="center"
     android:layout_marginHorizontal="@dimen/margin_24dp"
     android:background="@drawable/popup_background"
-    tools:context=".popup.RegisterPopupFragment">
+    tools:context=".popup.DeleteChatPopupFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:paddingVertical="@dimen/margin_24dp"
-        android:paddingHorizontal="@dimen/margin_24dp">
+        android:paddingVertical="@dimen/margin_24dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="close button"
+            android:src="@drawable/close_button_24"
+            app:layout_constraintBottom_toTopOf="@id/tv_delete_chat"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/tv_confirmed"
+            android:id="@+id/tv_delete_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bagel_fat_one"
-            android:text="@string/registration_confirmed"
+            android:text="@string/confirm_deleting_chat"
             android:textAlignment="center"
+            android:layout_marginHorizontal="@dimen/margin_24dp"
             android:textSize="@dimen/popup_text_size_32sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,11 +39,12 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/registration_confirmed_img_description"
-            android:src="@drawable/outline_person_check_24"
+            android:contentDescription="Delete button"
+            android:src="@drawable/outline_delete_24"
+            android:layout_marginTop="@dimen/margin_6dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_confirmed" />
+            app:layout_constraintTop_toBottomOf="@id/tv_delete_chat"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
