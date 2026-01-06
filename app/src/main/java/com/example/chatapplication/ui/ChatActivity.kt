@@ -167,7 +167,9 @@ class ChatActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener {
-            finish()
+            val intent = Intent(this, DashboardActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
         }
 
         binding.btnImage.setOnClickListener {
