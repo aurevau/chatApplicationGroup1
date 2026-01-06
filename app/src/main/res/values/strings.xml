@@ -47,4 +47,6 @@
     <string name="registration_confirmed_img_description">person with check symbol</string>
     <string name="registration_confirmed">Registration\nconfirmed</string>
     <string name="confirm_deleting_chat">Confirm\ndeleting chat?</string>
+    <string name="close_button_description">close button</string>
+    <string name="delete_button_description">Delete button</string>
 </resources>

@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapplication.adapter.RecentChatsRecyclerAdapter
 import com.example.chatapplication.databinding.FragmentRecentChatsBinding
+import com.example.chatapplication.popup.DeleteChatPopupFragment
+import com.example.chatapplication.popup.RegisterPopupFragment
 import com.example.chatapplication.repository.MessageRepository
 import com.example.chatapplication.viewmodel.AllChatsViewModel
 
@@ -38,17 +40,18 @@ class RecentChatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 1. Skapa adaptern
-        adapter = RecentChatsRecyclerAdapter({ chat ->
-            val intent = Intent(requireContext(), ChatActivity::class.java)
-            intent.putExtra("ROOM_ID", chat.roomId)
-            if (chat.userName != null) {
+        adapter = RecentChatsRecyclerAdapter(
+            onChatClick = { chat ->
+                val intent = Intent(requireContext(), ChatActivity::class.java)
+                intent.putExtra("ROOM_ID", chat.roomId)
                 intent.putExtra("GROUP_NAME", chat.userName)
+                startActivity(intent)
+            },
+            onChatLongClick = { chatRoom ->
+                DeleteChatPopupFragment.newInstance(chatRoom)
+                    .show(parentFragmentManager, "deleteChat")
             }
-            startActivity(intent)
-        }, {chatRoom ->
-
-            messageRepository.deleteChatRoom(chatRoom)
-        })
+        )
 
 
         // 2. Koppla RecyclerView till LayoutManager och Adapter

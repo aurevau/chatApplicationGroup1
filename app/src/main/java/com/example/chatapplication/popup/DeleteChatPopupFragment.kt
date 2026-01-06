@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.core.graphics.drawable.toDrawable
+import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.databinding.FragmentDeleteChatPopupBinding
+import com.example.chatapplication.repository.MessageRepository
 
 class DeleteChatPopupFragment : DialogFragment() {
 
@@ -33,6 +35,28 @@ class DeleteChatPopupFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
 
+        val chatRoom = arguments?.getParcelable<ChatRoom>("chatRoom")
+            ?: return
+
+        binding.btnTrash.setOnClickListener {
+            // Kör delete här
+            MessageRepository().deleteChatRoom(chatRoom)
+            dismiss()
+        }
+
+        binding.btnClosePopup.setOnClickListener {
+            dismiss()
+        }
+    }
+
+    companion object {
+        fun newInstance(chatRoom: ChatRoom): DeleteChatPopupFragment {
+            val fragment = DeleteChatPopupFragment()
+            val args = Bundle()
+            args.putParcelable("chatRoom", chatRoom)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     override fun onDestroyView() {
