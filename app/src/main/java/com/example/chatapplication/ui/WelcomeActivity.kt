@@ -5,21 +5,36 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityWelcomeBinding
 import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.ui.DashboardActivity
 import com.example.chatapplication.viewmodel.AuthViewModel
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class WelcomeActivity : AppCompatActivity() {
 
+    private lateinit var credentialManager: CredentialManager
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
     private lateinit var authViewModel: AuthViewModel
+    private val userRepository = UserRepository()
 
     private lateinit var emailEditText: TextInputLayout
     private lateinit var passwordEditText: TextInputLayout
@@ -30,6 +45,8 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        credentialManager = CredentialManager.create(this)
 
         emailEditText = binding.editTextEmail
         passwordEditText = binding.editTextPassword
@@ -70,6 +87,59 @@ class WelcomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.btnGoogleLogin.setOnClickListener {
+            loginWithGoogle()
+        }
+
+    }
+
+    private fun loginWithGoogle() {
+        lifecycleScope.launch {
+            try {
+                val googleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(baseContext.getString(R.string.default_web_client_id))
+                    .build()
+
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
+
+                val result = credentialManager.getCredential(this@WelcomeActivity, request)
+                handleSignIn(result)
+            } catch (exception: GetCredentialException) {
+                handleFailure(exception)
+            }
+        }
+    }
+
+    private fun handleSignIn(result: GetCredentialResponse) {
+        if (result.credential is CustomCredential && result.credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
+
+            val idToken = googleIdTokenCredential.idToken
+            authViewModel.loginWithGoogle(idToken, {
+            }, {
+                Toast.makeText(this, "not successfully: ${it.message}", Toast.LENGTH_SHORT).show()
+            })
+        }
+
+    }
+
+    private fun handleFailure(exception: GetCredentialException) {
+        when (exception) {
+            is GetCredentialCancellationException -> {
+                Toast.makeText(this, "not successful: ${exception.message}", Toast.LENGTH_SHORT).show()
+
+            }
+            is NoCredentialException -> {
+                Toast.makeText(this, "no google account found on phone: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+
+            }
+        }
     }
 
     fun login() {
