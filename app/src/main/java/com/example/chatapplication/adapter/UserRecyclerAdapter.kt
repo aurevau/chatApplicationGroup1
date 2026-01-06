@@ -122,11 +122,12 @@ class UserRecyclerAdapter(
         val imageUrl = user.profileImageUrl
 
         if (!imageUrl.isNullOrEmpty()) {
-            holder.initialCircle.visibility = View.GONE
+            holder.initialCircle.visibility = View.INVISIBLE
             holder.profilePic.visibility = View.VISIBLE
 
             Glide.with(holder.profilePic.context)
                 .load(imageUrl)
+                .circleCrop()
                 .into(holder.profilePic)
         } else {
             holder.initialCircle.visibility = View.VISIBLE
