@@ -4,19 +4,16 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-
-    <!-- Android 13+ -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" /> <!-- Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-
-    <!-- Android 12 och ner -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> <!-- Android 12 och ner -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,9 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication">
         <activity
-            android:name=".ui.ChatActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".ui.ProfileActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="false" />
@@ -40,8 +40,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.WelcomeActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".ui.LaunchActivity"
             android:exported="true">

@@ -2,6 +2,7 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -87,7 +88,7 @@ class UsersFragment : Fragment() {
         }, { user ->
             viewModel.addFriend(currentUserId, user)
         }, { user ->
-            viewModel.removeFriend(currentUserId, user.id)
+            viewModel.removeFriend(currentUserId, user)
         }, { user, isChecked ->
             if (isChecked) {
                 selectedUsersSet.add(user)
@@ -188,6 +189,8 @@ class UsersFragment : Fragment() {
         viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
 
             adapter.updateFriendList(friendsList)
+            Log.d("FRIENDS_OBSERVED", "Updated friends: ${friendsList.map { it.fullName }}")
+
         }
 
         viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
