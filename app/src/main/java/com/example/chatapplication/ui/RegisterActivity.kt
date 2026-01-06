@@ -90,19 +90,26 @@ class RegisterActivity : AppCompatActivity() {
                 imageUri,
                 onSuccess = {
                     // Om registreringen lyckades
-                    Toast.makeText(this, "Registrering lyckades!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, WelcomeActivity::class.java)
                     intent.putExtra("EMAIL", email)
                     intent.putExtra("PASSWORD", password)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    showPopup()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        startActivity(intent)
+                    }, 2500)
                 },
                 onFailure = { errorMessage ->
                     // Om registreringen misslyckades
-                    Toast.makeText(this, "Fel: $errorMessage", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_LONG).show()
                 }
             )
         }
+    }
+    fun showPopup() {
+        val fragment = RegisterPopupFragment()
+        fragment.show(supportFragmentManager, "RegisterPopupFragment")
     }
 
     private fun chooseImage() {

@@ -47,5 +47,7 @@
     <dimen name="add_friend_text_size_list_item_12sp">12sp</dimen>
     <dimen name="last_chat_text_size_recent_list_item_14sp">14sp</dimen>
     <dimen name="popup_text_size_32sp">32sp</dimen>
+    <dimen name="margin_128dp">128dp</dimen>
+    <dimen name="chat_write_field_radius_12dp">12dp</dimen>
 
 </resources>

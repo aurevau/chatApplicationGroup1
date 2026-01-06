@@ -7,8 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -20,8 +18,8 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapplication.R
-import com.example.chatapplication.databinding.ActivityChatBinding
 import com.example.chatapplication.adapter.ChatRecyclerAdapter
+import com.example.chatapplication.databinding.ActivityChatBinding
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.example.chatapplication.viewmodel.ChatViewModel
 import java.io.File
@@ -56,15 +54,23 @@ class ChatActivity : AppCompatActivity() {
             val popupMenu = PopupMenu(wrapper, it)
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.menu_profile -> {false}
+                    R.id.menu_profile -> {
+                        val intent = Intent(this@ChatActivity, ProfileActivity::class.java)
+                        startActivity(intent)
+                        true
+                    }
+
                     R.id.menu_logout -> {
                         authViewModel.logOut()
 
                         // Start WelcomeActivity with CLEAR_TASK
                         val intent = Intent(this@ChatActivity, WelcomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
-                        true }
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -111,7 +117,7 @@ class ChatActivity : AppCompatActivity() {
         viewModel.start(currentRoomId)
 
 
-        val adapter = ChatRecyclerAdapter{ message ->
+        val adapter = ChatRecyclerAdapter { message ->
             android.app.AlertDialog.Builder(this)
                 .setMessage("Do you want to delete this message?")
                 .setPositiveButton("Yes") { _, _ ->

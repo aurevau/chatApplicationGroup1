@@ -13,8 +13,8 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/header_and_edit_text_color"
         android:padding="@dimen/margin_12dp"
-        android:background="@color/header_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,12 +24,12 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:textAlignment="center"
                 android:id="@+id/front_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bagel_fat_one"
                 android:text="@string/welcome_header"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/header_text_size_48sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -45,21 +45,24 @@
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_128dp"
         android:hint="@string/hint_text_email"
-        android:textColor="@color/black"
         android:textColorHint="@color/hint_text_color"
+        app:boxStrokeColor="@color/hint_text_color"
+        app:cursorColor="@color/off_white"
         app:errorTextColor="@color/white"
-        android:layout_marginTop="128dp"
+        app:hintTextColor="@color/hint_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout">
 
-
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:fontFamily="@font/bagel_fat_one" />
+            android:backgroundTint="@color/header_and_edit_text_color"
+            android:fontFamily="@font/bagel_fat_one"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/off_white" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -67,12 +70,14 @@
         android:id="@+id/edit_text_password"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
-        android:layout_marginTop="@dimen/margin_16dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16dp"
         android:hint="@string/hint_text_password"
-        android:textColor="@color/black"
         android:textColorHint="@color/hint_text_color"
+        app:boxStrokeColor="@color/hint_text_color"
+        app:cursorColor="@color/off_white"
         app:errorTextColor="@color/white"
+        app:hintTextColor="@color/hint_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_text_email">
@@ -81,9 +86,10 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/header_and_edit_text_color"
             android:fontFamily="@font/bagel_fat_one"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/off_white" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
