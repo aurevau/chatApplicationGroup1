@@ -50,6 +50,18 @@
         android:textSize="@dimen/name_text_size_list_item_20sp"
         android:textStyle="bold" />
 
+    <ImageView
+        android:id="@+id/profilePic"
+        android:layout_width="@dimen/size_60dp"
+        android:layout_height="@dimen/size_60dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:background="@drawable/circle_image"
+        android:src="@drawable/ic_profile_placeholder"
+
+        />
+
     <!-- Namn och senaste meddelande -->
     <LinearLayout
         android:layout_width="0dp"

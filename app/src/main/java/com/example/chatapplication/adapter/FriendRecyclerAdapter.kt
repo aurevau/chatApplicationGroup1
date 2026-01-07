@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapplication.R
 import com.example.chatapplication.data.User
+import com.example.chatapplication.repository.UserRepository
 
 class FriendRecyclerAdapter(
     val onItemClick: (User) -> Unit,
@@ -21,6 +23,7 @@ class FriendRecyclerAdapter(
     private var friendRequests = emptyList<User>()
 
 
+    private val db = UserRepository()
     private var incomingFriendRequests = emptyList<User>()
     private var combined = emptyList<User>()
 
@@ -118,8 +121,6 @@ class FriendRecyclerAdapter(
         holder.deleteFriend.setOnClickListener {
             onDeleteFriendClick(user)
 
-
-
         }
 
         holder.itemView.setOnClickListener {
@@ -131,18 +132,35 @@ class FriendRecyclerAdapter(
             onProfileClick(user)
         }
 
+        holder.profilePic.setOnClickListener {
+            onProfileClick(user)
+        }
+
+        db.getUserDetailsById(user.id ?: "") {
+            if (!it?.profileImageUrl.isNullOrEmpty()) {
+                holder.initialCircle.visibility = View.INVISIBLE
+                holder.profilePic.visibility = View.VISIBLE
+                Glide.with(holder.profilePic.context)
+                    .load(it.profileImageUrl)
+                    .circleCrop()
+                    .into(holder.profilePic)
+            } else {
+                holder.initialCircle.visibility = View.VISIBLE
+                holder.profilePic.visibility = View.GONE
+                holder.initialCircle.text = user.initials.ifBlank { "?" }
+            }
+        }
 
 
-
-        holder.initialCircle.text = user.initials.ifBlank { "?" }
         holder.name.text = user.fullName
-
 
     }
 
     override fun getItemCount(): Int = combined.size
 
     inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+
+        val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend_friend)
         val acceptFriend: TextView = itemView.findViewById(R.id.tv_accept_friend_friend)
 

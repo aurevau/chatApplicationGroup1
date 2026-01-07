@@ -13,6 +13,20 @@
         android:layout_height="match_parent"
         android:padding="@dimen/margin_12dp">
 
+        <ImageView
+            android:id="@+id/profilePic"
+            android:layout_width="@dimen/initials_circle_background_40dp"
+            android:layout_height="@dimen/initials_circle_background_40dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            android:background="@drawable/circle_image"
+            android:src="@drawable/ic_profile_placeholder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
         <TextView
             android:id="@+id/tv_initials_friend"
             android:layout_width="@dimen/initials_circle_background_40dp"
