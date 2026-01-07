@@ -232,6 +232,7 @@ class MessageRepository {
                                 ChatRoom(
                                     roomId = doc.id,
                                     userName = userDoc.getString("fullName") ?: "Unknown User",
+                                    chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
                                     lastMessage = doc.getString("lastMessage"),
                                     timestamp = DateUtils.formatTimestamp(
                                         doc.getLong("lastMessageTimestamp") ?: 0

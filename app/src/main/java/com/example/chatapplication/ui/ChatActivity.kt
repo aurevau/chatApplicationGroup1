@@ -17,6 +17,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.chatapplication.R
 import com.example.chatapplication.adapter.ChatRecyclerAdapter
 import com.example.chatapplication.databinding.ActivityChatBinding
@@ -93,6 +94,7 @@ class ChatActivity : AppCompatActivity() {
 
         val userId = intent.getStringExtra("USER_ID")
         val groupRoomId = intent.getStringExtra("ROOM_ID")
+        val imageUrl = intent.getStringExtra("IMAGE_URL")
 
         val groupName = intent.getStringExtra("GROUP_NAME")
 
@@ -102,16 +104,32 @@ class ChatActivity : AppCompatActivity() {
 
         }
 
-        if (!groupName.isNullOrEmpty()) {
-            binding.tvHeader.text = groupName
+
+        if (!imageUrl.isNullOrEmpty()) {
             binding.tvInitials.visibility = View.GONE
-        } else if (userId != null) {
+            binding.profilePic.visibility = View.VISIBLE
+            Glide.with(binding.profilePic.context)
+                .load(imageUrl)
+                .circleCrop()
+                .into(binding.profilePic)
+        } else {
+            binding.tvInitials.visibility = View.GONE
+        }
+        if (userId != null) {
             viewModel.getUserDetailsById(userId)
             viewModel.targetUser.observe(this) { user ->
+                Log.d("??? user", user.toString())
+                binding.tvInitials.visibility = View.VISIBLE
                 binding.tvHeader.text = user?.fullName
                 binding.tvInitials.text = user?.initials
             }
+        } else if (!groupName.isNullOrEmpty()) {
+            Log.d("??? group", groupName)
+            binding.tvHeader.text = groupName
+            //binding.tvInitials.visibility = View.GONE
+
         }
+
 
 
         viewModel.start(currentRoomId)

@@ -1,12 +1,15 @@
 package com.example.chatapplication.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
@@ -42,6 +45,8 @@ class RecentChatsRecyclerAdapter(
 
     // ViewHolder = håller widgets i varje rad
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         private val initials = itemView.findViewById<TextView>(R.id.tvProfileInitials)
         private val name = itemView.findViewById<TextView>(R.id.tvChatName)
         private val message = itemView.findViewById<TextView>(R.id.tvLastMessage)
@@ -66,20 +71,42 @@ class RecentChatsRecyclerAdapter(
                 chatIcon.setImageResource(R.drawable.group_icon)
                 chatIcon.visibility = View.VISIBLE
                 fLChatIcon.visibility = View.VISIBLE
-
+                profilePic.visibility = View.GONE
                 initials.visibility = View.GONE
             } else {
                 chatIcon.visibility = View.GONE
                 fLChatIcon.visibility = View.GONE
-                initials.visibility = View.VISIBLE
+                //initials.visibility = View.VISIBLE
+                val imageUrl = chat.chatRoomImageUrl
+                if (!imageUrl.isNullOrEmpty()) {
+                    initials.visibility = View.GONE
+                    profilePic.visibility = View.VISIBLE
+                    Glide.with(profilePic.context)
+                        .load(imageUrl)
+                        .circleCrop()
+                        .into(profilePic)
+                } else {
+                    initials.visibility = View.VISIBLE
+                    profilePic.visibility = View.GONE
+                    initials.text = chat.userName?.take(2)
+                }
             }
-            initials.text = chat.userName?.take(2)  // T.ex. första bokstäverna i namnet
+
             name.text = chat.userName ?: "Okänd"
             message.text = chat.lastMessage ?: "Inget meddelande"
             time.text = chat.timestamp ?: "Nu"
             itemView.setOnClickListener {
                 onChatClick(chat)
             }
+
+              // T.ex. första bokstäverna i namnet
+
+
+
+
+            Log.d("profileImageUrl", chat.toString())
+
+
         }
     }
 }

@@ -175,7 +175,6 @@ class UserRecyclerAdapter(
 
 
         val imageUrl = user.profileImageUrl
-
         if (!imageUrl.isNullOrEmpty()) {
             holder.initialCircle.visibility = View.INVISIBLE
             holder.profilePic.visibility = View.VISIBLE
@@ -185,10 +184,25 @@ class UserRecyclerAdapter(
                 .circleCrop()
                 .into(holder.profilePic)
         } else {
-            holder.initialCircle.visibility = View.VISIBLE
-            holder.profilePic.visibility = View.GONE
-            holder.initialCircle.text = user.initials
+
+            db.getUserDetailsById(user.id ?: "") {
+
+                if (!it?.profileImageUrl.isNullOrEmpty()) {
+                    holder.initialCircle.visibility = View.INVISIBLE
+                    holder.profilePic.visibility = View.VISIBLE
+                    Glide.with(holder.profilePic.context)
+                        .load(it.profileImageUrl)
+                        .circleCrop()
+                        .into(holder.profilePic)
+                } else {
+                    holder.initialCircle.visibility = View.VISIBLE
+                    holder.profilePic.visibility = View.GONE
+                    holder.initialCircle.text = user.initials
+                }
+
+            }
         }
+
         holder.name.text = if (user.id == db.getCurrentUserId()) {
             "${user.fullName} (Me)"
         } else {
@@ -215,7 +229,7 @@ class UserRecyclerAdapter(
 
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)

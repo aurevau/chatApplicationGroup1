@@ -1,5 +1,6 @@
 package com.example.chatapplication.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
         val user = users[position]
         holder.name.text = user.fullName
         holder.initials.text = user.initials
+        Log.d("!!!", user.toString())
 
         holder.itemView.setOnClickListener {
             onItemClick(user)
