@@ -4,15 +4,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.chatapplication.R
 import com.example.chatapplication.data.User
+import com.example.chatapplication.databinding.ListItemUserBinding
 import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.viewmodel.UserViewModel
 
@@ -43,11 +38,12 @@ class UserRecyclerAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): UserRecyclerAdapter.UserViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.list_item_user, parent, false)
-        return UserViewHolder(view)
-
-
+        val binding = ListItemUserBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return UserViewHolder(binding)
     }
 
     fun updateFriendList(newFriends: List<User>) {
@@ -84,75 +80,61 @@ class UserRecyclerAdapter(
         val isSelected = selection.any { it.id == user.id }
 
 
-
-
-
-
-        holder.checkBox.setOnCheckedChangeListener(null)
-        holder.checkBox.isChecked = isSelected
-        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+        holder.binding.checkbox.setOnCheckedChangeListener(null)
+        holder.binding.checkbox.isChecked = isSelected
+        holder.binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
             onCheckButtonClick(user, isChecked)
         }
 
         val isFriend = friends.any { it.id == user.id }
 
-        holder.addFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
-        holder.deleteFriend.visibility = if (isFriend) View.VISIBLE else View.GONE
+        holder.binding.tvAddFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
+        holder.binding.tvDeleteFriend.visibility = if (isFriend) View.VISIBLE else View.GONE
 
 
-
-
-        holder.addFriend.setOnClickListener {
+        holder.binding.tvAddFriend.setOnClickListener {
             onAddFriendClick(user)
-
-
-
-
-
         }
 
-        holder.deleteFriend.setOnClickListener {
+        holder.binding.tvDeleteFriend.setOnClickListener {
             onDeleteFriendClick(user)
-
-
-
         }
 
 
         val imageUrl = user.profileImageUrl
 
         if (!imageUrl.isNullOrEmpty()) {
-            holder.initialCircle.visibility = View.INVISIBLE
-            holder.profilePic.visibility = View.VISIBLE
+            holder.binding.tvInitials.visibility = View.INVISIBLE
+            holder.binding.profilePic.visibility = View.VISIBLE
 
-            Glide.with(holder.profilePic.context)
+            Glide.with(holder.binding.profilePic.context)
                 .load(imageUrl)
                 .circleCrop()
-                .into(holder.profilePic)
+                .into(holder.binding.profilePic)
         } else {
-            holder.initialCircle.visibility = View.VISIBLE
-            holder.profilePic.visibility = View.GONE
-            holder.initialCircle.text = user.initials
+            holder.binding.tvInitials.visibility = View.VISIBLE
+            holder.binding.profilePic.visibility = View.GONE
+            holder.binding.tvInitials.text = user.initials
         }
-        holder.name.text = if (user.id == db.getCurrentUserId()) {
+
+        holder.binding.tvName.text = if (user.id == db.getCurrentUserId()) {
             "${user.fullName} (Me)"
         } else {
             user.fullName
         }
 
 
-        holder.itemView.setOnLongClickListener {
+        holder.binding.root.setOnLongClickListener {
             onItemLongClick(user)
             true
         }
 
 
-        holder.itemView.setOnClickListener {
+        holder.binding.root.setOnClickListener {
             onItemClick(user)
-
         }
 
-        holder.button.setOnClickListener {
+        holder.binding.btnStartChat.setOnClickListener {
             onButtonClick(user)
         }
     }
@@ -160,15 +142,7 @@ class UserRecyclerAdapter(
 
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class UserViewHolder(val binding: ListItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
-        val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)
-        val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend)
-        val button: Button = itemView.findViewById(R.id.btn_start_chat)
-        val initialCircle: TextView = itemView.findViewById(R.id.tv_initials)
-        val name: TextView = itemView.findViewById(R.id.tv_name)
-
-        val checkBox: CheckBox = itemView.findViewById(R.id.checkbox)
     }
 }

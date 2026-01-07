@@ -4,11 +4,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
 import com.example.chatapplication.data.User
+import com.example.chatapplication.databinding.ListItemFriendsBinding
 
 class FriendRecyclerAdapter(
     val onItemClick: (User) -> Unit,
@@ -17,18 +15,22 @@ class FriendRecyclerAdapter(
     val onProfileClick: (User) -> Unit
 ): RecyclerView.Adapter<FriendRecyclerAdapter.UserViewHolder>() {
 
-   private var friends = emptyList<User>()
+    private var friends = emptyList<User>()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): FriendRecyclerAdapter.UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_friends, parent, false)
-        return UserViewHolder(view)
+        val binding = ListItemFriendsBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return UserViewHolder(binding)
     }
 
     fun updateFriendList(newFriends: List<User>) {
         Log.d("Adapter", "Friends list updated: ${newFriends.map { it.fullName }}")
-
         friends = newFriends
         notifyDataSetChanged()
     }
@@ -38,58 +40,38 @@ class FriendRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    // holder: ViewHolder object that holds references to views for ONE row in RecyclerView
     override fun onBindViewHolder(
         holder: FriendRecyclerAdapter.UserViewHolder,
         position: Int
     ) {
         val friend = friends[position]
 
-        holder.deleteFriend.visibility = View.VISIBLE
+        holder.binding.tvDeleteFriendFriend.visibility = View.VISIBLE
 
-        holder.addFriend.setOnClickListener {
+        holder.binding.tvAddFriendFriend.setOnClickListener {
             onAddFriendClick(friend)
-
-
-
-
-
         }
 
-        holder.deleteFriend.setOnClickListener {
+        holder.binding.tvDeleteFriendFriend.setOnClickListener {
             onDeleteFriendClick(friend)
-
-
-
         }
 
-        holder.itemView.setOnClickListener {
+        holder.binding.root.setOnClickListener {
             onItemClick(friend)
-
         }
 
-        holder.initialCircle.setOnClickListener {
+        holder.binding.tvInitialsFriend.setOnClickListener {
             onProfileClick(friend)
         }
 
-
-
-
-        holder.initialCircle.text = friend.initials.ifBlank { "?" }
-        holder.name.text = friend.fullName
-
-
+        holder.binding.tvInitialsFriend.text = friend.initials.ifBlank { "?" }
+        holder.binding.tvNameFriend.text = friend.fullName
     }
 
     override fun getItemCount(): Int = friends.size
 
-    inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend_friend)
-        val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend_friend)
-
-        val initialCircle: TextView = itemView.findViewById(R.id.tv_initials_friend)
-        val name: TextView = itemView.findViewById(R.id.tv_name_friend)
+    inner class UserViewHolder(val binding: ListItemFriendsBinding): RecyclerView.ViewHolder(binding.root) {
 
     }
-
-
 }

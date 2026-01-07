@@ -15,6 +15,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 class ChatRecyclerAdapter(
+
+    // onMessageClick: Callback function triggered when user clicks a sent message (for delete functionality)
     private val onMessageClick: (Message) -> Unit
 ) :
     ListAdapter<Message, RecyclerView.ViewHolder>(Diff()) {
@@ -24,6 +26,7 @@ class ChatRecyclerAdapter(
         private const val RECEIVED = 2
     }
 
+    // Determines which layout to use based on who sent the message
     override fun getItemViewType(position: Int): Int {
         val myId = Firebase.auth.currentUser?.uid
         return if (getItem(position).senderId == myId) SENT else RECEIVED
@@ -57,8 +60,10 @@ class ChatRecyclerAdapter(
             binding.root.setOnClickListener {
                 onMessageClick(message)
             }
+            // Show image if message contains imageUrl, otherwise hide the ImageView
             if (!message.imageUrl.isNullOrEmpty()) {
                 binding.imgMessage.visibility = View.VISIBLE
+                // Use Glide library to load and display the image from URL
                 Glide.with(binding.imgMessage.context)
                     .load(message.imageUrl)
                     .into(binding.imgMessage)
@@ -102,6 +107,8 @@ class ChatRecyclerAdapter(
 
     }
 
+
+    //Diff is a helper class  that tells which items changed
     class Diff : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(a: Message, b: Message) = a.id == b.id
         override fun areContentsTheSame(a: Message, b: Message) = a == b

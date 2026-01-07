@@ -3,52 +3,44 @@ package com.example.chatapplication.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
+import com.example.chatapplication.databinding.ItemRecentChatBinding
 
 class RecentChatsRecyclerAdapter(
     private val onChatClick: (ChatRoom) -> Unit,
     val onChatLongClick: (ChatRoom) -> Unit,
 ) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
-    private var chats = emptyList<ChatRoom>()  // Ersätt ChatRoom med er model-klass
+    private var chats = emptyList<ChatRoom>()
 
-    // Uppdatera listan när data kommer från ViewModel
+    // Update the list when data comes from the ViewModel
     fun setChats(newChats: List<ChatRoom>) {
         chats = newChats
-        notifyDataSetChanged()  // Uppdatera RecyclerView
+        notifyDataSetChanged()  // Update RecyclerView
     }
 
-    // Hur många rader?
+    // How many rows?
     override fun getItemCount() = chats.size
 
-    // Skapa en rad (använd item_recent_chat.xml)
+    // Create a row (use item_recent_chat.xml)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_recent_chat, parent, false)
-        return ChatViewHolder(view)
+        val binding = ItemRecentChatBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ChatViewHolder(binding)
     }
 
-    // Fyll i data i varje rad
+    // Fill data in each row
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(chats[position], onChatClick, onChatLongClick )
-
-
+        holder.bind(chats[position], onChatClick, onChatLongClick)
     }
 
-    // ViewHolder = håller widgets i varje rad
-    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val initials = itemView.findViewById<TextView>(R.id.tvProfileInitials)
-        private val name = itemView.findViewById<TextView>(R.id.tvChatName)
-        private val message = itemView.findViewById<TextView>(R.id.tvLastMessage)
-        private val time = itemView.findViewById<TextView>(R.id.tvTimestamp)
-
-        private val chatIcon = itemView.findViewById<ImageView>(R.id.ivChatIcon)
-        private val fLChatIcon = itemView.findViewById<FrameLayout>(R.id.fl_ChatIcon)
+    // ViewHolder = holds widgets in each row
+    class ChatViewHolder(val binding: ItemRecentChatBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             chat: ChatRoom,
@@ -56,28 +48,29 @@ class RecentChatsRecyclerAdapter(
             onChatLongClick: (ChatRoom) -> Unit
         ) {
 
-            itemView.setOnLongClickListener {
+            binding.root.setOnLongClickListener {
                 onChatLongClick(chat)
                 true
             }
-            // Fyll i data här – anpassa efter er ChatRoom-modell
 
+            // Show group icon or initials based on chat type
             if(chat.isGroup) {
-                chatIcon.setImageResource(R.drawable.group_icon)
-                chatIcon.visibility = View.VISIBLE
-                fLChatIcon.visibility = View.VISIBLE
-
-                initials.visibility = View.GONE
+                binding.ivChatIcon.setImageResource(R.drawable.group_icon)
+                binding.ivChatIcon.visibility = View.VISIBLE
+                binding.flChatIcon.visibility = View.VISIBLE
+                binding.tvProfileInitials.visibility = View.GONE
             } else {
-                chatIcon.visibility = View.GONE
-                fLChatIcon.visibility = View.GONE
-                initials.visibility = View.VISIBLE
+                binding.ivChatIcon.visibility = View.GONE
+                binding.flChatIcon.visibility = View.GONE
+                binding.tvProfileInitials.visibility = View.VISIBLE
             }
-            initials.text = chat.userName?.take(2)  // T.ex. första bokstäverna i namnet
-            name.text = chat.userName ?: "Okänd"
-            message.text = chat.lastMessage ?: "Inget meddelande"
-            time.text = chat.timestamp ?: "Nu"
-            itemView.setOnClickListener {
+
+            binding.tvProfileInitials.text = chat.userName?.take(2)  // First 2 letters of name
+            binding.tvChatName.text = chat.userName ?: "Unknown"
+            binding.tvLastMessage.text = chat.lastMessage ?: "No Message"
+            binding.tvTimestamp.text = chat.timestamp ?: "Now"
+
+            binding.root.setOnClickListener {
                 onChatClick(chat)
             }
         }

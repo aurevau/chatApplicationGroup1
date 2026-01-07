@@ -1,12 +1,10 @@
 package com.example.chatapplication.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapplication.R
 import com.example.chatapplication.data.User
+import com.example.chatapplication.databinding.ListItemSelectedUsersBinding
 import com.example.chatapplication.repository.UserRepository
 
 class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
@@ -20,9 +18,12 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
         parent: ViewGroup,
         viewType: Int
     ): SelectedUsersRecyclerAdapter.UserViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item_selected_users, parent, false)
-        return UserViewHolder(view)
+        val binding = ListItemSelectedUsersBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return UserViewHolder(binding)
     }
 
     fun submitList(userList: List<User>) {
@@ -36,19 +37,17 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
         position: Int
     ) {
         val user = users[position]
-        holder.name.text = user.fullName
-        holder.initials.text = user.initials
+        holder.binding.tvNameSelectedUsers.text = user.fullName
+        holder.binding.tvInitialsSelectedUsers.text = user.initials
 
-        holder.itemView.setOnClickListener {
+        holder.binding.root.setOnClickListener {
             onItemClick(user)
         }
     }
 
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.tv_name_selected_users)
-        val initials: TextView = itemView.findViewById(R.id.tv_initials_selected_users)
+    inner class UserViewHolder(val binding: ListItemSelectedUsersBinding) : RecyclerView.ViewHolder(binding.root) {
 
     }
 }
