@@ -53,9 +53,10 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:textColor="@color/off_white"
-            android:layout_marginStart="@dimen/margin_16dp"
+            android:layout_marginStart="6dp"
             app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
             app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/add_friend"/>
 
         <TextView
@@ -69,7 +70,39 @@
             android:layout_marginStart="@dimen/margin_16dp"
             app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
             app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/friends"/>
+
+        <TextView
+            android:id="@+id/tv_accept_friend_friend"
+            android:visibility="gone"
+            android:fontFamily="@font/quantico_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/add_friend_text_size_list_item_12sp"
+            android:textColor="@color/off_white"
+            android:layout_marginStart="6dp"
+            app:layout_constraintStart_toEndOf="@id/tv_initials_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/add_friend"/>
+
+        <TextView
+            android:id="@+id/tv_decline_friend_friend"
+            android:visibility="gone"
+            android:fontFamily="@font/quantico_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/add_friend_text_size_list_item_12sp"
+            android:textColor="@color/decline_red"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="6dp"
+            app:layout_constraintStart_toEndOf="@id/tv_accept_friend_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_friend"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/decline_friend"/>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

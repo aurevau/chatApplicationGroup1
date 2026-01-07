@@ -51,4 +51,6 @@
     <string name="delete_button_description">Delete button</string>
     <string name="save">Save</string>
     <string name="default_web_client_id">409410581006-m60133hoj1b1uevksrc8csgusq9ihi18.apps.googleusercontent.com</string>
+    <string name="decline_friend">Decline</string>
+    <string name="cancel">Cancel</string>
 </resources>

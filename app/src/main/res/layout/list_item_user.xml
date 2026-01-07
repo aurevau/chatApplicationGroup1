@@ -73,17 +73,56 @@
 
         <TextView
             android:id="@+id/tv_add_friend"
-            android:visibility="gone"
+            android:visibility="visible"
             android:fontFamily="@font/quantico_bold"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:textColor="@color/off_white"
-            android:layout_marginStart="@dimen/margin_16dp"
+            android:layout_marginStart="6dp"
             app:layout_constraintStart_toEndOf="@id/tv_initials"
             app:layout_constraintTop_toBottomOf="@id/tv_name"
             android:text="@string/add_friend"/>
+        <TextView
+            android:id="@+id/tv_accept_friend"
+            android:visibility="gone"
+            android:fontFamily="@font/quantico_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/add_friend_text_size_list_item_12sp"
+            android:textColor="@color/off_white"
+            android:layout_marginStart="6dp"
+            app:layout_constraintStart_toEndOf="@id/tv_initials"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            android:text="@string/add_friend"/>
+
+        <TextView
+            android:id="@+id/tv_decline_friend"
+            android:visibility="gone"
+            android:fontFamily="@font/quantico_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/add_friend_text_size_list_item_12sp"
+            android:textColor="@color/decline_red"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toEndOf="@id/tv_accept_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            android:text="@string/decline_friend"/>
+
+        <TextView
+            android:id="@+id/tv_cancel_friend"
+            android:visibility="gone"
+            android:fontFamily="@font/quantico_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/add_friend_text_size_list_item_12sp"
+            android:textColor="@color/decline_red"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toEndOf="@id/tv_add_friend"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            android:text="@string/cancel"/>
 
         <TextView
             android:id="@+id/tv_delete_friend"
@@ -93,7 +132,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/off_white"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
-            android:layout_marginStart="@dimen/margin_16dp"
+            android:layout_marginStart="6dp"
             app:layout_constraintStart_toEndOf="@id/tv_initials"
             app:layout_constraintTop_toBottomOf="@id/tv_name"
             android:text="@string/friends"/>

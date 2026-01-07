@@ -18,8 +18,6 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 
 class UserRepository {
-    private val listeners = mutableListOf<ListenerRegistration>()
-    private var friendsListener: ListenerRegistration? = null
 
     private val db = Firebase.firestore
 
@@ -29,6 +27,12 @@ class UserRepository {
 
     private val _friends = MutableLiveData<MutableList<User>>()
     val friends: LiveData<MutableList<User>> get() = _friends
+
+    private val _outgoingFriendRequests = MutableLiveData<List<User>>()
+    val outgoingFriendRequests: LiveData<List<User>> get() = _outgoingFriendRequests
+
+    private val _incomingFriendRequests = MutableLiveData<List<User>>()
+    val incomingFriendRequests: LiveData<List<User>> get() = _incomingFriendRequests
 
     private val _selection = MutableLiveData<MutableList<User>>()
     val selection: LiveData<MutableList<User>> get() = _selection
@@ -210,20 +214,59 @@ class UserRepository {
 
     fun deleteFriendFromFirebase(user: User) {
         val currentUserId = getCurrentUserId()
-        if (currentUserId != null && user.id != null) {
-            db.collection("users")
-                .document(currentUserId)
-                .collection("friends")
-                .document(user.id)
-                .delete()
+        val otherUserId = user.id
+
+        if (currentUserId != null && otherUserId != null) {
+            val batch = db.batch()
+
+            batch.delete(
+                db.collection("users")
+                    .document(currentUserId)
+                    .collection("friends")
+                    .document(otherUserId)
+            )
+            batch.delete(
+                db.collection("users")
+                    .document(otherUserId)
+                    .collection("friends")
+                    .document(currentUserId)
+            )
+
+            batch.delete(
+                db.collection("users")
+                    .document(currentUserId)
+                    .collection("outgoingRequests")
+                    .document(otherUserId)
+            )
+            batch.delete(
+                db.collection("users")
+                    .document(currentUserId)
+                    .collection("friendRequests")
+                    .document(otherUserId)
+            )
+            batch.delete(
+                db.collection("users")
+                    .document(otherUserId)
+                    .collection("outgoingRequests")
+                    .document(currentUserId)
+            )
+            batch.delete(
+                db.collection("users")
+                    .document(otherUserId)
+                    .collection("friendRequests")
+                    .document(currentUserId)
+            )
+
+            batch.commit()
                 .addOnSuccessListener {
-                    Log.d("Friend", "Deleted friend ${user.fullName}")
+                    Log.d("Friend", "Deleted friendship and cleared all requests between $currentUserId and $otherUserId")
                 }
                 .addOnFailureListener { e ->
-                    Log.e("Friend", "Failed to delete friend ${user.fullName}", e)
+                    Log.e("Friend", "Failed to delete friendship and requests", e)
                 }
         }
     }
+
 
 
 
@@ -232,7 +275,7 @@ class UserRepository {
         if (currentUserId != null && user.id != null) {
             db.collection("users")
                 .document(currentUserId)
-                .collection("recentSearches") // ⚠️ korrekt collection
+                .collection("recentSearches")
                 .document(user.id)
                 .delete()
                 .addOnSuccessListener {
@@ -288,26 +331,6 @@ class UserRepository {
             }
     }
 
-    fun loadFriendsRealtime(currentUserId: String) {
-        db.collection("users")
-            .document(currentUserId)
-            .collection("friends")
-            .addSnapshotListener { snapshots, _ ->
-                val friendList = snapshots?.documents?.mapNotNull { doc ->
-                    User(
-                        id = doc.id,
-                        fullName = doc.getString("friendName") ?: ""
-                    )
-                } ?: emptyList()
-                _friends.value = friendList.toMutableList()
-                Log.d("FRIENDS", friendList.map { it.fullName }.toString())
-
-            }
-    }
-
-    fun downloadProfilePic(currentUserId: String) {
-
-    }
 
 
 
@@ -326,4 +349,204 @@ class UserRepository {
                 _recentSearchedUsers.value = recent
             }
     }
+
+    fun loadFriendsRealtime(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .addSnapshotListener { snapshots, _ ->
+                val friendList = snapshots?.documents?.mapNotNull { doc ->
+                    User(
+                        id = doc.id,
+                        fullName = doc.getString("fullName") ?: ""
+                    )
+                } ?: emptyList()
+                _friends.value = friendList.toMutableList()
+                Log.d("FRIENDS", friendList.map { it.fullName }.toString())
+
+            }
+    }
+
+    fun sendFriendRequest(fromUserId: String, fromUserName: String, toUserId: String, toUserName: String) {
+        val batch = db.batch()
+
+        // Skapa request hos mottagaren
+        val requestRef = db.collection("users")
+            .document(toUserId)
+            .collection("friendRequests")
+            .document(fromUserId)
+
+        val data = mapOf(
+            "fromUserId" to fromUserId,
+            "fromUserName" to fromUserName,
+            "status" to "pending",
+            "createdAt" to Timestamp.now()
+        )
+        batch.set(requestRef, data)
+
+        val outgoingRef = db.collection("users")
+            .document(fromUserId)
+            .collection("outgoingRequests")
+            .document(toUserId)
+
+        val outgoingData = mapOf(
+            "toUserId" to toUserId,
+            "toUserName" to toUserName,
+            "status" to "pending",
+            "createdAt" to Timestamp.now()
+        )
+        batch.set(outgoingRef, outgoingData)
+
+        batch.commit()
+    }
+
+    fun acceptFriendRequest(currentUserId: String, otherUserId: String, currentUserName: String, otherUserName: String) {
+        val batch = db.batch()
+
+        val currentUserFriendRef = db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .document(otherUserId)
+
+        val otherUserFriendRef = db.collection("users")
+            .document(otherUserId)
+            .collection("friends")
+            .document(currentUserId)
+
+        batch.set(currentUserFriendRef, mapOf(
+            "userId" to otherUserId,
+            "fullName" to otherUserName
+        ))
+
+        batch.set(otherUserFriendRef, mapOf(
+            "userId" to currentUserId,
+            "fullName" to currentUserName
+        ))
+
+        batch.delete(
+            db.collection("users")
+                .document(currentUserId)
+                .collection("friendRequests")
+                .document(otherUserId)
+        )
+        batch.delete(
+            db.collection("users")
+                .document(currentUserId)
+                .collection("outgoingRequests")
+                .document(otherUserId)
+        )
+        batch.delete(
+            db.collection("users")
+                .document(otherUserId)
+                .collection("friendRequests")
+                .document(currentUserId)
+        )
+        batch.delete(
+            db.collection("users")
+                .document(otherUserId)
+                .collection("outgoingRequests")
+                .document(currentUserId)
+        )
+
+        batch.commit()
+            .addOnSuccessListener {
+                loadFriendsRealtime(currentUserId)
+                loadIncomingFriendRequests(currentUserId)
+                loadOutgoingFriendRequests(currentUserId)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Friend", "Failed to accept friend request", e)
+            }
+    }
+
+
+
+    fun loadIncomingFriendRequests(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friendRequests")
+            .addSnapshotListener { snapshots, _ ->
+                val requests = snapshots?.documents?.mapNotNull { doc ->
+                    val id = doc.getString("fromUserId") ?: return@mapNotNull null
+                    val name = doc.getString("fromUserName") ?: "Unknown"
+                    User(id = id, fullName = name)
+                } ?: emptyList()
+                _incomingFriendRequests.value = requests.toMutableList()
+            }
+    }
+
+    fun loadOutgoingFriendRequests(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("outgoingRequests")
+            .addSnapshotListener { snapshots, _ ->
+                val requests = snapshots?.documents?.mapNotNull { doc ->
+                    val id = doc.getString("toUserId") ?: return@mapNotNull null
+                    val name = doc.getString("toUserName") ?: "Unknown"
+                    User(id = id, fullName = name)
+                } ?: emptyList()
+                _outgoingFriendRequests.value = requests.toMutableList()
+            }
+    }
+
+
+
+
+
+    fun declineFriendRequest(currentUserId: String, otherUserId: String) {
+        val batch = db.batch()
+
+        val incomingRef = db.collection("users")
+            .document(currentUserId)
+            .collection("friendRequests")
+            .document(otherUserId)
+        batch.delete(incomingRef)
+
+        val outgoingRef = db.collection("users")
+            .document(otherUserId)
+            .collection("outgoingRequests")
+            .document(currentUserId)
+        batch.delete(outgoingRef)
+
+        batch.commit().addOnSuccessListener {
+            Log.d("FRIEND_REQUEST", "Declined friend request from $otherUserId")
+
+            // Update LiveData explicitly if needed
+            val updatedIncoming = _incomingFriendRequests.value?.filter { it.id != otherUserId }
+            _incomingFriendRequests.postValue(updatedIncoming!!)
+
+            val updatedOutgoing = _outgoingFriendRequests.value?.filter { it.id != currentUserId }
+            _outgoingFriendRequests.postValue(updatedOutgoing!!)
+        }.addOnFailureListener { e ->
+            Log.e("FRIEND_REQUEST", "Failed to decline friend request", e)
+        }
+    }
+
+    fun cancelOutgoingFriendRequest(currentUserId: String, otherUserId: String, onComplete: () -> Unit = {}) {
+        val batch = db.batch()
+
+        val incomingRef = db.collection("users")
+            .document(otherUserId)
+            .collection("friendRequests")
+            .document(currentUserId)
+
+        val outgoingRef = db.collection("users")
+            .document(currentUserId)
+            .collection("outgoingRequests")
+            .document(otherUserId)
+
+        batch.delete(incomingRef)
+        batch.delete(outgoingRef)
+
+        batch.commit().addOnSuccessListener {
+            Log.d("FRIEND_REQUEST", "Cancelled outgoing request to $otherUserId")
+            onComplete()
+            loadOutgoingFriendRequests(currentUserId)
+
+        }.addOnFailureListener { e ->
+            Log.e("FRIEND_REQUEST", "Failed to cancel outgoing request", e)
+        }
+    }
+
+
 }
