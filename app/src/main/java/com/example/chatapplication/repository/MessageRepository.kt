@@ -274,6 +274,23 @@ class MessageRepository {
             .collection("messages")
             .document(messageId)
             .delete()
+            .addOnSuccessListener {
+                checkAndDeleteEmptyChat(roomId)
+            }
+    }
+    private fun checkAndDeleteEmptyChat(roomId: String) {
+        db.collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (snapshot.isEmpty) {
+                    // No messages left - delete the chat room
+                    db.collection("chatRooms")
+                        .document(roomId)
+                        .delete()
+                }
+            }
     }
 
 
