@@ -14,10 +14,16 @@ class UserViewModel: ViewModel() {
 
     val user: LiveData<MutableList<User>> = dataManager.users
     val friends: LiveData<MutableList<User>> = dataManager.friends
+
+
     val selection: LiveData<MutableList<User>> = dataManager.selection
 
     val recentSearchedUsers: LiveData<List<User>> = dataManager.recentSearchedUsers
     val searchResults: LiveData<List<User>> = dataManager.searchResults
+
+    val outgoingFriendRequest: LiveData<List<User>> = dataManager.outgoingFriendRequests
+    val incomingFriendRequest: LiveData<List<User>> = dataManager.incomingFriendRequests
+
 
 
 
@@ -103,6 +109,39 @@ class UserViewModel: ViewModel() {
     fun clearRecentSearches() {
         dataManager.clearRecentSearches()
     }
+
+
+
+
+
+    fun acceptFriendRequest(currentUserId: String, otherUserId: String, currentUserName: String, otherUserName: String) {
+        dataManager.acceptFriendRequest(currentUserId, otherUserId, currentUserName, otherUserName)
+    }
+
+    fun sendFriendRequest( fromUserId: String, fromUserName: String, toUserId: String, toUserName: String) {
+        dataManager.sendFriendRequest(fromUserId, fromUserName, toUserId, toUserName)
+    }
+
+    fun loadOutgoingFriendRequests(currentUserId: String) {
+        dataManager.loadOutgoingFriendRequests(currentUserId)
+    }
+
+
+
+    fun cancelOutgoingFriendRequest(currentUserId: String, otherUserId: String, onComplete: () -> Unit = {}) {
+        dataManager.cancelOutgoingFriendRequest(currentUserId, otherUserId)
+    }
+
+    fun loadIncomingFriendRequests(currentUserId: String) {
+        dataManager.loadIncomingFriendRequests(currentUserId)
+    }
+
+    fun declineFriendRequest(currentUserId: String, otherUserId: String) {
+        dataManager.declineFriendRequest(currentUserId, otherUserId)
+    }
+
+
+
 
 
 

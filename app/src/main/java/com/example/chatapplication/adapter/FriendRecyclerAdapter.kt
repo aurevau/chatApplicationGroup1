@@ -6,16 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapplication.R
 import com.example.chatapplication.data.User
 
 class FriendRecyclerAdapter(
     val onItemClick: (User) -> Unit,
-    val onAddFriendClick: (User) -> Unit,
     val onDeleteFriendClick: (User) -> Unit,
-    val onProfileClick: (User) -> Unit
+    val onProfileClick: (User) -> Unit,
+    val onAcceptFriendRequest: (User) -> Unit,
+    val onDeclineFriendRequest: (User) -> Unit
 ): RecyclerView.Adapter<FriendRecyclerAdapter.UserViewHolder>() {
+    private var friendRequests = emptyList<User>()
+
+
+    private var incomingFriendRequests = emptyList<User>()
+    private var combined = emptyList<User>()
+
+
+    var incomingRequests = mutableSetOf<String>()
+    var outgoingRequests = mutableSetOf<String>()
 
    private var friends = emptyList<User>()
     override fun onCreateViewHolder(
@@ -26,15 +37,35 @@ class FriendRecyclerAdapter(
         return UserViewHolder(view)
     }
 
-    fun updateFriendList(newFriends: List<User>) {
-        Log.d("Adapter", "Friends list updated: ${newFriends.map { it.fullName }}")
+    fun updateFriends(list: List<User>) {
+        friends = list
+        rebuild()
+    }
 
-        friends = newFriends
+    fun updateIncomingRequests(list: List<User>) {
+        incomingFriendRequests = list
+        rebuild()
+    }
+
+    private fun rebuild() {
+        combined = incomingFriendRequests + friends
         notifyDataSetChanged()
     }
 
-    fun submitList(friendList: List<User>) {
-        friends = friendList
+
+
+
+
+    fun updateFriendRequestStatus(
+        incoming: Set<String>,
+        outgoing: Set<String>
+    ) {
+        incomingRequests.clear()
+        incomingRequests.addAll(incoming)
+
+        outgoingRequests.clear()
+        outgoingRequests.addAll(outgoing)
+
         notifyDataSetChanged()
     }
 
@@ -42,49 +73,80 @@ class FriendRecyclerAdapter(
         holder: FriendRecyclerAdapter.UserViewHolder,
         position: Int
     ) {
-        val friend = friends[position]
+        val user = combined[position]
 
-        holder.deleteFriend.visibility = View.VISIBLE
+        val hasIncomingRequest = incomingRequests.contains(user.id)
+        val hasOutgoingRequest = outgoingRequests.contains(user.id)
+        val isFriend = friends.any { it.id == user.id }
 
-        holder.addFriend.setOnClickListener {
-            onAddFriendClick(friend)
+        holder.deleteFriend.visibility = View.INVISIBLE
+        holder.acceptFriend.visibility = View.GONE
+        holder.declineFriend.visibility = View.GONE
 
+        when {
+            isFriend -> {
+                holder.deleteFriend.visibility = View.VISIBLE
+                holder.deleteFriend.text = "Friends"
+                holder.deleteFriend.setOnClickListener { onDeleteFriendClick(user) }
 
+            }
+            hasIncomingRequest -> {
+                holder.deleteFriend.visibility = View.INVISIBLE
+                holder.acceptFriend.visibility = View.VISIBLE
+                holder.acceptFriend.text = "Accept"
+                holder.declineFriend.visibility = View.VISIBLE
+                holder.declineFriend.text = "Decline"
+                holder.declineFriend.setTextColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.decline_red)
+                )
 
+                holder.acceptFriend.setOnClickListener { onAcceptFriendRequest(user) }
+                holder.declineFriend.setOnClickListener { onDeclineFriendRequest(user) }
+            }
 
-
+            else -> {
+                holder.deleteFriend.visibility = View.INVISIBLE
+                holder.acceptFriend.visibility = View.GONE
+                holder.declineFriend.visibility = View.GONE
+            }
         }
 
+
+
+
+
         holder.deleteFriend.setOnClickListener {
-            onDeleteFriendClick(friend)
+            onDeleteFriendClick(user)
 
 
 
         }
 
         holder.itemView.setOnClickListener {
-            onItemClick(friend)
+            onItemClick(user)
 
         }
 
         holder.initialCircle.setOnClickListener {
-            onProfileClick(friend)
+            onProfileClick(user)
         }
 
 
 
 
-        holder.initialCircle.text = friend.initials.ifBlank { "?" }
-        holder.name.text = friend.fullName
+        holder.initialCircle.text = user.initials.ifBlank { "?" }
+        holder.name.text = user.fullName
 
 
     }
 
-    override fun getItemCount(): Int = friends.size
+    override fun getItemCount(): Int = combined.size
 
     inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend_friend)
-        val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend_friend)
+        val acceptFriend: TextView = itemView.findViewById(R.id.tv_accept_friend_friend)
+
+        val declineFriend: TextView = itemView.findViewById(R.id.tv_decline_friend_friend)
 
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials_friend)
         val name: TextView = itemView.findViewById(R.id.tv_name_friend)

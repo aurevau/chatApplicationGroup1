@@ -1,5 +1,6 @@
 package com.example.chatapplication.adapter
 
+import android.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,10 +26,10 @@ class UserRecyclerAdapter(
     val onDeleteFriendClick: (User) -> Unit,
     val onCheckButtonClick: (User, Boolean) -> Unit,
     val onItemLongClick: (User) -> Unit,
+    val onCancelOutgoingRequest: (User) -> Unit,
+    val onAcceptFriendRequest: (User) -> Unit,
+    val onDeclineFriendRequest: (User) -> Unit
 ) : RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
-
-
-//    private val selectedUsers = mutableListOf<User>()
 
     private var users = emptyList<User>()
     private val db = UserRepository()
@@ -35,9 +37,30 @@ class UserRecyclerAdapter(
 
     private var friends = emptyList<User>()
 
+
+
     private var selection = emptyList<User>()
 
     private val selectedUsersSet = mutableSetOf<User>()
+
+    var incomingRequests = mutableSetOf<String>()
+    var outgoingRequests = mutableSetOf<String>()
+
+
+
+
+    fun updateFriendRequestStatus(
+        incoming: Set<String>,
+        outgoing: Set<String>
+    ) {
+        incomingRequests.clear()
+        incomingRequests.addAll(incoming)
+
+        outgoingRequests.clear()
+        outgoingRequests.addAll(outgoing)
+
+        notifyDataSetChanged()
+    }
 
 
     override fun onCreateViewHolder(
@@ -75,6 +98,8 @@ class UserRecyclerAdapter(
 
         val user = users[position]
 
+
+
         Log.d(
             "PROFILE_IMG",
             "User=${user.fullName}, imageUrl=${user.profileImageUrl}"
@@ -83,11 +108,6 @@ class UserRecyclerAdapter(
 
         val isSelected = selection.any { it.id == user.id }
 
-
-
-
-
-
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = isSelected
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -95,28 +115,63 @@ class UserRecyclerAdapter(
         }
 
         val isFriend = friends.any { it.id == user.id }
+        val hasIncomingRequest = incomingRequests.contains(user.id)
+        val hasOutgoingRequest = outgoingRequests.contains(user.id)
 
-        holder.addFriend.visibility = if (isFriend) View.GONE else View.VISIBLE
-        holder.deleteFriend.visibility = if (isFriend) View.VISIBLE else View.GONE
-
-
-
-
-        holder.addFriend.setOnClickListener {
-            onAddFriendClick(user)
-
+        holder.addFriend.visibility = View.INVISIBLE
+        holder.deleteFriend.visibility = View.GONE
+        holder.declineFriend.visibility = View.GONE
+        holder.cancelFriend.visibility = View.GONE
+        holder.acceptFriend.visibility = View.GONE
 
 
 
+        holder.addFriend.setOnClickListener(null)
+        holder.deleteFriend.setOnClickListener(null)
+        holder.declineFriend.setOnClickListener(null)
+        holder.cancelFriend.setOnClickListener(null)
+        holder.acceptFriend.setOnClickListener(null)
 
+
+
+        when {
+            isFriend -> {
+                holder.addFriend.visibility = View.INVISIBLE
+                holder.deleteFriend.visibility = View.VISIBLE
+                holder.deleteFriend.text = "Friends"
+                holder.deleteFriend.setOnClickListener { onDeleteFriendClick(user) }
+            }
+
+            hasIncomingRequest -> {
+                holder.acceptFriend.visibility = View.VISIBLE
+                holder.acceptFriend.text = "Accept"
+                holder.declineFriend.visibility = View.VISIBLE
+                holder.declineFriend.text = "Decline"
+
+                holder.acceptFriend.setOnClickListener { onAcceptFriendRequest(user) }
+                holder.declineFriend.setOnClickListener { onDeclineFriendRequest(user) }
+            }
+
+            hasOutgoingRequest -> {
+                holder.addFriend.visibility = View.VISIBLE
+                holder.addFriend.text = "Pending"
+                holder.cancelFriend.visibility = View.VISIBLE
+                holder.cancelFriend.text = "Cancel"
+                holder.cancelFriend.setOnClickListener { onCancelOutgoingRequest(user) }
+            }
+
+            else -> {
+                holder.addFriend.visibility = View.VISIBLE
+                holder.addFriend.text = "Add Friend"
+                holder.deleteFriend.visibility = View.GONE
+                holder.acceptFriend.visibility = View.GONE
+                holder.declineFriend.visibility = View.GONE
+                holder.cancelFriend.visibility = View.GONE
+                holder.addFriend.setOnClickListener { onAddFriendClick(user) }
+            }
         }
 
-        holder.deleteFriend.setOnClickListener {
-            onDeleteFriendClick(user)
 
-
-
-        }
 
 
         val imageUrl = user.profileImageUrl
@@ -165,6 +220,11 @@ class UserRecyclerAdapter(
         val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)
         val addFriend: TextView = itemView.findViewById(R.id.tv_add_friend)
+        val acceptFriend: TextView = itemView.findViewById(R.id.tv_accept_friend)
+
+        val declineFriend: TextView = itemView.findViewById(R.id.tv_decline_friend)
+
+        val cancelFriend: TextView = itemView.findViewById(R.id.tv_cancel_friend)
         val button: Button = itemView.findViewById(R.id.btn_start_chat)
         val initialCircle: TextView = itemView.findViewById(R.id.tv_initials)
         val name: TextView = itemView.findViewById(R.id.tv_name)

@@ -1,5 +1,6 @@
 package com.example.chatapplication.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -47,6 +48,9 @@ class UsersFragment : Fragment() {
     private lateinit var groupChatButton: Button
     private val userRepository = UserRepository()
 
+    val incomingRequests = mutableSetOf<String>()
+    val outgoingRequests = mutableSetOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -86,9 +90,37 @@ class UsersFragment : Fragment() {
             binding.etSearchUser.text?.clear()
 
         }, { user ->
-            viewModel.addFriend(currentUserId, user)
+
+            if (user.id !in outgoingRequests) {
+                userRepository.getUserDetailsById(currentUserId!!) { currentUser ->
+                    if (currentUser != null) {
+                        viewModel.sendFriendRequest(
+                            fromUserId = currentUserId,
+                            fromUserName = currentUser.fullName,
+                            toUserId = user.id!!,
+                            toUserName = user.fullName
+                        )
+                    } else {
+                        Log.e("FRIEND_REQUEST", "Could not fetch current user details")
+                    }
+                }
+            }
+
+
         }, { user ->
-            viewModel.removeFriend(currentUserId, user)
+
+            AlertDialog.Builder(context)
+                .setTitle("Delete friend")
+                .setMessage("Are you sure you want to delete friend: ${user.fullName} ")
+                .setPositiveButton("Yes, delete") { dialog, _ ->
+                    viewModel.removeFriend(currentUserId, user)
+                    dialog.dismiss()
+                }
+
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }, { user, isChecked ->
             if (isChecked) {
                 selectedUsersSet.add(user)
@@ -110,7 +142,50 @@ class UsersFragment : Fragment() {
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
         }, {user ->
             userRepository.deleteRecentSearch(user)
-        })
+        }, {user ->
+
+            AlertDialog.Builder(context)
+                .setTitle("Cancel Request")
+                .setMessage("Are you sure you want to cancel your friend request to${user.fullName} ")
+                .setPositiveButton("Yes Cancel") { dialog, _ ->
+                    val currentUserId = viewModel.getCurrentUserId() ?: return@setPositiveButton
+                    viewModel.cancelOutgoingFriendRequest(currentUserId, user.id!!)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Keep request") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+
+        }, {user ->
+            val currentUser = viewModel.getUserDetailsById(currentUserId!!) { currentUser ->
+                if (currentUser != null) {
+                    viewModel.acceptFriendRequest(
+                        currentUserId, user.id!!,
+                        currentUser.fullName, user.fullName
+                    )
+                }
+            }
+
+
+
+
+        }, {user ->
+            AlertDialog.Builder(context)
+                .setTitle("Decline Request")
+                .setMessage("${user.fullName} sent you a friend request")
+                .setPositiveButton("Decline") { dialog, _ ->
+                    viewModel.declineFriendRequest(currentUserId!!, user.id!!)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+
+                }
+                .show()
+
+
+        } )
 
 
     }
@@ -140,6 +215,11 @@ class UsersFragment : Fragment() {
         val currentUserId = viewModel.getCurrentUserId() ?: return
 
 //        viewModel.loadRecentSearches()
+
+        if (currentUserId != null) {
+            viewModel.loadIncomingFriendRequests(currentUserId)
+            viewModel.loadOutgoingFriendRequests(currentUserId)
+        }
 
         groupChatButton = binding.btnStartGroupChat
 
@@ -184,6 +264,20 @@ class UsersFragment : Fragment() {
         viewModel.searchResults.observe(viewLifecycleOwner) { searchList ->
             adapter.submitList(searchList)
         }
+
+        viewModel.incomingFriendRequest.observe(viewLifecycleOwner) { requests ->
+            val incomingIds = requests.mapNotNull { it.id }.toSet()
+            val outgoingIds = viewModel.outgoingFriendRequest.value?.mapNotNull { it.id }?.toSet() ?: emptySet()
+            adapter.updateFriendRequestStatus(incomingIds, outgoingIds)
+
+        }
+
+        viewModel.outgoingFriendRequest.observe(viewLifecycleOwner) { requests ->
+            val outgoingIds = requests.mapNotNull { it.id }.toSet()
+            val incomingIds = viewModel.incomingFriendRequest.value?.mapNotNull { it.id }?.toSet() ?: emptySet()
+            adapter.updateFriendRequestStatus(incomingIds, outgoingIds)
+        }
+
 
 
         viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
