@@ -55,7 +55,7 @@
                 style="?attr/textInputFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_search_for_a_user"
+                android:hint="@string/search_for_a_user_hint_text"
                 android:textColorHint="@color/hint_text_color"
                 app:boxStrokeColor="@color/hint_text_color"
                 app:cursorColor="@color/off_white"
@@ -86,7 +86,7 @@
             android:layout_margin="@dimen/margin_16dp"
             android:layout_weight="0.15"
             android:backgroundTint="@color/button_color"
-            android:contentDescription="@string/search_floating_button"
+            android:contentDescription="@string/search_floating_button_description"
             android:src="@drawable/search_icon"
             app:tint="@color/white" />
     </LinearLayout>

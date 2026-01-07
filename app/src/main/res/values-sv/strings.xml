@@ -1,3 +1,79 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--SWEDISH STRING RESOURCE -->
+
+    <string name="app_name">ChatApplication</string>
+
+    <!--LaunchActivity & Welcome/RegisterActivity-->
+    <string name="launching_chatApp_text">Startar\nChatApp</string>
+    <string name="developer_text">Utvecklad av \"GroupOne\"</string>
+
+    <string name="welcome_header_text">Välkommen</string>
+    <string name="log_in_button_text">Logga in</string>
+    <string name="register_button_text">Registrera dig</string>
+    <string name="registration_header_text">Registrering</string>
+    <string name="hint_text_full_name">För- och efternamn</string>
+    <string name="hint_text_email">E-post</string>
+    <string name="hint_text_password">Lösenord</string>
+    <string name="app_nickname">ChatApp</string>
+
+    <string name="registration_confirmed">Registrering\nlyckades</string>
+
+    <!--DashboardActivity - Chats/UsersFragment -->
+    <string name="header_chats_text">Chattar</string>
+    <string name="header_text_users">Användare</string>
+    <string name="this_is_me_logged_in">Jag är inloggad</string>
+
+    <string name="menu">Meny</string>
+    <string name="menu_item_menu">Meny</string>
+    <string name="menu_item_profile">Profil</string>
+    <string name="menu_item_log_out">Logga ut</string>
+    <string name="back_button_text">Bakåt</string>
+
+    <string name="start_group_chat">Starta Gruppchat</string>
+    <string name="open_chat">Chatta</string>
+
+    <string name="add_friend">Lägg till vän</string>
+    <string name="friends">Vänner</string>
+
+    <string name="search_for_a_user_hint_text">Sök användare</string>
+    <string name="user_not_found">Användare hittades ej</string>
+
+    <string name="confirm_deleting_chat">Bekräfta\nradering av chatt?</string>
+    <string name="default_last_message">Senaste meddelande visas här</string>
+
+    <!--ChatActivity -->
+    <string name="message_hint_text">Meddelande</string>
+
+    <string name="message_preview_text">Chattmeddelande</string>
+    <string name="time_preview_text">Kl. 10:30</string>
+    <string name="initials_default_text">AV</string>
+    <string name="list_item_name_default_text">Namn</string>
+    <string name="default_time_13_37">Kl. 13:37</string>
+
+    <!--ProfileActivity -->
+    <string name="profile_header_text">Profil</string>
+    <string name="save">Spara</string>
+    <string name="cancel">Avbryt</string>
+    <string name="header_friends_text">Vänner</string>
+    <string name="decline_friend">Neka</string>
+
+    <!--Image/Button descriptions -->
+    <string name="delete_button_description">Radera</string>
+    <string name="close_button_description">Stäng</string>
+    <string name="search_floating_button_description">Sök</string>
+    <string name="back_arrow_button_description">Bakåtpil</string>
+    <string name="add_photo_button_description">Lägg till foto</string>
+    <string name="send_button_description">Skicka meddelande</string>
+    <string name="add_icon_img_description">Lägg till profilbild</string>
+
+    <string name="sent_picture_description">Skickad bild</string>
+    <string name="received_picture_description">Mottagen bild</string>
+    <string name="registration_confirmed_img_description">Person med bocksymbol</string>
+    <string name="menu_arrow_img_description">Menypil</string>
+    <string name="image_preview_description">Bildförhandsgranskning</string>
+    <string name="group_chat_img_description">Gruppchattsikon</string>
+
+    <!--Other stuff -->
+    <string name="default_web_client_id">409410581006-m60133hoj1b1uevksrc8csgusq9ihi18.apps.googleusercontent.com</string>
+
 </resources>

@@ -42,7 +42,7 @@ class RegisterActivity : AppCompatActivity() {
         ivProfilePicture = findViewById(R.id.ivProfilePicture)
 
         // Klicka på bilden för att välja ny
-        ivProfilePicture.setOnClickListener {
+        binding.imgBtnAddPhoto.setOnClickListener {
             chooseImage()
         }
 
