@@ -14,6 +14,7 @@
         android:padding="@dimen/margin_12dp">
 
         <ImageView
+            android:contentDescription="@string/profile_picture_img_description"
             android:id="@+id/profilePic"
             android:layout_width="@dimen/initials_circle_background_40dp"
             android:layout_height="@dimen/initials_circle_background_40dp"
@@ -60,7 +61,7 @@
             android:id="@+id/tv_add_friend_friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_6dp"
+            android:layout_marginStart="@dimen/margin_16dp"
             android:text="@string/add_friend"
             android:textColor="@color/off_white"
             android:fontFamily="@font/quantico_bold"
@@ -88,7 +89,7 @@
             android:id="@+id/tv_accept_friend_friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_6dp"
+            android:layout_marginStart="@dimen/margin_16dp"
             android:fontFamily="@font/quantico_bold"
             android:text="@string/add_friend"
             android:textColor="@color/off_white"
@@ -102,8 +103,7 @@
             android:id="@+id/tv_decline_friend_friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_6dp"
-            android:layout_marginTop="@dimen/margin_2dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="@font/quantico_bold"
             android:text="@string/decline_friend"
             android:textColor="@color/decline_red"

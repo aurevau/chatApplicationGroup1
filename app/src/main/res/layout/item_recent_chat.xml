@@ -48,6 +48,7 @@
         tools:text="@string/initials_default_text" />
 
     <ImageView
+        android:contentDescription="@string/profile_picture_img_description"
         android:id="@+id/profilePic"
         android:layout_width="@dimen/size_60dp"
         android:layout_height="@dimen/size_60dp"

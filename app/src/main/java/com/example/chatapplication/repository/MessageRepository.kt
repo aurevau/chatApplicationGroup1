@@ -87,10 +87,12 @@ class MessageRepository {
         ensureChatRoomExists(roomId, otherUserId)
         val user = Firebase.auth.currentUser ?: return
 
+        val cleanText = text?.trim() ?: ""
+
         val msg = Message(
             senderId = user.uid,
             roomId = roomId,
-            text = text ?: "",
+            text = cleanText,
             imageUrl = imageUrl,
             timestamp = System.currentTimeMillis()
         )
@@ -99,7 +101,7 @@ class MessageRepository {
             .document(roomId)
             .collection("messages")
             .add(msg).addOnSuccessListener {
-                updateChatRoomLastImage(roomId, imageUrl)
+                updateChatRoomLastImage(roomId, imageUrl, cleanText)
             }
     }
 
@@ -271,10 +273,10 @@ class MessageRepository {
         )
     }
 
-    private fun updateChatRoomLastImage(roomId: String, imageUrl: String) {
+    private fun updateChatRoomLastImage(roomId: String, imageUrl: String, text: String?) {
         db.collection("chatRooms").document(roomId).update(
             mapOf(
-                "lastMessage" to null,
+                "lastMessage" to text,
                 "lastImageMessage" to imageUrl,
                 "lastMessageTimestamp" to System.currentTimeMillis()
             )
