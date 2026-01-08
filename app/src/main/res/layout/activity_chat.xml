@@ -44,6 +44,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/profilePic"
+                android:layout_width="@dimen/initials_circle_background_40dp"
+                android:layout_height="@dimen/initials_circle_background_40dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:background="@drawable/circle_image"
+                android:src="@drawable/ic_profile_placeholder"
+                />
+
             <TextView
                 android:id="@+id/tv_initials"
                 android:layout_width="@dimen/initials_circle_background_40dp"
@@ -66,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_16dp"
                 android:fontFamily="@font/bagel_fat_one"
-                android:text="@string/chat_header_text"
+                tools:text="@string/list_item_name_default_text"
                 android:textColor="@color/off_white"
                 android:textSize="@dimen/name_header_text_size_24sp" />
         </LinearLayout>
@@ -97,7 +108,7 @@
                 android:id="@+id/arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/menu_arrow"
+                android:contentDescription="@string/menu_arrow_img_description"
                 android:src="@drawable/outline_arrow_drop_down_circle_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -184,16 +195,14 @@
             android:layout_height="@dimen/send_button_size_48dp"
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/margin_12dp"
-            android:layout_marginTop="@dimen/margin_4dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/add_photo_button_description"
-            android:src="@drawable/add_photo_icon" />
+            android:src="@drawable/add_photo_icon_24" />
 
         <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="@dimen/send_button_size_48dp"
             android:layout_height="@dimen/send_button_size_48dp"
-            android:layout_marginTop="@dimen/margin_4dp"
             android:background="@null"
             android:contentDescription="@string/send_button_description"
             android:src="@drawable/ic_send" />

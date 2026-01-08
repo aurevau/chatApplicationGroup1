@@ -6,26 +6,19 @@ import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityProfileBinding
-import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.example.chatapplication.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
-import de.hdodenhof.circleimageview.CircleImageView
 
 
 class ProfileActivity : AppCompatActivity() {
 
-    //private lateinit var ivProfilePicture: CircleImageView
     private var imageUri: Uri? = null
     private var currentUserId: String? = null
     private lateinit var viewModel: UserViewModel
@@ -34,14 +27,14 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
 
-
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            Log.d("SOUT", it.toString())
-            imageUri = it
-            binding.ivProfilePicture.setImageURI(it)
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                Log.d("SOUT", it.toString())
+                imageUri = it
+                binding.ivProfilePicture.setImageURI(it)
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +44,7 @@ class ProfileActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
 
-        Log.d("SOUT","ONCREATE")
+        Log.d("SOUT", "ONCREATE")
 
         binding.backBtn.setOnClickListener {
             finish()
@@ -62,7 +55,7 @@ class ProfileActivity : AppCompatActivity() {
 
         if (friendId == null) {
 
-            binding.ivProfilePicture.setOnClickListener {
+            binding.imgBtnAddPhoto.setOnClickListener {
                 chooseImage()
             }
 
@@ -84,7 +77,6 @@ class ProfileActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[UserViewModel::class.java]
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
-
 
 
         currentUserId = friendId ?: viewModel.getCurrentUserId()
@@ -111,11 +103,8 @@ class ProfileActivity : AppCompatActivity() {
                         .circleCrop()
                         .into(binding.ivProfilePicture)
                 }
-
-
             }
         }
-
     }
 
     private fun chooseImage() {
@@ -141,12 +130,15 @@ class ProfileActivity : AppCompatActivity() {
                                 userId,
                                 null,
                                 onSuccess = {
-                                    Toast.makeText(this, "User saved!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        this,
+                                        getString(R.string.user_saved_toast), Toast.LENGTH_SHORT
+                                    ).show()
                                 },
                                 onFailure = { errorMessage ->
                                     Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-                                }
-                            )
+                                })
+
                         } else {
                             authViewModel.uploadProfileImage(
                                 imageUri!!,
@@ -159,15 +151,16 @@ class ProfileActivity : AppCompatActivity() {
                                         userId,
                                         downloadUrl,
                                         onSuccess = {
-                                            Toast.makeText(this, "User saved!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                this,
+                                                getString(R.string.user_saved_toast),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         },
                                         onFailure = { errorMessage ->
-                                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-                                        }
-
-                                    )
-
-
+                                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG)
+                                                .show()
+                                        })
                                 },
                                 onError = { errorMessage ->
                                     Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
@@ -189,13 +182,7 @@ class ProfileActivity : AppCompatActivity() {
                         }
                     )
                 }
-
-
-
             }
         }
-
-
-
     }
 }

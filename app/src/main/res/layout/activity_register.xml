@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bagel_fat_one"
-                android:text="@string/register_text"
+                android:text="@string/registration_header_text"
                 android:textColor="@color/white"
                 android:textSize="@dimen/header_text_size_48sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -38,7 +38,6 @@
                 android:layout_width="@dimen/menu_icons_size"
                 android:layout_height="@dimen/menu_icons_size"
                 android:layout_gravity="center_vertical|start"
-                android:layout_marginStart="@dimen/margin_16dp"
                 android:background="@null"
                 android:contentDescription="@string/back_arrow_button_description"
                 android:src="@drawable/ic_back"
@@ -54,20 +53,29 @@
         android:id="@+id/ivProfilePicture"
         android:layout_width="@dimen/profile_pic_size_120dp"
         android:layout_height="@dimen/profile_pic_size_120dp"
-        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_64dp"
         android:src="@drawable/ic_profile_placeholder"
-        app:civ_border_color="@color/white"
+        app:civ_border_color="@color/medium_green"
         app:civ_border_width="@dimen/size_4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameLayout" />
+
+    <ImageView
+        android:id="@+id/img_btn_add_photo"
+        android:contentDescription="@string/add_icon_img_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/add_a_photo_48"
+        app:layout_constraintEnd_toEndOf="@id/ivProfilePicture"
+        app:layout_constraintBottom_toBottomOf="@id/ivProfilePicture"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_full_name"
         style="?attr/textInputFilledStyle"
         android:layout_width="@dimen/edit_text_width_220dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_24dp"
         android:hint="@string/hint_text_full_name"
         android:textColorHint="@color/hint_text_color"
         app:boxStrokeColor="@color/hint_text_color"
@@ -84,7 +92,7 @@
             android:backgroundTint="@color/header_and_edit_text_color"
             android:fontFamily="@font/bagel_fat_one"
             android:inputType="text"
-            android:textColor="@color/off_white" />
+            android:textColor="@color/off_white"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -147,7 +155,7 @@
         android:layout_marginTop="@dimen/margin_32dp"
         android:backgroundTint="@color/button_color"
         android:fontFamily="@font/bagel_fat_one"
-        android:text="@string/register_text"
+        android:text="@string/register_button_text"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

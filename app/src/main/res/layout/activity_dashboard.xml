@@ -8,17 +8,13 @@
     android:background="@color/off_white"
     tools:context=".ui.DashboardActivity">
 
-
-
-
     <FrameLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/header_and_edit_text_color"
+        android:paddingTop="@dimen/margin_16dp"
         app:layout_constraintTop_toTopOf="parent">
-
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,14 +22,15 @@
 
             <TextView
                 android:id="@+id/logged_in_user"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quantico_bold"
-                android:text="This is me logged in"
-                android:textColor="@color/off_white"
                 android:gravity="center_horizontal"
-                app:layout_constraintTop_toTopOf="parent"/>
-
+                android:textColor="@color/hint_text_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/this_is_me_logged_in" />
 
             <TextView
                 android:id="@+id/tv_header"
@@ -45,26 +42,26 @@
                 android:text="@string/header_chats_text"
                 android:textColor="@color/off_white"
                 android:textSize="@dimen/header_text_size_48sp"
-                app:layout_constraintTop_toBottomOf="@id/logged_in_user"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logged_in_user"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/dropdown_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/margin_20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/margin_6dp"
+                android:layout_marginEnd="@dimen/margin_12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_4dp"
                     android:fontFamily="@font/quantico_bold"
                     android:text="@string/menu"
-                    android:layout_marginEnd="@dimen/margin_4dp"
                     android:textColor="@color/off_white"
                     android:textSize="@dimen/normal_text_size_16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -76,7 +73,7 @@
                     android:id="@+id/arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/menu_arrow"
+                    android:contentDescription="@string/menu_arrow_img_description"
                     android:src="@drawable/outline_arrow_drop_down_circle_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +89,7 @@
         android:layout_height="@dimen/size_0dp"
         android:background="@color/dark_green"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-        app:layout_constraintTop_toBottomOf="@id/header_container"/>
+        app:layout_constraintTop_toBottomOf="@id/header_container" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

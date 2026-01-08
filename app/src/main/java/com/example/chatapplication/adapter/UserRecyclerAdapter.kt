@@ -138,15 +138,15 @@ class UserRecyclerAdapter(
             isFriend -> {
                 holder.addFriend.visibility = View.INVISIBLE
                 holder.deleteFriend.visibility = View.VISIBLE
-                holder.deleteFriend.text = "Friends"
+                holder.deleteFriend.text = holder.itemView.context.getString(R.string.friends)
                 holder.deleteFriend.setOnClickListener { onDeleteFriendClick(user) }
             }
 
             hasIncomingRequest -> {
                 holder.acceptFriend.visibility = View.VISIBLE
-                holder.acceptFriend.text = "Accept"
+                holder.acceptFriend.text = holder.itemView.context.getString(R.string.accept_btn_text)
                 holder.declineFriend.visibility = View.VISIBLE
-                holder.declineFriend.text = "Decline"
+                holder.declineFriend.text = holder.itemView.context.getString(R.string.decline_friend_request_btn_text)
 
                 holder.acceptFriend.setOnClickListener { onAcceptFriendRequest(user) }
                 holder.declineFriend.setOnClickListener { onDeclineFriendRequest(user) }
@@ -154,15 +154,15 @@ class UserRecyclerAdapter(
 
             hasOutgoingRequest -> {
                 holder.addFriend.visibility = View.VISIBLE
-                holder.addFriend.text = "Pending"
+                holder.addFriend.text = holder.itemView.context.getString(R.string.pending_btn_text)
                 holder.cancelFriend.visibility = View.VISIBLE
-                holder.cancelFriend.text = "Cancel"
+                holder.cancelFriend.text = holder.itemView.context.getString(R.string.cancel_alert_btn_text)
                 holder.cancelFriend.setOnClickListener { onCancelOutgoingRequest(user) }
             }
 
             else -> {
                 holder.addFriend.visibility = View.VISIBLE
-                holder.addFriend.text = "Add Friend"
+                holder.addFriend.text = holder.itemView.context.getString(R.string.add_friend)
                 holder.deleteFriend.visibility = View.GONE
                 holder.acceptFriend.visibility = View.GONE
                 holder.declineFriend.visibility = View.GONE
@@ -175,7 +175,6 @@ class UserRecyclerAdapter(
 
 
         val imageUrl = user.profileImageUrl
-
         if (!imageUrl.isNullOrEmpty()) {
             holder.initialCircle.visibility = View.INVISIBLE
             holder.profilePic.visibility = View.VISIBLE
@@ -185,12 +184,27 @@ class UserRecyclerAdapter(
                 .circleCrop()
                 .into(holder.profilePic)
         } else {
-            holder.initialCircle.visibility = View.VISIBLE
-            holder.profilePic.visibility = View.GONE
-            holder.initialCircle.text = user.initials
+
+            db.getUserDetailsById(user.id ?: "") {
+
+                if (!it?.profileImageUrl.isNullOrEmpty()) {
+                    holder.initialCircle.visibility = View.INVISIBLE
+                    holder.profilePic.visibility = View.VISIBLE
+                    Glide.with(holder.profilePic.context)
+                        .load(it.profileImageUrl)
+                        .circleCrop()
+                        .into(holder.profilePic)
+                } else {
+                    holder.initialCircle.visibility = View.VISIBLE
+                    holder.profilePic.visibility = View.GONE
+                    holder.initialCircle.text = user.initials
+                }
+
+            }
         }
+
         holder.name.text = if (user.id == db.getCurrentUserId()) {
-            "${user.fullName} (Me)"
+            holder.itemView.context.getString(R.string.me_following_text, user.fullName)
         } else {
             user.fullName
         }
@@ -215,7 +229,7 @@ class UserRecyclerAdapter(
 
     override fun getItemCount(): Int = users.size
 
-    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend)

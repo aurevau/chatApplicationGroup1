@@ -4,22 +4,22 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatapplication.R
 import com.example.chatapplication.adapter.SelectedUsersRecyclerAdapter
 import com.example.chatapplication.adapter.UserRecyclerAdapter
 import com.example.chatapplication.data.User
 import com.example.chatapplication.databinding.FragmentUsersBinding
-import com.example.chatapplication.repository.MessageRepository
 import com.example.chatapplication.repository.UserRepository
 import com.example.chatapplication.viewmodel.ChatViewModel
 import com.example.chatapplication.viewmodel.UserViewModel
@@ -110,14 +110,14 @@ class UsersFragment : Fragment() {
         }, { user ->
 
             AlertDialog.Builder(context)
-                .setTitle("Delete friend")
-                .setMessage("Are you sure you want to delete friend: ${user.fullName} ")
-                .setPositiveButton("Yes, delete") { dialog, _ ->
+                .setTitle(getString(R.string.delete_friend_text))
+                .setMessage(getString(R.string.delete_friend_alert_text, user.fullName))
+                .setPositiveButton(getString(R.string.confirm_delete_btn_text)) { dialog, _ ->
                     viewModel.removeFriend(currentUserId, user)
                     dialog.dismiss()
                 }
 
-                .setNegativeButton("Cancel") { dialog, _ ->
+                .setNegativeButton(getString(R.string.cancel_alert_btn_text)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
@@ -133,41 +133,41 @@ class UsersFragment : Fragment() {
             selectedUsersAdapter.submitList(selectedUsersSet.toList())
             if (selectedUsersSet.size <= 1) Toast.makeText(
                 requireContext(),
-                "Choose another user to start group chat",
+                getString(R.string.start_group_chat_text),
                 Toast.LENGTH_SHORT
             ).show()
             binding.btnStartGroupChat.visibility =
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
             binding.rvSelectedUsers.visibility =
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
-        }, {user ->
-        AlertDialog.Builder(context)
-            .setTitle("Remove from Recent")
-            .setMessage("Are you sure you want to remove ${user.fullName} from recent searches?")
-            .setPositiveButton("Yes, Remove") { dialog, _ ->
-                userRepository.deleteRecentSearch(user)
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }, {user ->
+        }, { user ->
+            AlertDialog.Builder(context)
+                .setTitle(getString(R.string.remove_user_from_recent))
+                .setMessage(getString(R.string.confirm_remove, user.fullName))
+                .setPositiveButton(getString(R.string.yes_remove)) { dialog, _ ->
+                    userRepository.deleteRecentSearch(user)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }, { user ->
 
             AlertDialog.Builder(context)
-                .setTitle("Cancel Request")
-                .setMessage("Are you sure you want to cancel your friend request to${user.fullName} ")
-                .setPositiveButton("Yes Cancel") { dialog, _ ->
+                .setTitle(getString(R.string.cancel_request_btn_text))
+                .setMessage(getString(R.string.confirm_cancel_friend_request, user.fullName))
+                .setPositiveButton(getString(R.string.yes_cancel_btn_text)) { dialog, _ ->
                     val currentUserId = viewModel.getCurrentUserId() ?: return@setPositiveButton
                     viewModel.cancelOutgoingFriendRequest(currentUserId, user.id!!)
                     dialog.dismiss()
                 }
-                .setNegativeButton("Keep request") { dialog, _ ->
+                .setNegativeButton(getString(R.string.keep_request_btn_text)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
 
-        }, {user ->
+        }, { user ->
             val currentUser = viewModel.getUserDetailsById(currentUserId!!) { currentUser ->
                 if (currentUser != null) {
                     viewModel.acceptFriendRequest(
@@ -178,26 +178,20 @@ class UsersFragment : Fragment() {
             }
 
 
-
-
-        }, {user ->
+        }, { user ->
             AlertDialog.Builder(context)
-                .setTitle("Decline Request")
-                .setMessage("${user.fullName} sent you a friend request")
-                .setPositiveButton("Decline") { dialog, _ ->
+                .setTitle(getString(R.string.decline_friend_request_alert_text))
+                .setMessage(getString(R.string.sent_friend_request_text, user.fullName))
+                .setPositiveButton(R.string.decline_friend_request_btn_text) { dialog, _ ->
                     viewModel.declineFriendRequest(currentUserId!!, user.id!!)
                     dialog.dismiss()
                 }
-                .setNegativeButton("Cancel") { dialog, _ ->
+                .setNegativeButton(R.string.cancel_alert_btn_text) { dialog, _ ->
                     dialog.dismiss()
 
                 }
                 .show()
-
-
-        } )
-
-
+        })
     }
 
     override fun onCreateView(
@@ -261,7 +255,6 @@ class UsersFragment : Fragment() {
                 binding.rvSelectedUsers.visibility = View.GONE
                 binding.btnStartGroupChat.visibility = View.GONE
 
-
             }
             binding.etSearchUser.text?.clear()
         }
@@ -277,24 +270,24 @@ class UsersFragment : Fragment() {
 
         viewModel.incomingFriendRequest.observe(viewLifecycleOwner) { requests ->
             val incomingIds = requests.mapNotNull { it.id }.toSet()
-            val outgoingIds = viewModel.outgoingFriendRequest.value?.mapNotNull { it.id }?.toSet() ?: emptySet()
+            val outgoingIds =
+                viewModel.outgoingFriendRequest.value?.mapNotNull { it.id }?.toSet() ?: emptySet()
             adapter.updateFriendRequestStatus(incomingIds, outgoingIds)
 
         }
 
         viewModel.outgoingFriendRequest.observe(viewLifecycleOwner) { requests ->
             val outgoingIds = requests.mapNotNull { it.id }.toSet()
-            val incomingIds = viewModel.incomingFriendRequest.value?.mapNotNull { it.id }?.toSet() ?: emptySet()
+            val incomingIds =
+                viewModel.incomingFriendRequest.value?.mapNotNull { it.id }?.toSet() ?: emptySet()
             adapter.updateFriendRequestStatus(incomingIds, outgoingIds)
         }
-
 
 
         viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
 
             adapter.updateFriendList(friendsList)
             Log.d("FRIENDS_OBSERVED", "Updated friends: ${friendsList.map { it.fullName }}")
-
         }
 
         viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
@@ -308,8 +301,6 @@ class UsersFragment : Fragment() {
             binding.rvSelectedUsers.visibility =
                 if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
         }
-
-
 
         viewModel.getFriends(currentUserId)
 
@@ -339,10 +330,4 @@ class UsersFragment : Fragment() {
 
         adapter.notifyDataSetChanged()
     }
-
-
-
-
-
-
 }

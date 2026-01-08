@@ -21,7 +21,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 class DashboardActivity : AppCompatActivity() {
-    private val usersFragment = UsersFragment()
     private lateinit var binding: ActivityDashboardBinding
 
     private val auth = Firebase.auth
@@ -55,29 +54,32 @@ class DashboardActivity : AppCompatActivity() {
 
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
+        binding.loggedInUser.text = auth.currentUser?.email
+
         binding.dropdownMenu.setOnClickListener {
             val wrapper = ContextThemeWrapper(this, R.style.CustomPopupMenu)
             val popupMenu = PopupMenu(wrapper, it)
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.menu_menu -> {false}
                     R.id.menu_profile -> {
                         val intent = Intent(this@DashboardActivity, ProfileActivity::class.java)
                         startActivity(intent)
                         true
                     }
+
                     R.id.menu_logout -> {
                         authViewModel.logOut()
                         // Start WelcomeActivity with CLEAR_TASK
                         val intent = Intent(this@DashboardActivity, WelcomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
-                        true }
+                        true
+                    }
+
                     else -> false
                 }
             }
-
-            binding.loggedInUser.text = auth.currentUser?.email
 
             popupMenu.inflate(R.menu.menu_dropdown)
 
@@ -89,7 +91,7 @@ class DashboardActivity : AppCompatActivity() {
                     .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
                     .invoke(mPopup, true)
             } catch (e: Exception) {
-                Log.e("SOUT", "Error showing menu icon")
+                Log.e("SOUT", "Error showing menu icon: $e")
             } finally {
                 popupMenu.show()
             }
@@ -98,13 +100,13 @@ class DashboardActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_allChats -> {
-                    headerText.text = getString(R.string.chats)
+                    headerText.text = getString(R.string.header_chats_text)
                     viewPager.currentItem = 0
                     true
                 }
 
                 R.id.navigation_allUsers -> {
-                    headerText.text = getString(R.string.users)
+                    headerText.text = getString(R.string.header_text_users)
                     viewPager.currentItem = 1
                     true
                 }
@@ -112,7 +114,6 @@ class DashboardActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
 
     }
 }

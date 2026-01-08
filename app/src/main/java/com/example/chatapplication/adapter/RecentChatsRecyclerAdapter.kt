@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
@@ -36,12 +37,12 @@ class RecentChatsRecyclerAdapter(
     // Fill in the data in each row
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         holder.bind(chats[position], onChatClick, onChatLongClick )
-
-
     }
 
     // ViewHolder = holds widgets in each row
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         private val initials = itemView.findViewById<TextView>(R.id.tvProfileInitials)
         private val name = itemView.findViewById<TextView>(R.id.tvChatName)
         private val message = itemView.findViewById<TextView>(R.id.tvLastMessage)
@@ -60,23 +61,34 @@ class RecentChatsRecyclerAdapter(
                 onChatLongClick(chat)
                 true
             }
-            // Fill in the data here – adapt to your ChatRoom model
 
             if(chat.isGroup) {
                 chatIcon.setImageResource(R.drawable.group_icon)
                 chatIcon.visibility = View.VISIBLE
                 fLChatIcon.visibility = View.VISIBLE
-
+                profilePic.visibility = View.GONE
                 initials.visibility = View.GONE
             } else {
                 chatIcon.visibility = View.GONE
                 fLChatIcon.visibility = View.GONE
-                initials.visibility = View.VISIBLE
+                val imageUrl = chat.chatRoomImageUrl
+                if (!imageUrl.isNullOrEmpty()) {
+                    initials.visibility = View.GONE
+                    profilePic.visibility = View.VISIBLE
+                    Glide.with(profilePic.context)
+                        .load(imageUrl)
+                        .circleCrop()
+                        .into(profilePic)
+                } else {
+                    initials.visibility = View.VISIBLE
+                    profilePic.visibility = View.GONE
+                    initials.text = chat.userName?.take(2)
+                }
             }
-            initials.text = chat.userName?.take(2)  // For example, the first letters of the name
-            name.text = chat.userName ?: "Unknown"
-            message.text = chat.lastMessage ?: "No Message"
-            time.text = chat.timestamp ?: "Now"
+            initials.text = chat.userName?.take(2)  // The two first letters of the name
+            name.text = chat.userName ?: itemView.context.getString(R.string.unknown)
+            message.text = chat.lastMessage ?: itemView.context.getString(R.string.no_message)
+            time.text = chat.timestamp ?: itemView.context.getString(R.string.now)
             itemView.setOnClickListener {
                 onChatClick(chat)
             }

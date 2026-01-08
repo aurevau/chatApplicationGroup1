@@ -45,6 +45,8 @@ class RecentChatsFragment : Fragment() {
                 val intent = Intent(requireContext(), ChatActivity::class.java)
                 intent.putExtra("ROOM_ID", chat.roomId)
                 intent.putExtra("GROUP_NAME", chat.userName)
+                intent.putExtra("IMAGE_URL",chat.chatRoomImageUrl)
+
                 startActivity(intent)
             },
             onChatLongClick = { chatRoom ->

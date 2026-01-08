@@ -1,56 +1,114 @@
 <resources>
+    <!--ENGLISH STRING RESOURCE -->
+
     <string name="app_name">ChatApplication</string>
-    <string name="welcome_header">Welcome</string>
+
+    <!--LaunchActivity & Welcome/RegisterActivity-->
+    <string name="launching_chatApp_text">Launching\nChatApp</string>
+    <string name="developer_text">Developed by \"GroupOne\"</string>
+
+    <string name="welcome_header_text">Welcome</string>
     <string name="log_in_button_text">Log in</string>
-    <string name="register_text">Register</string>
-    <string name="hint_text_email">Email</string>
+    <string name="register_button_text">Register</string>
+    <string name="registration_header_text">Registration</string>
+    <string name="hint_text_full_name">Full name</string>
+    <string name="hint_text_email">E-mail</string>
     <string name="hint_text_password">Password</string>
+    <string name="app_nickname">ChatApp</string>
+
+    <string name="registration_confirmed">Registration\nconfirmed</string>
+
+    <!--DashboardActivity - Chats/UsersFragment -->
+    <string name="header_chats_text">Chats</string>
+    <string name="header_text_users">Users</string>
+    <string name="this_is_me_logged_in">This is me logged in</string>
+
+    <string name="menu">Menu</string>
+    <string name="menu_item_menu">Menu</string>
     <string name="menu_item_profile">Profile</string>
     <string name="menu_item_log_out">Log out</string>
     <string name="back_button_text">Back</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="chats">Chats</string>
-    <string name="users">Users</string>
-    <string name="hint_text_full_name">Full name</string>
+    <string name="start_group_chat">Start Group chat</string>
     <string name="open_chat">Chat</string>
+
     <string name="add_friend">Add Friend</string>
     <string name="friends">Friends</string>
+
+    <string name="search_for_a_user_hint_text">Search for a user</string>
     <string name="user_not_found">User not found</string>
-    <string name="back_arrow_button_description">back arrow</string>
+
+    <string name="confirm_deleting_chat">Confirm\ndeleting chat?</string>
+    <string name="default_last_message">Last message shown here</string>
+
+    <string name="me_following_text">%1$s (Me)</string>
+
+    <!--ChatActivity -->
     <string name="message_hint_text">Message</string>
-    <string name="send_button_description">Send</string>
-    <string name="add_photo_button_description">add photo</string>
-    <string name="chat_header_text">Chat</string>
-    <string name="image_preview_description">image preview</string>
-    <string name="header_chats_text">Chats</string>
-    <string name="launching_chatApp_text">Launching\nChatApp</string>
+
     <string name="message_preview_text">Chat message</string>
     <string name="time_preview_text">10:30 AM</string>
-    <string name="received_picture_description">received picture</string>
-    <string name="sent_picture_description">sent picture</string>
-    <string name="search_for_a_user_hint_text">Search for a user</string>
-    <string name="search_floating_button">search</string>
     <string name="initials_default_text">AV</string>
     <string name="list_item_name_default_text">Name</string>
-    <string name="default_name">Name</string>
-    <string name="hint_search_for_a_user">Search for a user</string>
-    <string name="default_last_message">Last message shown here</string>
     <string name="default_time_13_37">13:37</string>
-    <string name="developer_text">Developed by Group One</string>
-    <string name="start_group_chat">Start Group chat</string>
-    <string name="menu_arrow">Menu arrow</string>
-    <string name="menu">Menu</string>
-    <string name="menu_item_menu">Menu</string>
-    <string name="header_friends_text">Friends</string>
-    <string name="registration_confirmed_img_description">person with check symbol</string>
-    <string name="registration_confirmed">Registration\nconfirmed</string>
-    <string name="confirm_deleting_chat">Confirm\ndeleting chat?</string>
-    <string name="close_button_description">close button</string>
-    <string name="delete_button_description">Delete button</string>
+
+    <string name="failed_to_send_image">Failed to send image: %1$s</string>
+    <string name="permission_for_images">Permission required to select images</string>
+    <string name="select_image_source">Select Image Source</string>
+
+    <!--ProfileActivity -->
+    <string name="profile_header_text">Profile</string>
     <string name="save">Save</string>
-    <string name="default_web_client_id">409410581006-m60133hoj1b1uevksrc8csgusq9ihi18.apps.googleusercontent.com</string>
-    <string name="decline_friend">Decline</string>
     <string name="cancel">Cancel</string>
+    <string name="header_friends_text">Friends</string>
+    <string name="decline_friend">Decline</string>
+
+    <!--Button/Image descriptions -->
+    <string name="delete_button_description">Delete</string>
+    <string name="close_button_description">Close</string>
+    <string name="search_floating_button_description">Search</string>
+    <string name="back_arrow_button_description">Back arrow</string>
+    <string name="add_photo_button_description">Add photo</string>
+    <string name="send_button_description">Send message</string>
+    <string name="add_icon_img_description">Add profile picture</string>
+
+    <string name="sent_picture_description">Sent picture</string>
+    <string name="received_picture_description">Received picture</string>
+    <string name="registration_confirmed_img_description">Person with check symbol</string>
+    <string name="menu_arrow_img_description">Menu arrow</string>
+    <string name="image_preview_description">Image preview</string>
+    <string name="group_chat_img_description">Group chat image</string>
+
+    <!--Alerts and Toasts -->
+    <string name="delete_friend_text">Delete friend</string>
+    <string name="delete_friend_alert_text">Are you sure you want to delete friend: %1$s</string>
+    <string name="confirm_delete_btn_text">Yes, delete</string>
+    <string name="cancel_alert_btn_text">Cancel</string>
+    <string name="decline_friend_request_btn_text">Decline</string>
+    <string name="sent_friend_request_text">%1$s sent you a friend request</string>
+    <string name="start_group_chat_text">Choose another user to start group chat</string>
+    <string name="cancel_request_btn_text">Cancel Request</string>
+    <string name="confirm_cancel_friend_request">"Are you sure you want to cancel your friend request to %1$s "</string>
+    <string name="yes_cancel_btn_text">Yes, cancel</string>
+    <string name="keep_request_btn_text">Keep request</string>
+    <string name="decline_friend_request_alert_text">Decline friend request</string>
+    <string name="delete_message_alert_text">Do you want to delete this message?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="user_saved_toast">User saved!</string>
+    <string name="edit_text_error_text_empty">Field cannot be empty</string>
+    <string name="password_length_error_text">Password needs to be at least 6 characters</string>
+    <string name="accept_btn_text">Accept</string>
+    <string name="pending_btn_text">Pending</string>
+    <string name="remove_user_from_recent">Remove user from Recent searched</string>
+    <string name="confirm_remove">Are you sure you want to remove %1$s from recent searches?</string>
+    <string name="yes_remove">Yes, remove</string>
+
+    <!--Other stuff -->
+    <string name="default_web_client_id">409410581006-m60133hoj1b1uevksrc8csgusq9ihi18.apps.googleusercontent.com</string>
+
+    <string name="unknown">Unknown</string>
+    <string name="no_message">No Message</string>
+    <string name="now">Now</string>
+
 </resources>

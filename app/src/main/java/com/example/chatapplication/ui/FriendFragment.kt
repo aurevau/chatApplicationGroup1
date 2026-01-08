@@ -6,12 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatapplication.R
 import com.example.chatapplication.adapter.FriendRecyclerAdapter
-import com.example.chatapplication.data.User
 import com.example.chatapplication.databinding.FragmentFriendBinding
 import com.example.chatapplication.viewmodel.UserViewModel
 
@@ -51,14 +50,14 @@ class FriendFragment : DialogFragment() {
             startActivity(chatIntent)
         }, {user ->
             AlertDialog.Builder(context)
-                .setTitle("Delete friend")
-                .setMessage("Are you sure you want to delete friend: ${user.fullName} ")
-                .setPositiveButton("Yes, delete") { dialog, _ ->
+                .setTitle(getString(R.string.delete_friend_text))
+                .setMessage(getString(R.string.delete_friend_alert_text, user.fullName))
+                .setPositiveButton(getString(R.string.confirm_delete_btn_text)) { dialog, _ ->
                     viewModel.removeFriend(currentUserId, user)
                     dialog.dismiss()
                 }
 
-                .setNegativeButton("Cancel") { dialog, _ ->
+                .setNegativeButton(getString(R.string.cancel_alert_btn_text)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
@@ -77,13 +76,13 @@ class FriendFragment : DialogFragment() {
             }
         }, { user ->
             AlertDialog.Builder(context)
-                .setTitle("Decline Request")
-                .setMessage("${user.fullName} sent you a friend request")
-                .setPositiveButton("Decline") { dialog, _ ->
+                .setTitle(getString(R.string.decline_friend_request_alert_text))
+                .setMessage(getString(R.string.sent_friend_request_text, user.fullName))
+                .setPositiveButton(R.string.decline_friend_request_btn_text) { dialog, _ ->
                     viewModel.declineFriendRequest(currentUserId!!, user.id!!)
                     dialog.dismiss()
                 }
-                .setNegativeButton("Cancel") { dialog, _ ->
+                .setNegativeButton(R.string.cancel_alert_btn_text) { dialog, _ ->
                     dialog.dismiss()
 
                 }
