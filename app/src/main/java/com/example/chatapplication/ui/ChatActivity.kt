@@ -12,7 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
@@ -29,8 +28,6 @@ import java.io.File
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
-    private lateinit var spinner: AppCompatSpinner
-
     private lateinit var authViewModel: AuthViewModel
 
     private val CAMERA_REQUEST_CODE = 1001
@@ -44,8 +41,6 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
 
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
@@ -131,7 +126,6 @@ class ChatActivity : AppCompatActivity() {
         }
 
 
-
         viewModel.start(currentRoomId)
 
 
@@ -179,7 +173,7 @@ class ChatActivity : AppCompatActivity() {
                     onError = { e ->
                         Toast.makeText(
                             this,
-                            "Failed to send image: ${e.message}",
+                            getString(R.string.failed_to_send_image, e.message),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -200,7 +194,6 @@ class ChatActivity : AppCompatActivity() {
             requestMediaPermissions()
         }
 
-
     }
 
     private val permissionLauncher =
@@ -209,7 +202,7 @@ class ChatActivity : AppCompatActivity() {
             if (granted) {
                 showImageSourceDialog()
             } else {
-                Toast.makeText(this, "Permission required to select images", Toast.LENGTH_SHORT)
+                Toast.makeText(this, getString(R.string.permission_for_images), Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -234,11 +227,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-
     private fun showImageSourceDialog() {
         val options = arrayOf("Camera", "Gallery")
         androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Select Image Source")
+            .setTitle(getString(R.string.select_image_source))
             .setItems(options) { dialog, which ->
                 when (which) {
                     0 -> openCamera()
@@ -282,9 +274,5 @@ class ChatActivity : AppCompatActivity() {
             binding.ivPhoto.visibility = View.VISIBLE
 
         }
-
-
     }
-
-
 }

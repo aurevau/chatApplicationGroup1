@@ -21,7 +21,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 class DashboardActivity : AppCompatActivity() {
-    private val usersFragment = UsersFragment()
     private lateinit var binding: ActivityDashboardBinding
 
     private val auth = Firebase.auth
@@ -67,13 +66,17 @@ class DashboardActivity : AppCompatActivity() {
                         startActivity(intent)
                         true
                     }
+
                     R.id.menu_logout -> {
                         authViewModel.logOut()
                         // Start WelcomeActivity with CLEAR_TASK
                         val intent = Intent(this@DashboardActivity, WelcomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
-                        true }
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -111,7 +114,6 @@ class DashboardActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
 
     }
 }

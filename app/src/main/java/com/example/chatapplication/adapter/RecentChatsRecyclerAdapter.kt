@@ -1,13 +1,11 @@
 package com.example.chatapplication.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapplication.data.ChatRoom
@@ -18,32 +16,30 @@ class RecentChatsRecyclerAdapter(
     val onChatLongClick: (ChatRoom) -> Unit,
 ) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
-    private var chats = emptyList<ChatRoom>()  // Ersätt ChatRoom med er model-klass
+    private var chats = emptyList<ChatRoom>()
 
-    // Uppdatera listan när data kommer från ViewModel
+    // Update the list when data comes from the ViewModel
     fun setChats(newChats: List<ChatRoom>) {
         chats = newChats
-        notifyDataSetChanged()  // Uppdatera RecyclerView
+        notifyDataSetChanged()  // Update RecyclerView
     }
 
-    // Hur många rader?
+
     override fun getItemCount() = chats.size
 
-    // Skapa en rad (använd item_recent_chat.xml)
+    // Create a row (use item_recent_chat.xml)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_recent_chat, parent, false)
         return ChatViewHolder(view)
     }
 
-    // Fyll i data i varje rad
+    // Fill in the data in each row
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         holder.bind(chats[position], onChatClick, onChatLongClick )
-
-
     }
 
-    // ViewHolder = håller widgets i varje rad
+    // ViewHolder = holds widgets in each row
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
@@ -65,7 +61,6 @@ class RecentChatsRecyclerAdapter(
                 onChatLongClick(chat)
                 true
             }
-            // Fyll i data här – anpassa efter er ChatRoom-modell
 
             if(chat.isGroup) {
                 chatIcon.setImageResource(R.drawable.group_icon)
@@ -76,7 +71,6 @@ class RecentChatsRecyclerAdapter(
             } else {
                 chatIcon.visibility = View.GONE
                 fLChatIcon.visibility = View.GONE
-                //initials.visibility = View.VISIBLE
                 val imageUrl = chat.chatRoomImageUrl
                 if (!imageUrl.isNullOrEmpty()) {
                     initials.visibility = View.GONE
@@ -91,22 +85,13 @@ class RecentChatsRecyclerAdapter(
                     initials.text = chat.userName?.take(2)
                 }
             }
-
-            name.text = chat.userName ?: "Okänd"
-            message.text = chat.lastMessage ?: "Inget meddelande"
-            time.text = chat.timestamp ?: "Nu"
+            initials.text = chat.userName?.take(2)  // The two first letters of the name
+            name.text = chat.userName ?: itemView.context.getString(R.string.unknown)
+            message.text = chat.lastMessage ?: itemView.context.getString(R.string.no_message)
+            time.text = chat.timestamp ?: itemView.context.getString(R.string.now)
             itemView.setOnClickListener {
                 onChatClick(chat)
             }
-
-              // T.ex. första bokstäverna i namnet
-
-
-
-
-            Log.d("profileImageUrl", chat.toString())
-
-
         }
     }
 }

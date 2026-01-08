@@ -102,6 +102,7 @@ class ChatRecyclerAdapter(
 
     }
 
+    //Diff is a helper class that tells RecyclerView which items changed
     class Diff : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(a: Message, b: Message) = a.id == b.id
         override fun areContentsTheSame(a: Message, b: Message) = a == b

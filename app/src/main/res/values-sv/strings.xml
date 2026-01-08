@@ -43,6 +43,7 @@
 
     <string name="me_following_text">%1$s (Jag)</string>
 
+
     <!--ChatActivity -->
     <string name="message_hint_text">Meddelande</string>
 
@@ -51,6 +52,11 @@
     <string name="initials_default_text">AV</string>
     <string name="list_item_name_default_text">Namn</string>
     <string name="default_time_13_37">Kl. 13:37</string>
+
+    <string name="failed_to_send_image">Misslyckades att skicka bild: %1$s</string>
+    <string name="permission_for_images">Godkännande behövs för att välja bild</string>
+    <string name="select_image_source">Välj källa för bild</string>
+
 
     <!--ProfileActivity -->
     <string name="profile_header_text">Profil</string>
@@ -96,8 +102,15 @@
     <string name="password_length_error_text">Lösenordet behöver vara minst 6 tecken</string>
     <string name="accept_btn_text">Acceptera</string>
     <string name="pending_btn_text">Skickad</string>
+    <string name="remove_user_from_recent">Radera användare från senast sökta</string>
+    <string name="confirm_remove">Är du säker som du vill radera %1$s från senast sökta?</string>
+    <string name="yes_remove">Ja, radera</string>
 
     <!--Other stuff -->
     <string name="default_web_client_id">409410581006-m60133hoj1b1uevksrc8csgusq9ihi18.apps.googleusercontent.com</string>
+
+    <string name="unknown">Okänd</string>
+    <string name="no_message">Inget meddelande</string>
+    <string name="now">Nu</string>
 
 </resources>

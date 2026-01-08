@@ -370,7 +370,7 @@ class UserRepository {
     fun sendFriendRequest(fromUserId: String, fromUserName: String, toUserId: String, toUserName: String) {
         val batch = db.batch()
 
-        // Skapa request hos mottagaren
+        // Create request with the recipient
         val requestRef = db.collection("users")
             .document(toUserId)
             .collection("friendRequests")

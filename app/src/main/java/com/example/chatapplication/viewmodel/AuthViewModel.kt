@@ -67,7 +67,6 @@ class AuthViewModel : ViewModel() {
     }
 
     fun saveUserToFirestore(fullName: String, fullNameLower: String, email: String, userId: String, profileImageUrl: String?, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
-        // Step 9: Uppdatera User-klassen och spara till Firestore
         // Using the User data class instead of a HashMap for cleaner code and type safety
         val user = User(
             id = userId,

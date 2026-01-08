@@ -39,7 +39,7 @@ class RecentChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Skapa adaptern
+        // 1. Create the adapter
         adapter = RecentChatsRecyclerAdapter(
             onChatClick = { chat ->
                 val intent = Intent(requireContext(), ChatActivity::class.java)
@@ -56,14 +56,14 @@ class RecentChatsFragment : Fragment() {
         )
 
 
-        // 2. Koppla RecyclerView till LayoutManager och Adapter
+        // 2. Connect RecyclerView to LayoutManager and Adapter
         binding.recyclerViewRecentChats.apply {
             layoutManager = LinearLayoutManager(context)
-            // HÄR ÄR FIXEN: Vi måste tilldela adaptern till RecyclerView
+            // HERE IS THE FIX: We need to assign the adapter to the RecyclerView
             this.adapter = this@RecentChatsFragment.adapter
         }
 
-        // 3. Lyssna på data
+        // 3. Listen to data
         viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
             adapter.setChats(chatList)
         }

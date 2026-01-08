@@ -75,7 +75,7 @@ class UsersFragment : Fragment() {
         })
 
         adapter = UserRecyclerAdapter(viewModel, { user ->
-            // Se mer information om användaren och kunna lägga till vän?
+            // See more information about the user and be able to add friends?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
             if (currentUserId != null) {
@@ -141,7 +141,17 @@ class UsersFragment : Fragment() {
             binding.rvSelectedUsers.visibility =
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
         }, { user ->
-            userRepository.deleteRecentSearch(user)
+            AlertDialog.Builder(context)
+                .setTitle(getString(R.string.remove_user_from_recent))
+                .setMessage(getString(R.string.confirm_remove, user.fullName))
+                .setPositiveButton(getString(R.string.yes_remove)) { dialog, _ ->
+                    userRepository.deleteRecentSearch(user)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }, { user ->
 
             AlertDialog.Builder(context)
@@ -181,11 +191,7 @@ class UsersFragment : Fragment() {
 
                 }
                 .show()
-
-
         })
-
-
     }
 
     override fun onCreateView(
@@ -249,7 +255,6 @@ class UsersFragment : Fragment() {
                 binding.rvSelectedUsers.visibility = View.GONE
                 binding.btnStartGroupChat.visibility = View.GONE
 
-
             }
             binding.etSearchUser.text?.clear()
         }
@@ -279,12 +284,10 @@ class UsersFragment : Fragment() {
         }
 
 
-
         viewModel.friends.observe(viewLifecycleOwner) { friendsList ->
 
             adapter.updateFriendList(friendsList)
             Log.d("FRIENDS_OBSERVED", "Updated friends: ${friendsList.map { it.fullName }}")
-
         }
 
         viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
@@ -292,14 +295,12 @@ class UsersFragment : Fragment() {
             adapter.updateSelectionList(selectionList)
             val selectedUsers = adapter.getSelectedUsers()
             selectedUsersAdapter.submitList(selectedUsers.toList())
-            // Visa/hide knappar
+            // Show/hide buttons
             binding.btnStartGroupChat.visibility =
                 if (selectedUsers.size > 1) View.VISIBLE else View.GONE
             binding.rvSelectedUsers.visibility =
                 if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
         }
-
-
 
         viewModel.getFriends(currentUserId)
 
@@ -329,6 +330,4 @@ class UsersFragment : Fragment() {
 
         adapter.notifyDataSetChanged()
     }
-
-
 }

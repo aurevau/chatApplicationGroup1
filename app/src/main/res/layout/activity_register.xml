@@ -92,7 +92,7 @@
             android:backgroundTint="@color/header_and_edit_text_color"
             android:fontFamily="@font/bagel_fat_one"
             android:inputType="text"
-            android:textColor="@color/off_white" />
+            android:textColor="@color/off_white"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
