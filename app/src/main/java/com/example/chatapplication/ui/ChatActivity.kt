@@ -137,11 +137,11 @@ class ChatActivity : AppCompatActivity() {
 
         val adapter = ChatRecyclerAdapter { message ->
             android.app.AlertDialog.Builder(this)
-                .setMessage("Do you want to delete this message?")
-                .setPositiveButton("Yes") { _, _ ->
+                .setMessage(getString(R.string.delete_message_alert_text))
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
                     viewModel.deleteMessage(message.id, message.roomId, message.senderId)
                 }
-                .setNegativeButton("No", null)
+                .setNegativeButton(getString(R.string.no), null)
                 .show()
         }
         binding.recyclerMessages.adapter = adapter

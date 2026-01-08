@@ -1,6 +1,5 @@
 package com.example.chatapplication.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,7 +13,6 @@ import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityRegisterBinding
 import com.example.chatapplication.popup.RegisterPopupFragment
 import com.example.chatapplication.viewmodel.AuthViewModel
-import com.google.firebase.storage.FirebaseStorage
 import de.hdodenhof.circleimageview.CircleImageView
 
 class RegisterActivity : AppCompatActivity() {
@@ -26,12 +24,13 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
 
     // Result launcher for picking an image
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            imageUri = it
-            ivProfilePicture.setImageURI(it)
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                imageUri = it
+                ivProfilePicture.setImageURI(it)
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,18 +62,20 @@ class RegisterActivity : AppCompatActivity() {
             val fullNameLower = fullName.lowercase()
             // Enkel validering
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                binding.etFullName.editText?.error = "Field cannot be empty"
-                binding.etEmail.editText?.error = "Field cannot be empty"
-                binding.etPassword.editText?.error = "Field cannot be empty"
-                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
+                binding.etFullName.editText?.error =
+                    getString(R.string.edit_text_error_text_empty)
+                binding.etEmail.editText?.error =
+                    getString(R.string.edit_text_error_text_empty)
+                binding.etPassword.editText?.error =
+                    getString(R.string.edit_text_error_text_empty)
                 return@setOnClickListener
             }
 
             if (password.length < 6) {
-                binding.etPassword.editText?.error = "Password needs to be at least 6 characters"
+                binding.etPassword.editText?.error = getString(R.string.password_length_error_text)
                 Toast.makeText(
                     this,
-                    "Password needs to be at least 6 characters",
+                    getString(R.string.password_length_error_text),
                     Toast.LENGTH_SHORT
                 )
                     .show()
@@ -83,10 +84,10 @@ class RegisterActivity : AppCompatActivity() {
 
             // Anropa nya register-funktionen med imageUri och callbacks
             authViewModel.register(
-                fullName, 
-                fullNameLower, 
-                email, 
-                password, 
+                fullName,
+                fullNameLower,
+                email,
+                password,
                 imageUri,
                 onSuccess = {
                     // Om registreringen lyckades
@@ -107,6 +108,7 @@ class RegisterActivity : AppCompatActivity() {
             )
         }
     }
+
     fun showPopup() {
         val fragment = RegisterPopupFragment()
         fragment.show(supportFragmentManager, "RegisterPopupFragment")

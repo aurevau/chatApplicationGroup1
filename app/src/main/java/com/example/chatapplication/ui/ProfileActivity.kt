@@ -141,7 +141,8 @@ class ProfileActivity : AppCompatActivity() {
                                 userId,
                                 null,
                                 onSuccess = {
-                                    Toast.makeText(this, "User saved!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this,
+                                        getString(R.string.user_saved_toast), Toast.LENGTH_SHORT).show()
                                 },
                                 onFailure = { errorMessage ->
                                     Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
@@ -159,7 +160,7 @@ class ProfileActivity : AppCompatActivity() {
                                         userId,
                                         downloadUrl,
                                         onSuccess = {
-                                            Toast.makeText(this, "User saved!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this, getString(R.string.user_saved_toast), Toast.LENGTH_SHORT).show()
                                         },
                                         onFailure = { errorMessage ->
                                             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()

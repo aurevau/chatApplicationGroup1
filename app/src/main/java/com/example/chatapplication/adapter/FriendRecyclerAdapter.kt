@@ -89,16 +89,16 @@ class FriendRecyclerAdapter(
         when {
             isFriend -> {
                 holder.deleteFriend.visibility = View.VISIBLE
-                holder.deleteFriend.text = "Friends"
+                holder.deleteFriend.text = ContextCompat.getString(holder.itemView.context,R.string.friends)
                 holder.deleteFriend.setOnClickListener { onDeleteFriendClick(user) }
 
             }
             hasIncomingRequest -> {
                 holder.deleteFriend.visibility = View.INVISIBLE
                 holder.acceptFriend.visibility = View.VISIBLE
-                holder.acceptFriend.text = "Accept"
+                holder.acceptFriend.text = holder.itemView.context.getString(R.string.accept_btn_text)
                 holder.declineFriend.visibility = View.VISIBLE
-                holder.declineFriend.text = "Decline"
+                holder.declineFriend.text = ContextCompat.getString(holder.itemView.context, R.string.decline_friend_request_btn_text)
                 holder.declineFriend.setTextColor(
                     ContextCompat.getColor(holder.itemView.context, R.color.decline_red)
                 )

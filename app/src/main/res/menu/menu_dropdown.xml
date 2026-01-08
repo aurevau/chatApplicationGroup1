@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/menu_menu"
-        android:title="@string/menu_item_menu"
-        android:icon="@drawable/menu_icon"/>
     <item
         android:id="@+id/menu_profile"
         android:title="@string/menu_item_profile"
