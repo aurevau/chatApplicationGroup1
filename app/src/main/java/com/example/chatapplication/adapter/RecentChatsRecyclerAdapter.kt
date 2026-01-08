@@ -88,10 +88,16 @@ class RecentChatsRecyclerAdapter(
             }
 
             message.text = when {
-                !chat.lastImageMessage?.isNotEmpty()!! && chat.lastMessage.isNullOrBlank() -> itemView.context.getString(R.string.picutre_message_text)
-                !chat.lastMessage?.isNotBlank()!! -> chat.lastMessage
-                else -> itemView.context.getString(R.string.no_message)
+                !chat.lastImageMessage.isNullOrEmpty() ->
+                    itemView.context.getString(R.string.picutre_message_text)
+
+                !chat.lastMessage.isNullOrBlank() ->
+                    chat.lastMessage
+
+                else ->
+                   ""
             }
+
 
 
             initials.text = chat.userName?.take(2)  // The two first letters of the name

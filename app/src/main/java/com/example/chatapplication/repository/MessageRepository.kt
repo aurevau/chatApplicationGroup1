@@ -69,7 +69,7 @@ class MessageRepository {
         val msg = Message(
             senderId = user.uid,
             roomId = roomId,
-            text = text,
+            text = text ?: "",
             timestamp = System.currentTimeMillis()
         )
 
@@ -90,7 +90,7 @@ class MessageRepository {
         val msg = Message(
             senderId = user.uid,
             roomId = roomId,
-            text = text.orEmpty(),
+            text = text ?: "",
             imageUrl = imageUrl,
             timestamp = System.currentTimeMillis()
         )

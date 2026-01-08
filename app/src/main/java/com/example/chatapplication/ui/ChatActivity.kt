@@ -159,12 +159,16 @@ class ChatActivity : AppCompatActivity() {
             val text = binding.etMessage.text.toString()
             binding.etMessage.text.clear()
             val selectedImage = viewModel.selectedImageUri.value
+            if (text.isEmpty() && selectedImage == null) return@setOnClickListener
 
             if (selectedImage != null) {
                 binding.progressCircular.visibility = View.VISIBLE
+                binding.btnSend.isEnabled = false
+
                 viewModel.uploadChatImage(
                     selectedImage, roomId,
                     onSuccess = { imageUrl ->
+                        binding.btnSend.isEnabled = true
                         viewModel.sendImageMessage(roomId, imageUrl, text, userId)
                         viewModel.selectedImageUri.value = null
                         binding.ivPhoto.visibility = View.GONE
@@ -176,12 +180,15 @@ class ChatActivity : AppCompatActivity() {
                             getString(R.string.failed_to_send_image, e.message),
                             Toast.LENGTH_SHORT
                         ).show()
+                        binding.btnSend.isEnabled = true
                     }
                 )
-            } else if (text != null) {
+            } else {
                 viewModel.sendTextMessage(roomId, text, userId)
-                binding.etMessage.text.clear()
             }
+
+                binding.etMessage.text.clear()
+
         }
 
         binding.btnBack.setOnClickListener {
