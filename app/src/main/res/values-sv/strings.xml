@@ -43,6 +43,9 @@
 
     <string name="me_following_text">%1$s (Jag)</string>
 
+    <string name="picture_message_text">📷 Bild</string>
+    <string name="profile_picture_img_description">Profilbild</string>
+
 
     <!--ChatActivity -->
     <string name="message_hint_text">Meddelande</string>
@@ -88,7 +91,7 @@
     <string name="cancel_alert_btn_text">Avbryt</string>
     <string name="decline_friend_request_btn_text">Neka</string>
     <string name="sent_friend_request_text">%1$s skickade en vänförfrågan</string>
-    <string name="start_group_chat_text">Välj en till användare för att start en gruppchatt</string>
+    <string name="start_group_chat_text">Välj en till användare för att starta en gruppchatt</string>
     <string name="cancel_request_btn_text">Avbryt förfrågan</string>
     <string name="confirm_cancel_friend_request">Är du säker att du vill avbryta förfrågan till %1$s</string>
     <string name="yes_cancel_btn_text">Ja, avbryt</string>
@@ -112,6 +115,5 @@
     <string name="unknown">Okänd</string>
     <string name="no_message">Inget meddelande</string>
     <string name="now">Nu</string>
-    <string name="picutre_message_text">📷 Bild</string>
 
 </resources>

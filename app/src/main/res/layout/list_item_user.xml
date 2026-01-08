@@ -24,6 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:contentDescription="@string/profile_picture_img_description"
             android:id="@+id/profilePic"
             android:layout_width="@dimen/initials_circle_background_40dp"
             android:layout_height="@dimen/initials_circle_background_40dp"
@@ -85,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_16dp"
             android:fontFamily="@font/quantico_bold"
-            android:text="@string/add_friend"
+            android:text="@string/accept_btn_text"
             android:textColor="@color/off_white"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
             android:visibility="gone"
@@ -114,7 +115,7 @@
             android:text="@string/cancel"
             android:textColor="@color/decline_red"
             android:textSize="@dimen/add_friend_text_size_list_item_12sp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@id/tv_add_friend"
             app:layout_constraintTop_toBottomOf="@id/tv_name" />
 

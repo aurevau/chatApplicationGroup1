@@ -43,6 +43,9 @@
 
     <string name="me_following_text">%1$s (Me)</string>
 
+    <string name="picture_message_text">📷 Picture</string>
+    <string name="profile_picture_img_description">profile picture</string>
+
     <!--ChatActivity -->
     <string name="message_hint_text">Message</string>
 
@@ -110,6 +113,5 @@
     <string name="unknown">Unknown</string>
     <string name="no_message">No Message</string>
     <string name="now">Now</string>
-    <string name="picutre_message_text">📷 Picture</string>
 
 </resources>

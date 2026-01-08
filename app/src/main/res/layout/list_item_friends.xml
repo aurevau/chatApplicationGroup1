@@ -14,6 +14,7 @@
         android:padding="@dimen/margin_12dp">
 
         <ImageView
+            android:contentDescription="@string/profile_picture_img_description"
             android:id="@+id/profilePic"
             android:layout_width="@dimen/initials_circle_background_40dp"
             android:layout_height="@dimen/initials_circle_background_40dp"
