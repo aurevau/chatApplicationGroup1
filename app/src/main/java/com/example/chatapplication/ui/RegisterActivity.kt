@@ -38,10 +38,10 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Steg 5: Koppla bilden i onCreate()
+
         ivProfilePicture = findViewById(R.id.ivProfilePicture)
 
-        // Klicka på bilden för att välja ny
+        // Click on the image to choose new
         ivProfilePicture.setOnClickListener {
             chooseImage()
         }
@@ -49,19 +49,19 @@ class RegisterActivity : AppCompatActivity() {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
 
-        // Back-knapp – går tillbaka till föregående aktivitet
+
         binding.backBtn.setOnClickListener {
             finish()
         }
 
-        // Register-knapp
+
         binding.btnRegister.setOnClickListener {
             val fullName = binding.etFullName.editText?.text.toString().trim()
             val email = binding.etEmail.editText?.text.toString().trim()
             val password = binding.etPassword.editText?.text.toString().trim()
 
             val fullNameLower = fullName.lowercase()
-            // Enkel validering
+
             if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 binding.etFullName.editText?.error = "Field cannot be empty"
                 binding.etEmail.editText?.error = "Field cannot be empty"
@@ -81,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Anropa nya register-funktionen med imageUri och callbacks
+            // Calling the new register function with imageUri and callbacks
             authViewModel.register(
                 fullName, 
                 fullNameLower, 
@@ -89,7 +89,7 @@ class RegisterActivity : AppCompatActivity() {
                 password, 
                 imageUri,
                 onSuccess = {
-                    // Om registreringen lyckades
+
                     val intent = Intent(this, WelcomeActivity::class.java)
                     intent.putExtra("EMAIL", email)
                     intent.putExtra("PASSWORD", password)
@@ -101,7 +101,7 @@ class RegisterActivity : AppCompatActivity() {
                     }, 2500)
                 },
                 onFailure = { errorMessage ->
-                    // Om registreringen misslyckades
+
                     Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_LONG).show()
                 }
             )

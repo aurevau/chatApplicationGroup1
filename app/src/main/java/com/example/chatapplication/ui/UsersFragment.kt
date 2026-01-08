@@ -75,7 +75,7 @@ class UsersFragment : Fragment() {
         })
 
         adapter = UserRecyclerAdapter(viewModel, { user ->
-            // Se mer information om användaren och kunna lägga till vän?
+            // See more information about the user and be able to add friends?
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
             if (currentUserId != null) {
@@ -141,8 +141,18 @@ class UsersFragment : Fragment() {
             binding.rvSelectedUsers.visibility =
                 if (selectedUsersSet.size > 1) View.VISIBLE else View.GONE
         }, {user ->
-            userRepository.deleteRecentSearch(user)
-        }, {user ->
+        AlertDialog.Builder(context)
+            .setTitle("Remove from Recent")
+            .setMessage("Are you sure you want to remove ${user.fullName} from recent searches?")
+            .setPositiveButton("Yes, Remove") { dialog, _ ->
+                userRepository.deleteRecentSearch(user)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }, {user ->
 
             AlertDialog.Builder(context)
                 .setTitle("Cancel Request")
@@ -292,7 +302,7 @@ class UsersFragment : Fragment() {
             adapter.updateSelectionList(selectionList)
             val selectedUsers = adapter.getSelectedUsers()
             selectedUsersAdapter.submitList(selectedUsers.toList())
-            // Visa/hide knappar
+            // Show/hide buttons
             binding.btnStartGroupChat.visibility =
                 if (selectedUsers.size > 1) View.VISIBLE else View.GONE
             binding.rvSelectedUsers.visibility =

@@ -1,5 +1,6 @@
 package com.example.chatapplication.popup
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,7 +26,7 @@ class DeleteChatPopupFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
+
         _binding = FragmentDeleteChatPopupBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -39,9 +40,16 @@ class DeleteChatPopupFragment : DialogFragment() {
             ?: return
 
         binding.btnTrash.setOnClickListener {
-            // Kör delete här
-            MessageRepository().deleteChatRoom(chatRoom)
-            dismiss()
+            // Show AlertDialog for confirmation
+            AlertDialog.Builder(requireContext())
+                .setTitle("Delete Chat")
+                .setMessage("Are you sure you want to delete this chat with ${chatRoom.userName}? This cannot be undone.")
+                .setPositiveButton("Yes, Delete") { _, _ ->
+                    MessageRepository().deleteChatRoom(chatRoom)
+                    dismiss()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         binding.btnClosePopup.setOnClickListener {

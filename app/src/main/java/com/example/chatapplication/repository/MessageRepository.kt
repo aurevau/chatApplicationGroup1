@@ -54,7 +54,7 @@ class MessageRepository {
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    onSuccess(uri.toString()) // Detta är URL som vi skickar som message
+                    onSuccess(uri.toString()) //This is the URL we send as a message
                 }
             }
             .addOnFailureListener { e ->
