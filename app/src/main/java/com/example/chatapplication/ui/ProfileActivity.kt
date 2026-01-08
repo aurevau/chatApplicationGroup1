@@ -1,5 +1,6 @@
 package com.example.chatapplication.ui
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
@@ -47,7 +48,9 @@ class ProfileActivity : AppCompatActivity() {
         Log.d("SOUT", "ONCREATE")
 
         binding.backBtn.setOnClickListener {
-            finish()
+            val intent = Intent(this, DashboardActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
         }
 
 
