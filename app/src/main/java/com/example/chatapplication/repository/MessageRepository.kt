@@ -1,21 +1,20 @@
 package com.example.chatapplication.repository
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.Message
-import com.example.chatapplication.data.User
 import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
-import java.util.UUID
+import com.example.chatapplication.R
 
 class MessageRepository {
 
@@ -182,7 +181,7 @@ class MessageRepository {
 
 
     //fetch Firebase and return a list of chat rooms
-    fun getRecentChats() {
+    fun getRecentChats(context: Context) {
         val currentUserId = Firebase.auth.currentUser?.uid ?: return
 
         db.collection("chatRooms")
@@ -205,9 +204,8 @@ class MessageRepository {
 
                 snapshot.documents.forEach { doc ->
                     val members = doc.get("members") as? List<*>
-                    val otherUserId = members?.firstOrNull { it != currentUserId } as? String
-
                     val isGroup = doc.getBoolean("isGroup") == true
+
                     if(isGroup) {
                         chatList.add(
                                 ChatRoom(
@@ -216,24 +214,43 @@ class MessageRepository {
                                     lastMessage = doc.getString("lastMessage") ?: "",
                                     lastImageMessage = doc.getString("lastImageMessage") ?: "",
                                     timestamp = DateUtils.formatTimestamp(
-                                        doc.getLong("lastMessageTimestamp") ?: 0
-                                    ),
+                                        doc.getLong("lastMessageTimestamp") ?: 0),
                                     isGroup = true
                                 )
                         )
                         processedCount++
-
-                    } else {
-                        val members = doc.get("members") as? List<*>
-                    val otherUserId =
-                        members?.firstOrNull { it != currentUserId } as? String
-
-                    if (otherUserId == null) {
-                        processedCount++
                         return@forEach
                     }
+                        val otherUserId = members?.firstOrNull { it != currentUserId } as? String
 
-                    db.collection("users").document(otherUserId).get()
+                        if (otherUserId == null) {
+                            // Chat with yourself
+                            db.collection("users").document(currentUserId).get()
+                                .addOnSuccessListener { userDoc ->
+                                    chatList.add(
+                                        ChatRoom(
+                                            roomId = doc.id,
+                                            userName = userDoc.getString("fullName")?.let { fullName ->
+                                                context.getString(R.string.me_following_text, fullName)
+                                            },
+                                            chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
+                                            lastMessage = doc.getString("lastMessage"),
+                                            lastImageMessage = doc.getString("lastImageMessage"),
+                                            timestamp = DateUtils.formatTimestamp(
+                                                doc.getLong("lastMessageTimestamp") ?: 0
+                                            )
+                                        )
+                                    )
+                                    processedCount++
+                                    if (processedCount == totalDocs) {
+                                        _recentChats.value = chatList
+                                    }
+                                }
+                            return@forEach
+                        }
+
+
+                        db.collection("users").document(otherUserId).get()
                         .addOnSuccessListener { userDoc ->
                             chatList.add(
                                 ChatRoom(
@@ -243,8 +260,7 @@ class MessageRepository {
                                     lastMessage = doc.getString("lastMessage"),
                                     lastImageMessage = doc.getString("lastImageMessage"),
                                     timestamp = DateUtils.formatTimestamp(
-                                        doc.getLong("lastMessageTimestamp") ?: 0
-                                    )
+                                        doc.getLong("lastMessageTimestamp") ?: 0)
                                 )
                             )
                             processedCount++
@@ -252,15 +268,10 @@ class MessageRepository {
                                 _recentChats.value = chatList
                             }
                         }
-                    return@forEach
-                }
-
-                if (processedCount == totalDocs) {
-                    _recentChats.value = chatList
                 }
             }
+
     }
-}
 
 
     private fun updateChatRoomLastMessage(roomId: String, message: String) {

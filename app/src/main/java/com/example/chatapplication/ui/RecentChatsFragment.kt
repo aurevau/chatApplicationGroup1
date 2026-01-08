@@ -39,6 +39,7 @@ class RecentChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getRecentChats(requireContext())
         // 1. Create the adapter
         adapter = RecentChatsRecyclerAdapter(
             onChatClick = { chat ->
@@ -53,6 +54,7 @@ class RecentChatsFragment : Fragment() {
                 DeleteChatPopupFragment.newInstance(chatRoom)
                     .show(parentFragmentManager, "deleteChat")
             }
+
         )
 
 

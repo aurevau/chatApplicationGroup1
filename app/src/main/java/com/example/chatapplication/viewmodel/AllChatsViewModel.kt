@@ -1,6 +1,7 @@
 package com.example.chatapplication.viewmodel
 
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.chatapplication.data.ChatRoom
@@ -11,8 +12,9 @@ class AllChatsViewModel : ViewModel() {
 
     val recentChats: LiveData<List<ChatRoom>> = messageRepository.recentChats
 
-    init {
-        messageRepository.getRecentChats()
+
+    fun getRecentChats(context: Context) {
+        messageRepository.getRecentChats(context)
     }
 
 }
