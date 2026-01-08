@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapplication.data.ChatRoom
@@ -85,9 +86,17 @@ class RecentChatsRecyclerAdapter(
                     initials.text = chat.userName?.take(2)
                 }
             }
+
+            message.text = when {
+                !chat.lastImageMessage?.isNotEmpty()!! && chat.lastMessage.isNullOrBlank() -> itemView.context.getString(R.string.picutre_message_text)
+                !chat.lastMessage?.isNotBlank()!! -> chat.lastMessage
+                else -> itemView.context.getString(R.string.no_message)
+            }
+
+
             initials.text = chat.userName?.take(2)  // The two first letters of the name
             name.text = chat.userName ?: itemView.context.getString(R.string.unknown)
-            message.text = chat.lastMessage ?: itemView.context.getString(R.string.no_message)
+//            message.text = chat.lastMessage ?: itemView.context.getString(R.string.no_message)
             time.text = chat.timestamp ?: itemView.context.getString(R.string.now)
             itemView.setOnClickListener {
                 onChatClick(chat)

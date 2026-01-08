@@ -99,9 +99,6 @@ class FriendRecyclerAdapter(
                 holder.acceptFriend.text = holder.itemView.context.getString(R.string.accept_btn_text)
                 holder.declineFriend.visibility = View.VISIBLE
                 holder.declineFriend.text = ContextCompat.getString(holder.itemView.context, R.string.decline_friend_request_btn_text)
-                holder.declineFriend.setTextColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.decline_red)
-                )
 
                 holder.acceptFriend.setOnClickListener { onAcceptFriendRequest(user) }
                 holder.declineFriend.setOnClickListener { onDeclineFriendRequest(user) }

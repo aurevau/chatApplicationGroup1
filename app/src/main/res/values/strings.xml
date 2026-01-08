@@ -110,5 +110,6 @@
     <string name="unknown">Unknown</string>
     <string name="no_message">No Message</string>
     <string name="now">Now</string>
+    <string name="picutre_message_text">📷 Picture</string>
 
 </resources>

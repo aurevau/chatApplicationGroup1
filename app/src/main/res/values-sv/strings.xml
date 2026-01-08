@@ -112,5 +112,6 @@
     <string name="unknown">Okänd</string>
     <string name="no_message">Inget meddelande</string>
     <string name="now">Nu</string>
+    <string name="picutre_message_text">📷 Bild</string>
 
 </resources>
