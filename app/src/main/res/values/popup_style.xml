@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
-        <item name="android:backgroundTint">@color/medium_green</item>
+        <item name="android:backgroundTint">@color/message_received</item>
         <item name="android:textColor">@color/off_white</item>
     </style>
 </resources>

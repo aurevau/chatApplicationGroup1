@@ -138,15 +138,15 @@ class UserRecyclerAdapter(
             isFriend -> {
                 holder.addFriend.visibility = View.INVISIBLE
                 holder.deleteFriend.visibility = View.VISIBLE
-                holder.deleteFriend.text = "Friends"
+                holder.deleteFriend.text = holder.itemView.context.getString(R.string.friends)
                 holder.deleteFriend.setOnClickListener { onDeleteFriendClick(user) }
             }
 
             hasIncomingRequest -> {
                 holder.acceptFriend.visibility = View.VISIBLE
-                holder.acceptFriend.text = "Accept"
+                holder.acceptFriend.text = holder.itemView.context.getString(R.string.accept_btn_text)
                 holder.declineFriend.visibility = View.VISIBLE
-                holder.declineFriend.text = "Decline"
+                holder.declineFriend.text = holder.itemView.context.getString(R.string.decline_friend_request_btn_text)
 
                 holder.acceptFriend.setOnClickListener { onAcceptFriendRequest(user) }
                 holder.declineFriend.setOnClickListener { onDeclineFriendRequest(user) }
@@ -154,15 +154,15 @@ class UserRecyclerAdapter(
 
             hasOutgoingRequest -> {
                 holder.addFriend.visibility = View.VISIBLE
-                holder.addFriend.text = "Pending"
+                holder.addFriend.text = holder.itemView.context.getString(R.string.pending_btn_text)
                 holder.cancelFriend.visibility = View.VISIBLE
-                holder.cancelFriend.text = "Cancel"
+                holder.cancelFriend.text = holder.itemView.context.getString(R.string.cancel_alert_btn_text)
                 holder.cancelFriend.setOnClickListener { onCancelOutgoingRequest(user) }
             }
 
             else -> {
                 holder.addFriend.visibility = View.VISIBLE
-                holder.addFriend.text = "Add Friend"
+                holder.addFriend.text = holder.itemView.context.getString(R.string.add_friend)
                 holder.deleteFriend.visibility = View.GONE
                 holder.acceptFriend.visibility = View.GONE
                 holder.declineFriend.visibility = View.GONE
@@ -204,7 +204,7 @@ class UserRecyclerAdapter(
         }
 
         holder.name.text = if (user.id == db.getCurrentUserId()) {
-            "${user.fullName} (Me)"
+            holder.itemView.context.getString(R.string.me_following_text, user.fullName)
         } else {
             user.fullName
         }

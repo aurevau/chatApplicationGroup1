@@ -62,7 +62,6 @@ class DashboardActivity : AppCompatActivity() {
             val popupMenu = PopupMenu(wrapper, it)
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.menu_menu -> {false}
                     R.id.menu_profile -> {
                         val intent = Intent(this@DashboardActivity, ProfileActivity::class.java)
                         startActivity(intent)

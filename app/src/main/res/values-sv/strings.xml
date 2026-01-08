@@ -41,6 +41,8 @@
     <string name="confirm_deleting_chat">Bekräfta\nradering av chatt?</string>
     <string name="default_last_message">Senaste meddelande visas här</string>
 
+    <string name="me_following_text">%1$s (Jag)</string>
+
     <!--ChatActivity -->
     <string name="message_hint_text">Meddelande</string>
 
@@ -72,6 +74,28 @@
     <string name="menu_arrow_img_description">Menypil</string>
     <string name="image_preview_description">Bildförhandsgranskning</string>
     <string name="group_chat_img_description">Gruppchattsikon</string>
+
+    <!--Alerts and Toasts -->
+    <string name="delete_friend_text">Radera vän</string>
+    <string name="delete_friend_alert_text">Är du säker att du vill radera: %1$s</string>
+    <string name="confirm_delete_btn_text">Ja, radera</string>
+    <string name="cancel_alert_btn_text">Avbryt</string>
+    <string name="decline_friend_request_btn_text">Neka</string>
+    <string name="sent_friend_request_text">%1$s skickade en vänförfrågan</string>
+    <string name="start_group_chat_text">Välj en till användare för att start en gruppchatt</string>
+    <string name="cancel_request_btn_text">Avbryt förfrågan</string>
+    <string name="confirm_cancel_friend_request">Är du säker att du vill avbryta förfrågan till %1$s</string>
+    <string name="yes_cancel_btn_text">Ja, avbryt</string>
+    <string name="keep_request_btn_text">Behåll förfrågan</string>
+    <string name="decline_friend_request_alert_text">Neka vänförfrågan</string>
+    <string name="delete_message_alert_text">Vill du radera meddelandet?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="user_saved_toast">Användare sparad!</string>
+    <string name="edit_text_error_text_empty">Fältet kan ej vara tomt</string>
+    <string name="password_length_error_text">Lösenordet behöver vara minst 6 tecken</string>
+    <string name="accept_btn_text">Acceptera</string>
+    <string name="pending_btn_text">Skickad</string>
 
     <!--Other stuff -->
     <string name="default_web_client_id">409410581006-m60133hoj1b1uevksrc8csgusq9ihi18.apps.googleusercontent.com</string>

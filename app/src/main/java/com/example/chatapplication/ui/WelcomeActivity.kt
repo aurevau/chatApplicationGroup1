@@ -74,9 +74,10 @@ class WelcomeActivity : AppCompatActivity() {
             val password = binding.editTextPassword.editText?.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                binding.editTextEmail.editText?.error = "Field cannot be empty"
-                binding.editTextPassword.editText?.error = "Field cannot be empty"
-                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
+                binding.editTextEmail.editText?.error =
+                    getString(R.string.edit_text_error_text_empty)
+                binding.editTextPassword.editText?.error =
+                    getString(R.string.edit_text_error_text_empty)
                 return@setOnClickListener
             }
 
