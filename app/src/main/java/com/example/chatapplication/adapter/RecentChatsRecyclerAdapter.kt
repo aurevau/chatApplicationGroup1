@@ -91,12 +91,14 @@ class RecentChatsRecyclerAdapter(
                 !chat.lastImageMessage.isNullOrEmpty() ->
                     itemView.context.getString(R.string.picutre_message_text)
 
-                !chat.lastMessage.isNullOrBlank() ->
+                !chat.lastMessage.isNullOrEmpty() ->
                     chat.lastMessage
 
                 else ->
-                   ""
+                    ""
             }
+
+
 
 
 
