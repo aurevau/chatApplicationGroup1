@@ -69,7 +69,7 @@ class MessageRepository {
         val msg = Message(
             senderId = user.uid,
             roomId = roomId,
-            text = text,
+            text = text ?: "",
             timestamp = System.currentTimeMillis()
         )
 
@@ -81,6 +81,8 @@ class MessageRepository {
             }
     }
 
+
+
     fun sendImageMessage(roomId: String, imageUrl: String, text: String?, otherUserId: String? = null) {
         ensureChatRoomExists(roomId, otherUserId)
         val user = Firebase.auth.currentUser ?: return
@@ -88,7 +90,7 @@ class MessageRepository {
         val msg = Message(
             senderId = user.uid,
             roomId = roomId,
-            text = text.orEmpty(),
+            text = text ?: "",
             imageUrl = imageUrl,
             timestamp = System.currentTimeMillis()
         )
@@ -97,7 +99,7 @@ class MessageRepository {
             .document(roomId)
             .collection("messages")
             .add(msg).addOnSuccessListener {
-                updateChatRoomLastMessage(roomId, text ?: "Image")
+                updateChatRoomLastImage(roomId, imageUrl)
             }
     }
 
@@ -118,6 +120,7 @@ class MessageRepository {
             "members" to userIds,
             "createdAt" to System.currentTimeMillis(),
             "lastMessage" to "",
+            "lastImageMessage" to "",
             "lastMessageTimestamp" to System.currentTimeMillis(),
             "lastMessageSenderId" to "",
             "isGroup" to true
@@ -153,6 +156,7 @@ class MessageRepository {
                         "members" to members,
                         "createdAt" to System.currentTimeMillis(),
                         "lastMessage" to "",
+                        "lastImageMessage" to "",
                         "lastMessageTimestamp" to System.currentTimeMillis(),
                         "isGroup" to false
                     ))
@@ -207,7 +211,8 @@ class MessageRepository {
                                 ChatRoom(
                                     roomId = doc.id,
                                     userName = doc.getString("groupName") ?: "Grupp",
-                                    lastMessage = doc.getString("lastMessage"),
+                                    lastMessage = doc.getString("lastMessage") ?: "",
+                                    lastImageMessage = doc.getString("lastImageMessage") ?: "",
                                     timestamp = DateUtils.formatTimestamp(
                                         doc.getLong("lastMessageTimestamp") ?: 0
                                     ),
@@ -234,6 +239,7 @@ class MessageRepository {
                                     userName = userDoc.getString("fullName") ?: "Unknown User",
                                     chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
                                     lastMessage = doc.getString("lastMessage"),
+                                    lastImageMessage = doc.getString("lastImageMessage"),
                                     timestamp = DateUtils.formatTimestamp(
                                         doc.getLong("lastMessageTimestamp") ?: 0
                                     )
@@ -259,26 +265,71 @@ class MessageRepository {
         db.collection("chatRooms").document(roomId).update(
             mapOf(
                 "lastMessage" to message,
+                "lastImageMessage" to null,
                 "lastMessageTimestamp" to System.currentTimeMillis()
             )
         )
     }
 
+    private fun updateChatRoomLastImage(roomId: String, imageUrl: String) {
+        db.collection("chatRooms").document(roomId).update(
+            mapOf(
+                "lastMessage" to null,
+                "lastImageMessage" to imageUrl,
+                "lastMessageTimestamp" to System.currentTimeMillis()
+            )
+        )
+    }
+
+
     fun deleteMessage(messageId: String, roomId: String, senderId: String) {
         val currentUserId = Firebase.auth.currentUser?.uid ?: return
 
-        // Only delete if current user is the sender
+        // Only allow sender to delete
         if (senderId != currentUserId) return
 
-        db.collection("chatRooms")
+        val messagesRef = db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
-            .document(messageId)
+
+        // Delete the message
+        messagesRef.document(messageId)
             .delete()
             .addOnSuccessListener {
-                checkAndDeleteEmptyChat(roomId)
+                // Get latest message sent before delete
+                messagesRef
+                    .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener { snapshot ->
+                        if (snapshot.isEmpty) {
+                            //  Ingen kvar → nollställ lastMessage och lastImageMessage
+                            db.collection("chatRooms").document(roomId).update(
+                                mapOf(
+                                    "lastMessage" to null,
+                                    "lastImageMessage" to null,
+                                    "lastMessageTimestamp" to System.currentTimeMillis()
+                                )
+                            )
+                        } else {
+
+                            val last = snapshot.documents[0].toObject(Message::class.java)
+                            val lastTimestamp: Long = last?.timestamp ?: System.currentTimeMillis()
+
+                            //  Uppdate chatroom with the latest message so the text changes from picture
+                            db.collection("chatRooms").document(roomId).update(
+                                mapOf(
+                                    "lastMessage" to last?.text,
+                                    "lastImageMessage" to last?.imageUrl,
+                                    "lastMessageTimestamp" to lastTimestamp
+                                )
+                            )
+                        }
+                    }
             }
     }
+
+
     private fun checkAndDeleteEmptyChat(roomId: String) {
         db.collection("chatRooms")
             .document(roomId)

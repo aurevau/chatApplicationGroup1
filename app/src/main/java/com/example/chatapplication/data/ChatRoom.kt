@@ -8,6 +8,7 @@ data class ChatRoom(
     val chatRoomImageUrl: String? = null,
     val groupName: String? = null,
     val lastMessage: String? = null,
+    val lastImageMessage: String? = null,
     val timestamp: String? = null,
     val roomId: String? = null,
     val isGroup: Boolean = false
