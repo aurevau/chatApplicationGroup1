@@ -34,8 +34,8 @@ class UserRepository {
     private val _incomingFriendRequests = MutableLiveData<List<User>>()
     val incomingFriendRequests: LiveData<List<User>> get() = _incomingFriendRequests
 
-    private val _selection = MutableLiveData<MutableList<User>>()
-    val selection: LiveData<MutableList<User>> get() = _selection
+    private val _selection = MutableLiveData<MutableList<User>?>()
+    val selection: LiveData<MutableList<User>?> get() = _selection
 
     private val _recentSearchedUsers = MutableLiveData<List<User>>()
     val recentSearchedUsers: LiveData<List<User>> get() = _recentSearchedUsers
@@ -154,10 +154,7 @@ class UserRepository {
     }
 
     fun isSelected(currentUserId: String?, other: User) {
-        val selectedData = mapOf(
-            "fullName" to other.fullName,
-
-            )
+        val selectedData = mapOf("fullName" to other.fullName)
 
         if (currentUserId != null) {
             db.collection("users")
@@ -167,6 +164,9 @@ class UserRepository {
                 .set(selectedData)
                 .addOnSuccessListener {
                     Log.d("SOUT", "User is selected")
+                    // Uppdatera LiveData direkt
+                    val current = _selection.value ?: mutableListOf()
+                    _selection.postValue((current + other).toMutableList())
                 }
                 .addOnFailureListener { exception ->
                     Log.e("SOUT", "Error selecting user", exception)
@@ -175,25 +175,26 @@ class UserRepository {
     }
 
     fun isNotSelected(currentUserId: String?, otherUserId: String?) {
-        if (currentUserId != null) {
-            if (otherUserId != null) {
-                db.collection("users")
-                    .document(currentUserId)
-                    .collection("isSelected")
-                    .document(otherUserId)
-                    .delete()
-                    .addOnSuccessListener {
-                        Log.d("SOUT", "User not selected")
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("SOUT", "Error unselecting user", exception)
+        if (currentUserId != null && otherUserId != null) {
+            db.collection("users")
+                .document(currentUserId)
+                .collection("isSelected")
+                .document(otherUserId)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("SOUT", "User not selected")
 
-                    }
-            }
+                    // Hämta uppdaterad lista från Firestore och posta till LiveData
+                    getSelection(currentUserId)
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("SOUT", "Error unselecting user", exception)
+                }
         }
     }
 
-    fun getSelection(currentUserId: String, otherUserId: String) {
+
+    fun getSelection(currentUserId: String) {
         db.collection("users")
             .document(currentUserId)
             .collection("isSelected")
@@ -202,12 +203,25 @@ class UserRepository {
                 val selectionList = snapshots.documents.mapNotNull { document ->
                     val userId = document.id
                     val fullName = document.getString("fullName") ?: ""
-                    User(
-                        id = userId,
-                        fullName = fullName,
-                    )
+                    User(id = userId, fullName = fullName)
                 }
-                _selection.value = selectionList as MutableList<User>?
+                _selection.value = selectionList.toMutableList()
+            }
+    }
+
+    fun clearSelection(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("isSelected")
+            .get()
+            .addOnSuccessListener { snapshots ->
+                val batch = db.batch()
+                snapshots.documents.forEach { doc ->
+                    batch.delete(doc.reference)
+                }
+                batch.commit().addOnSuccessListener {
+                    _selection.value = mutableListOf() // uppdatera LiveData direkt
+                }
             }
     }
 

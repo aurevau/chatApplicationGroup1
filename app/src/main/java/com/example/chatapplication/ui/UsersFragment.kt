@@ -228,17 +228,19 @@ class UsersFragment : Fragment() {
         groupChatButton = binding.btnStartGroupChat
 
         groupChatButton.setOnClickListener {
-            val memberIds = (selectedUsersSet.mapNotNull { it.id } + currentUserId)
-                .sorted()
-            val groupRoomId = memberIds.joinToString("_")
-            val groupName = selectedUsersSet
+            val currentUserId = viewModel.getCurrentUserId() ?: return@setOnClickListener
+            val selectedUsers = viewModel.selection.value ?: emptyList()
+
+
+            val memberIds = (selectedUsers.mapNotNull { it.id } + currentUserId).sorted()
+            val groupName = selectedUsers
                 .filter { it.id != currentUserId }
-                .joinToString(", ") {
-                    it.fullName.substringBefore(" ")
-                }
+                .joinToString(", ") { it.fullName.substringBefore(" ") }
+
+
 
             chatViewModel.createGroupChat(
-                roomId = groupRoomId,
+                roomId = memberIds.joinToString("_"),
                 userIds = memberIds,
                 groupName = groupName
             ) { roomId ->
@@ -247,15 +249,15 @@ class UsersFragment : Fragment() {
                 chatIntent.putExtra("GROUP_NAME", groupName)
                 startActivity(chatIntent)
 
-                selectedUsersSet.forEach { user ->
-                    viewModel.isNotSelected(currentUserId, user.id)
-                }
+
+                viewModel.clearSelection()
                 selectedUsersSet.clear()
+                adapter.updateSelectionList(viewModel.selection.value ?: emptyList())
                 selectedUsersAdapter.submitList(emptyList())
                 binding.rvSelectedUsers.visibility = View.GONE
                 binding.btnStartGroupChat.visibility = View.GONE
-
             }
+
             binding.etSearchUser.text?.clear()
         }
 
@@ -291,15 +293,14 @@ class UsersFragment : Fragment() {
         }
 
         viewModel.selection.observe(viewLifecycleOwner) { selectionList ->
+            if (selectionList != null) {
+                adapter.updateSelectionList(selectionList)
+                selectedUsersAdapter.submitList(selectionList)
+                binding.btnStartGroupChat.visibility = if (selectionList.size > 1) View.VISIBLE else View.GONE
+                binding.rvSelectedUsers.visibility = if (selectionList.isNotEmpty()) View.VISIBLE else View.GONE
+            }
 
-            adapter.updateSelectionList(selectionList)
-            val selectedUsers = adapter.getSelectedUsers()
-            selectedUsersAdapter.submitList(selectedUsers.toList())
-            // Show/hide buttons
-            binding.btnStartGroupChat.visibility =
-                if (selectedUsers.size > 1) View.VISIBLE else View.GONE
-            binding.rvSelectedUsers.visibility =
-                if (selectedUsers.isNotEmpty()) View.VISIBLE else View.GONE
+
         }
 
         viewModel.getFriends(currentUserId)

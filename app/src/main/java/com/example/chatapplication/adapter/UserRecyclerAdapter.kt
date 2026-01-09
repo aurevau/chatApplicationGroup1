@@ -82,6 +82,8 @@ class UserRecyclerAdapter(
 
     fun updateSelectionList(newSelection: List<User>) {
         selection = newSelection
+        selectedUsersSet.clear()
+        selectedUsersSet.addAll(selection)
         notifyDataSetChanged()
     }
 
@@ -111,7 +113,11 @@ class UserRecyclerAdapter(
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = isSelected
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            onCheckButtonClick(user, isChecked)
+            if (isChecked) {
+                viewModel.isSelected(currentUserId, user)
+            } else {
+                viewModel.isNotSelected(currentUserId, user.id)
+            }
         }
 
         val isFriend = friends.any { it.id == user.id }
