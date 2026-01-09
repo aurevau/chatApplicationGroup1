@@ -29,13 +29,13 @@ A real-time messaging Android application built with Kotlin and Firebase.
 ## Project Structure
 
 ```app/
-├── adapter/ # RecyclerView adapters
-├── data/ # Data models (User, Message, ChatRoom)
-├── repository/ # Firebase data operations
-├── ui/ # Activities and Fragments
-├── viewmodel/ # ViewModels for MVVM
-├── util/ # Utility classes (DateUtils)
-└── popup/ # Dialog fragments
+├── adapter/ RecyclerView adapters
+├── data/  Data models (User, Message, ChatRoom)
+├── repository/  Firebase data operations
+├── ui/  Activities and Fragments
+├── viewmodel/  ViewModels for MVVM
+├── util/   Utility classes (DateUtils)
+└── popup/   Dialog fragments
 ```
 
 ## Setup Instructions
@@ -50,7 +50,7 @@ A real-time messaging Android application built with Kotlin and Firebase.
 1. Clone this repository
    ```bash
    git clone [your-repo-url]
-- How To Use
+### How To Use
 
 - Register/Login: Create account or login with existing credentials
 - Search Users: Find other users to chat with
@@ -60,7 +60,7 @@ A real-time messaging Android application built with Kotlin and Firebase.
 - Delete: Long-press messages or chats to delete
 - Create Group: Select multiple users and start group chat
 
-#Firestore Database Structure
+### Firestore Database Structure
 
 ```
 users/
