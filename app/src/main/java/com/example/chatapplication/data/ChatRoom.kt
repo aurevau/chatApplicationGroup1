@@ -11,5 +11,7 @@ data class ChatRoom(
     val lastImageMessage: String? = null,
     val timestamp: String? = null,
     val roomId: String? = null,
-    val isGroup: Boolean = false
+    val isGroup: Boolean = false,
+    val lastSenderName: String? = null
+
 ) : Parcelable

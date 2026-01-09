@@ -9,6 +9,15 @@
     android:paddingEnd="@dimen/size_48dp"
     android:paddingBottom="@dimen/size_4dp">
 
+    <TextView
+        android:id="@+id/tvSenderName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/off_white"
+        android:textSize="@dimen/last_chat_text_size_recent_list_item_14sp"
+        android:textStyle="bold"
+        tools:text="Alice" />
+
     <ImageView
         android:id="@+id/imgMessage"
         android:layout_width="@dimen/sent_image_size_200dp"

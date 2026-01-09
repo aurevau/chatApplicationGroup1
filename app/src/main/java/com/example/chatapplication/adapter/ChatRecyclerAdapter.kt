@@ -57,6 +57,8 @@ class ChatRecyclerAdapter(
             binding.root.setOnClickListener {
                 onMessageClick(message)
             }
+
+
             if (!message.imageUrl.isNullOrEmpty()) {
                 binding.imgMessage.visibility = View.VISIBLE
                 Glide.with(binding.imgMessage.context)
@@ -82,6 +84,14 @@ class ChatRecyclerAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
+
+
+            if (!message.senderName.isNullOrEmpty()) {
+                binding.tvSenderName.visibility = View.VISIBLE
+                binding.tvSenderName.text = message.senderName
+            } else {
+                binding.tvSenderName.visibility = View.GONE
+            }
             if (!message.imageUrl.isNullOrEmpty()) {
                 binding.imgMessage.visibility = View.VISIBLE
                 Glide.with(binding.imgMessage.context)

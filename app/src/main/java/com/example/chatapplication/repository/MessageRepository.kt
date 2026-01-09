@@ -25,20 +25,70 @@ class MessageRepository {
     private val _recentChats = MutableLiveData<List<ChatRoom>>()
     val recentChats: LiveData<List<ChatRoom>> get() = _recentChats
 
+//    fun listenToChat(roomId: String) {
+//        db.collection("chatRooms")
+//            .document(roomId)
+//            .collection("messages")
+//            .orderBy("timestamp")
+//            .addSnapshotListener { snapshot, _ ->
+//                if (snapshot != null) {
+//                    _message.value = snapshot.documents.mapNotNull {
+//                        it.toObject(Message::class.java)?.copy(id = it.id)
+//                    }
+//                }
+//
+//            }
+//    }
+
     fun listenToChat(roomId: String) {
         db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
             .orderBy("timestamp")
             .addSnapshotListener { snapshot, _ ->
-                if (snapshot != null) {
-                    _message.value = snapshot.documents.mapNotNull {
-                        it.toObject(Message::class.java)?.copy(id = it.id)
-                    }
+                if (snapshot == null) return@addSnapshotListener
+
+                val messages = mutableListOf<Message>()
+                var processedCount = 0
+                val totalMessages = snapshot.documents.size
+
+                if (totalMessages == 0) {
+                    _message.value = emptyList()
+                    return@addSnapshotListener
                 }
 
+                snapshot.documents.forEach { doc ->
+                    val message = doc.toObject(Message::class.java)?.copy(id = doc.id)
+                    if (message == null) {
+                        processedCount++
+                        if (processedCount == totalMessages) {
+                            _message.value = messages.sortedBy { it.timestamp }
+                        }
+                        return@forEach
+                    }
+
+                    db.collection("users").document(message.senderId).get()
+                        .addOnSuccessListener { userDoc ->
+                            message.senderName = userDoc.getString("fullName")
+                            messages.add(message)
+                            processedCount++
+                            if (processedCount == totalMessages) {
+                                _message.value = messages.sortedBy { it.timestamp }
+                            }
+                        }
+                        .addOnFailureListener {
+                            messages.add(message)
+                            processedCount++
+                            if (processedCount == totalMessages) {
+                                _message.value = messages.sortedBy { it.timestamp }
+                            }
+                        }
+                }
             }
     }
+
+
+
 
 
     fun uploadChatImage(
@@ -206,19 +256,45 @@ class MessageRepository {
                     val members = doc.get("members") as? List<*>
                     val isGroup = doc.getBoolean("isGroup") == true
 
+
                     if(isGroup) {
-                        chatList.add(
+                        val lastSenderId = doc.getString("lastMessageSenderId")
+                        if (!lastSenderId.isNullOrEmpty()) {
+                            db.collection("users").document(lastSenderId).get()
+                                .addOnSuccessListener { userDoc ->
+                                    val senderName = userDoc.getString("fullName") ?: "Unknown"
+                                    chatList.add(
+                                        ChatRoom(
+                                            roomId = doc.id,
+                                            userName = doc.getString("groupName") ?: "Grupp",
+                                            lastMessage = "${senderName}: ${doc.getString("lastMessage") ?: ""}",
+                                            lastImageMessage = doc.getString("lastImageMessage") ?: "",
+                                            timestamp = DateUtils.formatTimestamp(
+                                                doc.getLong("lastMessageTimestamp") ?: 0
+                                            ),
+                                            isGroup = true
+                                        )
+                                    )
+                                    processedCount++
+                                    if (processedCount == totalDocs) _recentChats.value = chatList
+                                }
+                        } else {
+                            // Grupp utan senaste meddelande
+                            chatList.add(
                                 ChatRoom(
                                     roomId = doc.id,
                                     userName = doc.getString("groupName") ?: "Grupp",
                                     lastMessage = doc.getString("lastMessage") ?: "",
                                     lastImageMessage = doc.getString("lastImageMessage") ?: "",
                                     timestamp = DateUtils.formatTimestamp(
-                                        doc.getLong("lastMessageTimestamp") ?: 0),
+                                        doc.getLong("lastMessageTimestamp") ?: 0
+                                    ),
                                     isGroup = true
                                 )
-                        )
-                        processedCount++
+                            )
+                            processedCount++
+                            if (processedCount == totalDocs) _recentChats.value = chatList
+                        }
                         return@forEach
                     }
                         val otherUserId = members?.firstOrNull { it != currentUserId } as? String
@@ -275,21 +351,27 @@ class MessageRepository {
 
 
     private fun updateChatRoomLastMessage(roomId: String, message: String) {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: return
+
         db.collection("chatRooms").document(roomId).update(
             mapOf(
                 "lastMessage" to message,
                 "lastImageMessage" to null,
-                "lastMessageTimestamp" to System.currentTimeMillis()
+                "lastMessageTimestamp" to System.currentTimeMillis(),
+                "lastMessageSenderId" to currentUserId
             )
         )
     }
 
     private fun updateChatRoomLastImage(roomId: String, imageUrl: String, text: String?) {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: return
+
         db.collection("chatRooms").document(roomId).update(
             mapOf(
                 "lastMessage" to text,
                 "lastImageMessage" to imageUrl,
-                "lastMessageTimestamp" to System.currentTimeMillis()
+                "lastMessageTimestamp" to System.currentTimeMillis(),
+                "lastMessageSenderId" to currentUserId
             )
         )
     }
