@@ -110,6 +110,8 @@ class UserRecyclerAdapter(
 
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = isSelected
+        val currentUserId = viewModel.getCurrentUserId()
+
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             onCheckButtonClick(user, isChecked)
         }
@@ -161,7 +163,11 @@ class UserRecyclerAdapter(
             }
 
             else -> {
-                holder.addFriend.visibility = View.VISIBLE
+                if (user.id == currentUserId) {
+                    holder.checkBox.visibility = View.GONE
+                    holder.addFriend.visibility = View.INVISIBLE
+                }
+
                 holder.addFriend.text = holder.itemView.context.getString(R.string.add_friend)
                 holder.deleteFriend.visibility = View.GONE
                 holder.acceptFriend.visibility = View.GONE
