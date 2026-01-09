@@ -92,7 +92,6 @@ class UserRecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    fun getSelectedUsers(): List<User> = selectedUsersSet.toList()
 
     override fun onBindViewHolder(
         holder: UserRecyclerAdapter.UserViewHolder, position: Int

@@ -164,7 +164,7 @@ class UserRepository {
                 .set(selectedData)
                 .addOnSuccessListener {
                     Log.d("SOUT", "User is selected")
-                    // Uppdatera LiveData direkt
+                    // Update livedata directly
                     val current = _selection.value ?: mutableListOf()
                     _selection.postValue((current + other).toMutableList())
                 }
@@ -184,7 +184,7 @@ class UserRepository {
                 .addOnSuccessListener {
                     Log.d("SOUT", "User not selected")
 
-                    // Hämta uppdaterad lista från Firestore och posta till LiveData
+                    // Get updated list from firestore and post to livedata
                     getSelection(currentUserId)
                 }
                 .addOnFailureListener { exception ->
@@ -220,7 +220,7 @@ class UserRepository {
                     batch.delete(doc.reference)
                 }
                 batch.commit().addOnSuccessListener {
-                    _selection.value = mutableListOf() // uppdatera LiveData direkt
+                    _selection.value = mutableListOf() // Update livedata directly
                 }
             }
     }
