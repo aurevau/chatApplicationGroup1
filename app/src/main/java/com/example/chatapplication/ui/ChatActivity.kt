@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -22,6 +23,7 @@ import com.example.chatapplication.adapter.ChatRecyclerAdapter
 import com.example.chatapplication.databinding.ActivityChatBinding
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.example.chatapplication.viewmodel.ChatViewModel
+import com.example.chatapplication.viewmodel.UserViewModel
 import java.io.File
 
 
@@ -34,8 +36,12 @@ class ChatActivity : AppCompatActivity() {
     private val GALLERY_REQUEST_CODE = 1002
     private var cameraImageUri: Uri? = null
 
+    private lateinit var userViewModel: UserViewModel
 
     private val viewModel: ChatViewModel by viewModels()
+
+    private lateinit var currentUserFullName: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +49,7 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
 
         binding.dropdownMenu.setOnClickListener {
@@ -91,12 +98,42 @@ class ChatActivity : AppCompatActivity() {
         val groupRoomId = intent.getStringExtra("ROOM_ID")
         val imageUrl = intent.getStringExtra("IMAGE_URL")
 
-        val groupName = intent.getStringExtra("GROUP_NAME")
+//        val groupName = intent.getStringExtra("GROUP_NAME")
+
 
         val currentRoomId = groupRoomId ?: run {
             val myId = viewModel.myUserId ?: ""
             listOf(myId, userId ?: "").sorted().joinToString("_")
 
+        }
+
+        val currentUserId = userViewModel.getCurrentUserId()
+        if (currentUserId != null) {
+            userViewModel.getUserDetailsById(currentUserId) { user ->
+                currentUserFullName = user?.fullName ?: ""
+
+
+                viewModel.getChatRoomDetailsById(currentRoomId)
+
+                viewModel.chatRoomDetails.observe(this) { room ->
+
+                    val displayName = when {
+                        room == null -> "Chat"
+                        room.isGroup -> {
+                            when {
+                                !room.groupName.isNullOrBlank() -> room.groupName
+                                !room.memberNames.isNullOrEmpty() -> viewModel.buildGroupName(room.memberNames, currentUserFullName)
+                                else -> "Group"
+                            }
+                        }
+                        else -> {
+                            room.groupName ?: "Chat"
+                        }
+                    }
+
+                    binding.tvHeader.text = displayName
+                }
+            }
         }
 
 
@@ -118,12 +155,20 @@ class ChatActivity : AppCompatActivity() {
                 binding.tvHeader.text = user?.fullName
                 binding.tvInitials.text = user?.initials
             }
-        } else if (!groupName.isNullOrEmpty()) {
-            Log.d("??? group", groupName)
-            binding.tvHeader.text = groupName
-            //binding.tvInitials.visibility = View.GONE
-
         }
+
+        binding.tvHeader.setOnClickListener {
+            val chatNameDialog = ChangeChatNameFragment().apply {
+                arguments = bundleOf(
+                    "state" to "UPDATE",
+                    "ROOM_ID" to currentRoomId)
+
+            }
+
+            chatNameDialog.show(supportFragmentManager, "ChatNameDialog")
+        }
+
+
 
 
         viewModel.start(currentRoomId)

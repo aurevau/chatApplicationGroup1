@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -228,26 +229,36 @@ class UsersFragment : Fragment() {
         groupChatButton = binding.btnStartGroupChat
 
         groupChatButton.setOnClickListener {
+
             val currentUserId = viewModel.getCurrentUserId() ?: return@setOnClickListener
             val selectedUsers = viewModel.selection.value ?: emptyList()
-
-
+            val selectedUserNames = selectedUsers.map { it.fullName }
             val memberIds = (selectedUsers.mapNotNull { it.id } + currentUserId).sorted()
-            val groupName = selectedUsers
-                .filter { it.id != currentUserId }
-                .joinToString(", ") { it.fullName.substringBefore(" ") }
+
+            val chatNameDialog = ChangeChatNameFragment().apply {
+                arguments = bundleOf(
+                    "state" to "NEWGROUP",
+                    "selected_users" to ArrayList(selectedUserNames),
+                    "member_ids" to ArrayList(memberIds))
+            }
+            chatNameDialog.show(childFragmentManager, "ChatNameDialog")
 
 
-
-            chatViewModel.createGroupChat(
-                roomId = memberIds.joinToString("_"),
-                userIds = memberIds,
-                groupName = groupName
-            ) { roomId ->
-                val chatIntent = Intent(requireContext(), ChatActivity::class.java)
-                chatIntent.putExtra("ROOM_ID", roomId)
-                chatIntent.putExtra("GROUP_NAME", groupName)
-                startActivity(chatIntent)
+//            val groupName = selectedUsers
+//                .filter { it.id != currentUserId }
+//                .joinToString(", ") { it.fullName.substringBefore(" ") }
+//
+//
+//
+//            chatViewModel.createGroupChat(
+//                roomId = memberIds.joinToString("_"),
+//                userIds = memberIds,
+//                groupName = groupName
+//            ) { roomId ->
+//                val chatIntent = Intent(requireContext(), ChatActivity::class.java)
+//                chatIntent.putExtra("ROOM_ID", roomId)
+//                chatIntent.putExtra("GROUP_NAME", groupName)
+//                startActivity(chatIntent)
 
 
                 viewModel.clearSelection()
@@ -256,7 +267,7 @@ class UsersFragment : Fragment() {
                 selectedUsersAdapter.submitList(emptyList())
                 binding.rvSelectedUsers.visibility = View.GONE
                 binding.btnStartGroupChat.visibility = View.GONE
-            }
+//            }
 
             binding.etSearchUser.text?.clear()
         }
