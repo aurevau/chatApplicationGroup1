@@ -97,7 +97,7 @@ class UserRecyclerAdapter(
     ) {
 
         val user = users[position]
-
+        val currentUserId = db.getCurrentUserId()
 
 
         Log.d(
@@ -118,22 +118,18 @@ class UserRecyclerAdapter(
         val hasIncomingRequest = incomingRequests.contains(user.id)
         val hasOutgoingRequest = outgoingRequests.contains(user.id)
 
+        holder.checkBox.visibility = View.VISIBLE
         holder.addFriend.visibility = View.INVISIBLE
-        holder.deleteFriend.visibility = View.GONE
-        holder.declineFriend.visibility = View.GONE
-        holder.cancelFriend.visibility = View.GONE
-        holder.acceptFriend.visibility = View.GONE
+        holder.deleteFriend.visibility = View.INVISIBLE
+        holder.acceptFriend.visibility = View.INVISIBLE
+        holder.declineFriend.visibility = View.INVISIBLE
+        holder.cancelFriend.visibility = View.INVISIBLE
+        val isCurrentUser = user.id == currentUserId
+        if (isCurrentUser) {
+            holder.checkBox.visibility = View.GONE
+        }
 
-
-
-        holder.addFriend.setOnClickListener(null)
-        holder.deleteFriend.setOnClickListener(null)
-        holder.declineFriend.setOnClickListener(null)
-        holder.cancelFriend.setOnClickListener(null)
-        holder.acceptFriend.setOnClickListener(null)
-
-
-
+        if (!isCurrentUser) {
         when {
             isFriend -> {
                 holder.addFriend.visibility = View.INVISIBLE
@@ -170,7 +166,7 @@ class UserRecyclerAdapter(
                 holder.addFriend.setOnClickListener { onAddFriendClick(user) }
             }
         }
-
+}
 
 
 
@@ -203,7 +199,7 @@ class UserRecyclerAdapter(
             }
         }
 
-        holder.name.text = if (user.id == db.getCurrentUserId()) {
+        holder.name.text = if (user.id == currentUserId) {
             holder.itemView.context.getString(R.string.me_following_text, user.fullName)
         } else {
             user.fullName
