@@ -28,7 +28,8 @@ class UserRecyclerAdapter(
     val onItemLongClick: (User) -> Unit,
     val onCancelOutgoingRequest: (User) -> Unit,
     val onAcceptFriendRequest: (User) -> Unit,
-    val onDeclineFriendRequest: (User) -> Unit
+    val onDeclineFriendRequest: (User) -> Unit,
+    val onProfileClick: (User) -> Unit
 ) : RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder>() {
 
     private var users = emptyList<User>()
@@ -173,7 +174,13 @@ class UserRecyclerAdapter(
         }
 }
 
+        holder.initialCircle.setOnClickListener {
+            onProfileClick(user)
+        }
 
+        holder.profilePic.setOnClickListener {
+            onProfileClick(user)
+        }
 
         val imageUrl = user.profileImageUrl
         if (!imageUrl.isNullOrEmpty()) {
