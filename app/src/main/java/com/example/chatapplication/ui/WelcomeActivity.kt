@@ -2,6 +2,7 @@ package com.example.chatapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -151,7 +152,9 @@ class WelcomeActivity : AppCompatActivity() {
 
             }
             is NoCredentialException -> {
-                Toast.makeText(this, "no google account found on phone: ${exception.message}", Toast.LENGTH_SHORT).show()
+                val intent = Intent(Settings.ACTION_SETTINGS)
+                startActivity(intent)
+                Toast.makeText(this, "Please add a Google account in Settings → Accounts → Google: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
             else -> {
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
