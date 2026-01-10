@@ -243,31 +243,13 @@ class UsersFragment : Fragment() {
             }
             chatNameDialog.show(childFragmentManager, "ChatNameDialog")
 
-
-//            val groupName = selectedUsers
-//                .filter { it.id != currentUserId }
-//                .joinToString(", ") { it.fullName.substringBefore(" ") }
-//
-//
-//
-//            chatViewModel.createGroupChat(
-//                roomId = memberIds.joinToString("_"),
-//                userIds = memberIds,
-//                groupName = groupName
-//            ) { roomId ->
-//                val chatIntent = Intent(requireContext(), ChatActivity::class.java)
-//                chatIntent.putExtra("ROOM_ID", roomId)
-//                chatIntent.putExtra("GROUP_NAME", groupName)
-//                startActivity(chatIntent)
-
-
                 viewModel.clearSelection()
                 selectedUsersSet.clear()
                 adapter.updateSelectionList(viewModel.selection.value ?: emptyList())
                 selectedUsersAdapter.submitList(emptyList())
                 binding.rvSelectedUsers.visibility = View.GONE
                 binding.btnStartGroupChat.visibility = View.GONE
-//            }
+
 
             binding.etSearchUser.text?.clear()
         }

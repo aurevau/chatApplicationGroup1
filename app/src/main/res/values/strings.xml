@@ -117,5 +117,7 @@
     <string name="add_google_account">Add Google Account</string>
     <string name="yes_go_to_settings">Yes go to settings</string>
     <string name="not_successful">not successful: %1$s</string>
+    <string name="chat">Chat</string>
+    <string name="group">Group</string>
 
 </resources>
