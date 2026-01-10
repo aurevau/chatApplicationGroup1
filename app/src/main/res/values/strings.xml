@@ -119,5 +119,6 @@
     <string name="not_successful">not successful: %1$s</string>
     <string name="chat">Chat</string>
     <string name="group">Group</string>
+    <string name="delete_account_text">Delete account</string>
 
 </resources>
