@@ -192,6 +192,10 @@ class UsersFragment : Fragment() {
 
                 }
                 .show()
+        }, {user ->
+            val profileIntent = Intent(activity, ProfileActivity::class.java)
+            profileIntent.putExtra("USER_ID", user.id)
+            startActivity(profileIntent)
         })
     }
 
