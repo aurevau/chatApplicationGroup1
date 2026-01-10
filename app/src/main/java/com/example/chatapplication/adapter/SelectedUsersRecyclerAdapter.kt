@@ -4,8 +4,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapplication.R
 import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.UserRepository
@@ -37,8 +39,36 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
         position: Int
     ) {
         val user = users[position]
+        val imageUrl = user.profileImageUrl
+        if(!imageUrl.isNullOrEmpty()) {
+            holder.initials.visibility = View.GONE
+            holder.profilePic.visibility = View.VISIBLE
+            Glide.with(holder.profilePic.context)
+                .load(imageUrl)
+                .circleCrop()
+                .into(holder.profilePic)
+
+        } else {
+
+            db.getUserDetailsById(user.id ?: "") {
+
+                if (!it?.profileImageUrl.isNullOrEmpty()) {
+                    holder.initials.visibility = View.INVISIBLE
+                    holder.profilePic.visibility = View.VISIBLE
+                    Glide.with(holder.profilePic.context)
+                        .load(it.profileImageUrl)
+                        .circleCrop()
+                        .into(holder.profilePic)
+                } else {
+                    holder.initials.visibility = View.VISIBLE
+                    holder.profilePic.visibility = View.GONE
+                    holder.initials.text = user.initials
+                }
+
+            }
+        }
         holder.name.text = user.fullName
-        holder.initials.text = user.initials
+//        holder.initials.text = user.initials
         Log.d("!!!", user.toString())
 
         holder.itemView.setOnClickListener {
@@ -50,6 +80,7 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
 
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.tv_name_selected_users)
+        val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val initials: TextView = itemView.findViewById(R.id.tv_initials_selected_users)
 
     }
