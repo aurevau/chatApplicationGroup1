@@ -1,7 +1,9 @@
 package com.example.chatapplication.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -138,7 +140,7 @@ class WelcomeActivity : AppCompatActivity() {
 
 
             }, {
-                Toast.makeText(this, "not successfully: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.not_successful, it.message), Toast.LENGTH_SHORT).show()
             })
         }
 
@@ -147,11 +149,24 @@ class WelcomeActivity : AppCompatActivity() {
     private fun handleFailure(exception: GetCredentialException) {
         when (exception) {
             is GetCredentialCancellationException -> {
-                Toast.makeText(this, "not successful: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,
+                    getString(R.string.not_successful, exception.message), Toast.LENGTH_SHORT).show()
 
             }
             is NoCredentialException -> {
-                Toast.makeText(this, "no google account found on phone: ${exception.message}", Toast.LENGTH_SHORT).show()
+
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.add_google_account))
+                    .setMessage(getString(R.string.add_google_account_long_text))
+                    .setPositiveButton(getString(R.string.yes_go_to_settings)) { dialog, _ ->
+                        val intent = Intent(Settings.ACTION_SETTINGS)
+                        startActivity(intent)
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(getString(R.string.cancel_alert_btn_text)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
             }
             else -> {
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()

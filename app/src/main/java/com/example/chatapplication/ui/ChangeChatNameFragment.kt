@@ -53,7 +53,7 @@ class ChangeChatNameFragment : DialogFragment() {
                 currentUserFullName = user?.fullName ?: return@getUserDetailsById
 
                 val allMemberNames = mutableListOf<String>()
-                currentUserFullName.let { allMemberNames.add(it) }  // Lägg till dig själv först
+                currentUserFullName.let { allMemberNames.add(it) }
                 allMemberNames.addAll(selectedUserNames)
 
 

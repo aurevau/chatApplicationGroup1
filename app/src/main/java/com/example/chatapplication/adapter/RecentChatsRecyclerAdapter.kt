@@ -91,8 +91,8 @@ class RecentChatsRecyclerAdapter(
 
             val displayName = when {
                 !chat.groupName.isNullOrBlank() -> chat.groupName
-                chat.isGroup && !chat.memberNames.isNullOrEmpty() -> buildGroupName(chat.memberNames) // Grupp utan namn
-                chat.userName == currentUserFullName -> itemView.context.getString(R.string.me_following_text, currentUserFullName) // Chat med dig själv
+                chat.isGroup && !chat.memberNames.isNullOrEmpty() -> buildGroupName(chat.memberNames) // group without groupname
+                chat.userName == currentUserFullName -> itemView.context.getString(R.string.me_following_text, currentUserFullName) // Chat with yourself
                 else -> chat.userName ?: itemView.context.getString(R.string.unknown)
             }
             name.text = displayName
@@ -119,7 +119,7 @@ class RecentChatsRecyclerAdapter(
                 .filterNotNull()
                 .filter { it.isNotBlank() && it != currentUserFullName }
                 .map { it.substringBefore(" ") }
-            return if (names.isEmpty()) "Group" else names.joinToString(", ")
+            return if (names.isEmpty()) itemView.context.getString(R.string.group) else names.joinToString(", ")
         }
 
     }

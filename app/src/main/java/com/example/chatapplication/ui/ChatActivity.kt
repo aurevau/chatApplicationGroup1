@@ -118,16 +118,16 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.chatRoomDetails.observe(this) { room ->
 
                     val displayName = when {
-                        room == null -> "Chat"
+                        room == null -> getString(R.string.chat)
                         room.isGroup -> {
                             when {
                                 !room.groupName.isNullOrBlank() -> room.groupName
                                 !room.memberNames.isNullOrEmpty() -> viewModel.buildGroupName(room.memberNames, currentUserFullName)
-                                else -> "Group"
+                                else -> getString(R.string.group)
                             }
                         }
                         else -> {
-                            room.groupName ?: "Chat"
+                            room.groupName ?: getString(R.string.chat)
                         }
                     }
 

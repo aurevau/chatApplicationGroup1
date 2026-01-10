@@ -116,4 +116,9 @@
     <string name="no_message">Inget meddelande</string>
     <string name="now">Nu</string>
 
+    <string name="add_google_account_long_text">Lägg till Google konto i intställningar - Konto -Google \n \n  eller avbryt för att registera med en annan email</string>
+    <string name="add_google_account">Lägg till Google konto</string>
+    <string name="yes_go_to_settings">Ja, gå till inställningar</string>
+    <string name="not_successful">misslyckad: %1$s</string>
+
 </resources>
