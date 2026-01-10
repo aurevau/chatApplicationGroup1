@@ -77,7 +77,8 @@ class ProfileActivity : AppCompatActivity() {
                     .setPositiveButton(getString(R.string.confirm_delete_btn_text)) { dialog, _ ->
                         viewModel.deleteCurrentUser()
                         val intent = Intent(this, WelcomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
 
                         dialog.dismiss()

@@ -9,7 +9,7 @@ object DateUtils {
         val oneDayMillis = 24 * 60 * 60 * 1000L
 
         val date = Date(timestamp)
-        return if( now - timestamp > oneDayMillis) {
+        return if (now - timestamp > oneDayMillis) {
             val sdf = SimpleDateFormat("dd/MM/yyyy h:mm a", Locale.getDefault())
             sdf.format(Date(timestamp))
         } else {

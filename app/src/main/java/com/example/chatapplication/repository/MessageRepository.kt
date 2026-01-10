@@ -29,21 +29,6 @@ class MessageRepository {
     private val _chatRoomDetails = MutableLiveData<ChatRoom>()
     val chatRoomDetails: LiveData<ChatRoom> get() = _chatRoomDetails
 
-//    fun listenToChat(roomId: String) {
-//        db.collection("chatRooms")
-//            .document(roomId)
-//            .collection("messages")
-//            .orderBy("timestamp")
-//            .addSnapshotListener { snapshot, _ ->
-//                if (snapshot != null) {
-//                    _message.value = snapshot.documents.mapNotNull {
-//                        it.toObject(Message::class.java)?.copy(id = it.id)
-//                    }
-//                }
-//
-//            }
-//    }
-
     fun listenToChat(roomId: String) {
         db.collection("chatRooms")
             .document(roomId)
@@ -92,9 +77,6 @@ class MessageRepository {
     }
 
 
-
-
-
     fun uploadChatImage(
         imageUri: Uri,
         roomId: String,
@@ -126,18 +108,22 @@ class MessageRepository {
             timestamp = System.currentTimeMillis()
         )
         ensureChatRoomExists(roomId, otherUserId) {
-        db.collection("chatRooms")
-            .document(roomId)
-            .collection("messages")
-            .add(msg).addOnSuccessListener {
-                updateChatRoomLastMessage(roomId, text)
-            }
+            db.collection("chatRooms")
+                .document(roomId)
+                .collection("messages")
+                .add(msg).addOnSuccessListener {
+                    updateChatRoomLastMessage(roomId, text)
+                }
         }
     }
 
 
-
-    fun sendImageMessage(roomId: String, imageUrl: String, text: String?, otherUserId: String? = null) {
+    fun sendImageMessage(
+        roomId: String,
+        imageUrl: String,
+        text: String?,
+        otherUserId: String? = null
+    ) {
 
         val user = Firebase.auth.currentUser ?: return
 
@@ -159,10 +145,6 @@ class MessageRepository {
                 }
         }
     }
-
-    fun allChatRoomCollectionReference(): CollectionReference =
-        FirebaseFirestore.getInstance().collection("chatRooms")
-
 
     fun createGroupChat(
         roomId: String,
@@ -200,7 +182,11 @@ class MessageRepository {
     }
 
 
-    private fun ensureChatRoomExists(roomId: String, otherUserId: String? = null, onReady: () -> Unit = {}) {
+    private fun ensureChatRoomExists(
+        roomId: String,
+        otherUserId: String? = null,
+        onReady: () -> Unit = {}
+    ) {
         val currentUserId = Firebase.auth.currentUser?.uid ?: return
 
         db.collection("chatRooms").document(roomId).get()
@@ -210,10 +196,10 @@ class MessageRepository {
                     else listOf(currentUserId)
 
                     if (otherUserId != null) {
-                        // Privat chatt: hämta namn på andra användaren
                         db.collection("users").document(otherUserId).get()
                             .addOnSuccessListener { otherUserDoc ->
-                                val otherUserName = otherUserDoc.getString("fullName") ?: "Unknown User"
+                                val otherUserName =
+                                    otherUserDoc.getString("fullName") ?: "Unknown User"
                                 db.collection("chatRooms").document(roomId).set(
                                     mapOf(
                                         "members" to members,
@@ -229,7 +215,7 @@ class MessageRepository {
                                 ).addOnSuccessListener { onReady() }
                             }
                     } else {
-                        // Grupp eller privat med bara dig själv
+
                         db.collection("chatRooms").document(roomId).set(
                             mapOf(
                                 "members" to members,
@@ -247,8 +233,6 @@ class MessageRepository {
                 }
             }
     }
-
-
 
 
     fun deleteChatRoom(chatRoom: ChatRoom) {
@@ -272,7 +256,10 @@ class MessageRepository {
 
         db.collection("chatRooms")
             .whereArrayContains("members", currentUserId)
-            .orderBy("lastMessageTimestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .orderBy(
+                "lastMessageTimestamp",
+                com.google.firebase.firestore.Query.Direction.DESCENDING
+            )
             .addSnapshotListener { snapshot, _ ->
                 if (snapshot == null || snapshot.isEmpty) {
                     _recentChats.value = emptyList()
@@ -299,7 +286,9 @@ class MessageRepository {
                                 memberNames = memberNames,
                                 lastMessage = doc.getString("lastMessage") ?: "",
                                 lastImageMessage = doc.getString("lastImageMessage") ?: "",
-                                timestamp = DateUtils.formatTimestamp(doc.getLong("lastMessageTimestamp") ?: 0),
+                                timestamp = DateUtils.formatTimestamp(
+                                    doc.getLong("lastMessageTimestamp") ?: 0
+                                ),
                                 isGroup = doc.getBoolean("isGroup") == true
                             )
                         )
@@ -322,10 +311,13 @@ class MessageRepository {
                                             context.getString(R.string.me_following_text, fullName)
                                         } ?: "Me",
                                         groupName = doc.getString("groupName"),
-                                        chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
+                                        chatRoomImageUrl = userDoc.getString("profileImageUrl")
+                                            ?: "",
                                         lastMessage = doc.getString("lastMessage") ?: "",
                                         lastImageMessage = doc.getString("lastImageMessage") ?: "",
-                                        timestamp = DateUtils.formatTimestamp(doc.getLong("lastMessageTimestamp") ?: 0)
+                                        timestamp = DateUtils.formatTimestamp(
+                                            doc.getLong("lastMessageTimestamp") ?: 0
+                                        )
                                     )
                                 )
                                 processedCount++
@@ -349,7 +341,9 @@ class MessageRepository {
                                     chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
                                     lastMessage = doc.getString("lastMessage") ?: "",
                                     lastImageMessage = doc.getString("lastImageMessage") ?: "",
-                                    timestamp = DateUtils.formatTimestamp(doc.getLong("lastMessageTimestamp") ?: 0)
+                                    timestamp = DateUtils.formatTimestamp(
+                                        doc.getLong("lastMessageTimestamp") ?: 0
+                                    )
                                 )
                             )
                             processedCount++
@@ -362,9 +356,6 @@ class MessageRepository {
                 }
             }
     }
-
-
-
 
 
     private fun updateChatRoomLastMessage(roomId: String, message: String) {
@@ -400,7 +391,7 @@ class MessageRepository {
                     val room = snapshot.toObject(ChatRoom::class.java)?.copy(
                         isGroup = snapshot.getBoolean("isGroup") == true
                     )
-                    _chatRoomDetails.value = room
+                    _chatRoomDetails.value = room!!
                 }
             }
     }
@@ -470,7 +461,6 @@ class MessageRepository {
     }
 
 
-
     fun updateChatName(roomId: String, newName: String) {
         val chatRef = db.collection("chatRooms").document(roomId)
         chatRef.update("groupName", newName)
@@ -481,7 +471,6 @@ class MessageRepository {
                 Log.e("Chat", "Failed to update chat name", e)
             }
     }
-
 
 
 }

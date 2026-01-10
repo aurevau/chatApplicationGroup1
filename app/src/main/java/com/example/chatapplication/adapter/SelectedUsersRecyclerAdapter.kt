@@ -40,7 +40,7 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
     ) {
         val user = users[position]
         val imageUrl = user.profileImageUrl
-        if(!imageUrl.isNullOrEmpty()) {
+        if (!imageUrl.isNullOrEmpty()) {
             holder.initials.visibility = View.GONE
             holder.profilePic.visibility = View.VISIBLE
             Glide.with(holder.profilePic.context)
@@ -68,7 +68,7 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
             }
         }
         holder.name.text = user.fullName
-//        holder.initials.text = user.initials
+
         Log.d("!!!", user.toString())
 
         holder.itemView.setOnClickListener {

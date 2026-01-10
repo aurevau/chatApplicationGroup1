@@ -29,6 +29,7 @@ class ChangeChatNameFragment : DialogFragment() {
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,8 +49,8 @@ class ChangeChatNameFragment : DialogFragment() {
         etChangeName = binding.etChatName
 
         val currentUserId = userViewModel.getCurrentUserId()
-        if (currentUserId != null ){
-            userViewModel.getUserDetailsById(currentUserId) {user ->
+        if (currentUserId != null) {
+            userViewModel.getUserDetailsById(currentUserId) { user ->
                 currentUserFullName = user?.fullName ?: return@getUserDetailsById
 
                 val allMemberNames = mutableListOf<String>()
@@ -87,20 +88,14 @@ class ChangeChatNameFragment : DialogFragment() {
                     }
 
 
-
-
-
                 }
-        }
-
-
+            }
 
 
         }
 
 
     }
-
 
 
 }

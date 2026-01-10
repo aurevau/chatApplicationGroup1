@@ -17,7 +17,7 @@ class RecentChatsRecyclerAdapter(
     private val onChatClick: (ChatRoom) -> Unit,
     val onChatLongClick: (ChatRoom) -> Unit,
 
-) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
+    ) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
     private var chats = emptyList<ChatRoom>()
 
@@ -39,7 +39,7 @@ class RecentChatsRecyclerAdapter(
 
     // Fill in the data in each row
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(chats[position], onChatClick, onChatLongClick )
+        holder.bind(chats[position], onChatClick, onChatLongClick)
     }
 
     // ViewHolder = holds widgets in each row
@@ -65,7 +65,7 @@ class RecentChatsRecyclerAdapter(
                 true
             }
 
-            if(chat.isGroup) {
+            if (chat.isGroup) {
                 chatIcon.setImageResource(R.drawable.group_icon)
                 chatIcon.visibility = View.VISIBLE
                 fLChatIcon.visibility = View.VISIBLE
@@ -92,7 +92,10 @@ class RecentChatsRecyclerAdapter(
             val displayName = when {
                 !chat.groupName.isNullOrBlank() -> chat.groupName
                 chat.isGroup && !chat.memberNames.isNullOrEmpty() -> buildGroupName(chat.memberNames) // group without groupname
-                chat.userName == currentUserFullName -> itemView.context.getString(R.string.me_following_text, currentUserFullName) // Chat with yourself
+                chat.userName == currentUserFullName -> itemView.context.getString(
+                    R.string.me_following_text,
+                    currentUserFullName
+                ) // Chat with yourself
                 else -> chat.userName ?: itemView.context.getString(R.string.unknown)
             }
             name.text = displayName
@@ -102,24 +105,26 @@ class RecentChatsRecyclerAdapter(
                 !chat.lastMessage.isNullOrBlank() -> chat.lastMessage
                 !chat.lastImageMessage.isNullOrEmpty() ->
                     itemView.context.getString(R.string.picture_message_text)
+
                 else -> ""
             }
 
 
             initials.text = chat.userName?.take(2)  // The two first letters of the name
-//            name.text = chat.userName ?: itemView.context.getString(R.string.unknown)
-//            message.text = chat.lastMessage ?: itemView.context.getString(R.string.no_message)
             time.text = chat.timestamp ?: itemView.context.getString(R.string.now)
             itemView.setOnClickListener {
                 onChatClick(chat)
             }
         }
+
         private fun buildGroupName(allUserNames: List<String?>): String {
             val names = allUserNames
                 .filterNotNull()
                 .filter { it.isNotBlank() && it != currentUserFullName }
                 .map { it.substringBefore(" ") }
-            return if (names.isEmpty()) itemView.context.getString(R.string.group) else names.joinToString(", ")
+            return if (names.isEmpty()) itemView.context.getString(R.string.group) else names.joinToString(
+                ", "
+            )
         }
 
     }

@@ -27,21 +27,24 @@ class ChatViewModel : ViewModel() {
     val chatRoomDetails: LiveData<ChatRoom> = messageRepository.chatRoomDetails
 
 
-
-
     //get target user details
-    fun getUserDetailsById(userID:String?){
-        if(userID == null) return
+    fun getUserDetailsById(userID: String?) {
+        if (userID == null) return
 
         userRepository.getUserDetailsById(
-            userId = userID ,
-            { user->
-               targetUser.value = user
-             }
+            userId = userID,
+            { user ->
+                targetUser.value = user
+            }
         )
     }
 
-    fun sendImageMessage(roomId: String, imageUrl: String, text: String?, otherUserId: String? = null){
+    fun sendImageMessage(
+        roomId: String,
+        imageUrl: String,
+        text: String?,
+        otherUserId: String? = null
+    ) {
         messageRepository.sendImageMessage(roomId, imageUrl, text, otherUserId)
     }
 
@@ -57,21 +60,25 @@ class ChatViewModel : ViewModel() {
     val selectedImageUri = MutableLiveData<Uri?>()
 
 
-
     fun sendTextMessage(roomId: String, text: String, otherUserId: String? = null) {
         messageRepository.sendTextMessage(roomId, text, otherUserId)
     }
 
 
-
-
-    fun createGroupChat(roomId: String, userIds: List<String>, groupName: String, memberNames: List<String>, onSuccess: (String) -> Unit) {
-        messageRepository.createGroupChat(roomId, userIds, groupName, memberNames,onSuccess )
+    fun createGroupChat(
+        roomId: String,
+        userIds: List<String>,
+        groupName: String,
+        memberNames: List<String>,
+        onSuccess: (String) -> Unit
+    ) {
+        messageRepository.createGroupChat(roomId, userIds, groupName, memberNames, onSuccess)
     }
 
     fun sendImageIfSelected(roomId: String, text: String? = null) {
         selectedImageUri.value?.let { uri ->
-            uploadChatImage(uri, roomId,
+            uploadChatImage(
+                uri, roomId,
                 onSuccess = { imageUrl ->
                     // Skicka både bild + text i samma meddelande
                     messageRepository.sendImageMessage(roomId, imageUrl, text, null)
@@ -102,7 +109,6 @@ class ChatViewModel : ViewModel() {
     fun updateChatName(roomId: String, newName: String) {
         messageRepository.updateChatName(roomId, newName)
     }
-
 
 
 }

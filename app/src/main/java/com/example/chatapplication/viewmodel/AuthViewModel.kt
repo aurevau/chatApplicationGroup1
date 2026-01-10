@@ -16,7 +16,15 @@ class AuthViewModel : ViewModel() {
     private val firestore = Firebase.firestore
     private val storage = FirebaseStorage.getInstance()
 
-    fun register(fullName: String, fullNameLower: String, email: String, password: String, imageUri: Uri?, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+    fun register(
+        fullName: String,
+        fullNameLower: String,
+        email: String,
+        password: String,
+        imageUri: Uri?,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -24,15 +32,32 @@ class AuthViewModel : ViewModel() {
                     val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
                     if (imageUri != null) {
-                        uploadProfileImage(imageUri, userId,
-                            onSuccess =  { downloadUrl ->
-                            saveUserToFirestore(fullName, fullNameLower, email, userId, downloadUrl, onSuccess, onFailure)
-                                 }, onError = {error ->
-                                     onFailure(error)
+                        uploadProfileImage(
+                            imageUri, userId,
+                            onSuccess = { downloadUrl ->
+                                saveUserToFirestore(
+                                    fullName,
+                                    fullNameLower,
+                                    email,
+                                    userId,
+                                    downloadUrl,
+                                    onSuccess,
+                                    onFailure
+                                )
+                            }, onError = { error ->
+                                onFailure(error)
                             }
                         )
                     } else {
-                        saveUserToFirestore(fullName, fullNameLower, email, userId, null, onSuccess, onFailure)
+                        saveUserToFirestore(
+                            fullName,
+                            fullNameLower,
+                            email,
+                            userId,
+                            null,
+                            onSuccess,
+                            onFailure
+                        )
                     }
                 }
             }
@@ -43,12 +68,17 @@ class AuthViewModel : ViewModel() {
         auth.signInWithCredential(credential)
             .addOnSuccessListener {
                 onSuccess()
-            }.addOnFailureListener {exception ->
+            }.addOnFailureListener { exception ->
                 onFailure(exception)
             }
     }
 
-     fun uploadProfileImage(imageUri: Uri, userId: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+    fun uploadProfileImage(
+        imageUri: Uri,
+        userId: String,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
         val ref = storage.reference.child("profile_images/$userId")
 
         ref.putFile(imageUri)
@@ -66,7 +96,15 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    fun saveUserToFirestore(fullName: String, fullNameLower: String, email: String, userId: String, profileImageUrl: String?, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+    fun saveUserToFirestore(
+        fullName: String,
+        fullNameLower: String,
+        email: String,
+        userId: String,
+        profileImageUrl: String?,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
         // Using the User data class instead of a HashMap for cleaner code and type safety
         val user = User(
             id = userId,
@@ -86,7 +124,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    fun isLoggedIn() : Boolean = auth.currentUser != null
+    fun isLoggedIn(): Boolean = auth.currentUser != null
 
     fun logOut() {
         auth.signOut()
