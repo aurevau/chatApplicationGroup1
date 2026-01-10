@@ -120,5 +120,10 @@
     <string name="add_google_account">Lägg till Google konto</string>
     <string name="yes_go_to_settings">Ja, gå till inställningar</string>
     <string name="not_successful">misslyckad: %1$s</string>
+    <string name="chat">Chatt</string>
+    <string name="group">Grupp</string>
+    <string name="delete_account_text">Ta bort konto</string>
+    <string name="are_you_sure_you_want_to_delete_your_account">Är du säker på att du vill ta bort ditt konto?</string>
+    <string name="delete_account">Ta bort konto</string>
 
 </resources>
