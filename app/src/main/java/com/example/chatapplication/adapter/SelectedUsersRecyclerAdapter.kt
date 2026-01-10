@@ -41,7 +41,7 @@ class SelectedUsersRecyclerAdapter(val onItemClick: (User) -> Unit) :
         val user = users[position]
         val imageUrl = user.profileImageUrl
         if (!imageUrl.isNullOrEmpty()) {
-            holder.initials.visibility = View.GONE
+            holder.initials.visibility = View.INVISIBLE
             holder.profilePic.visibility = View.VISIBLE
             Glide.with(holder.profilePic.context)
                 .load(imageUrl)
