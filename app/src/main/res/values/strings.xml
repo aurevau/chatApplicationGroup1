@@ -113,5 +113,9 @@
     <string name="unknown">Unknown</string>
     <string name="no_message">No Message</string>
     <string name="now">Now</string>
+    <string name="add_google_account_long_text">Please add a Google account in Settings - Accounts -Google \n \n  or cancel to register with another email</string>
+    <string name="add_google_account">Add Google Account</string>
+    <string name="yes_go_to_settings">Yes go to settings</string>
+    <string name="not_successful">not successful: %1$s</string>
 
 </resources>
