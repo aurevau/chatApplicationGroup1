@@ -2,8 +2,10 @@ package com.example.chatapplication.viewmodel
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.MessageRepository
 import com.example.chatapplication.repository.UserRepository
@@ -22,6 +24,9 @@ class ChatViewModel : ViewModel() {
     val targetUser = MutableLiveData<User?>()
 
     fun start(roomId: String) = messageRepository.listenToChat(roomId)
+    val chatRoomDetails: LiveData<ChatRoom> = messageRepository.chatRoomDetails
+
+
 
 
     //get target user details
@@ -60,8 +65,8 @@ class ChatViewModel : ViewModel() {
 
 
 
-    fun createGroupChat(roomId: String, userIds: List<String>, groupName: String, onSuccess: (String) -> Unit) {
-        messageRepository.createGroupChat(roomId, userIds, groupName, onSuccess)
+    fun createGroupChat(roomId: String, userIds: List<String>, groupName: String, memberNames: List<String>, onSuccess: (String) -> Unit) {
+        messageRepository.createGroupChat(roomId, userIds, groupName, memberNames,onSuccess )
     }
 
     fun sendImageIfSelected(roomId: String, text: String? = null) {
@@ -81,6 +86,21 @@ class ChatViewModel : ViewModel() {
 
     fun deleteMessage(messageId: String, roomId: String, senderId: String) {
         messageRepository.deleteMessage(messageId, roomId, senderId)
+    }
+
+    fun getChatRoomDetailsById(roomId: String) {
+        messageRepository.getChatRoomDetailsById(roomId)
+    }
+
+    fun buildGroupName(allUserNames: List<String?>, currentUserFullName: String): String {
+        return allUserNames
+            .filter { it?.trim()?.equals(currentUserFullName.trim(), ignoreCase = true) == false }
+            .joinToString(", ") { it?.substringBefore(" ")?.trim() ?: "" }
+    }
+
+
+    fun updateChatName(roomId: String, newName: String) {
+        messageRepository.updateChatName(roomId, newName)
     }
 
 

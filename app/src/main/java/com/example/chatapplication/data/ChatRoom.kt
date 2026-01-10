@@ -4,9 +4,11 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ChatRoom(
+    val id: String = "",
     val userName: String? = null,
     val chatRoomImageUrl: String? = null,
     val groupName: String? = null,
+    val memberNames: List<String?> = emptyList(),
     val lastMessage: String? = null,
     val lastImageMessage: String? = null,
     val timestamp: String? = null,

@@ -1,5 +1,6 @@
 package com.example.chatapplication.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,10 @@ import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
 
 class RecentChatsRecyclerAdapter(
+    var currentUserFullName: String,
     private val onChatClick: (ChatRoom) -> Unit,
     val onChatLongClick: (ChatRoom) -> Unit,
+
 ) : RecyclerView.Adapter<RecentChatsRecyclerAdapter.ChatViewHolder>() {
 
     private var chats = emptyList<ChatRoom>()
@@ -40,7 +43,7 @@ class RecentChatsRecyclerAdapter(
     }
 
     // ViewHolder = holds widgets in each row
-    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         private val initials = itemView.findViewById<TextView>(R.id.tvProfileInitials)
@@ -86,6 +89,15 @@ class RecentChatsRecyclerAdapter(
                 }
             }
 
+            val displayName = when {
+                !chat.groupName.isNullOrBlank() -> chat.groupName
+                chat.isGroup && !chat.memberNames.isNullOrEmpty() -> buildGroupName(chat.memberNames) // Grupp utan namn
+                chat.userName == currentUserFullName -> itemView.context.getString(R.string.me_following_text, currentUserFullName) // Chat med dig själv
+                else -> chat.userName ?: itemView.context.getString(R.string.unknown)
+            }
+            name.text = displayName
+
+
             message.text = when {
                 !chat.lastMessage.isNullOrBlank() -> chat.lastMessage
                 !chat.lastImageMessage.isNullOrEmpty() ->
@@ -95,12 +107,23 @@ class RecentChatsRecyclerAdapter(
 
 
             initials.text = chat.userName?.take(2)  // The two first letters of the name
-            name.text = chat.userName ?: itemView.context.getString(R.string.unknown)
+//            name.text = chat.userName ?: itemView.context.getString(R.string.unknown)
 //            message.text = chat.lastMessage ?: itemView.context.getString(R.string.no_message)
             time.text = chat.timestamp ?: itemView.context.getString(R.string.now)
             itemView.setOnClickListener {
                 onChatClick(chat)
             }
         }
+        private fun buildGroupName(allUserNames: List<String?>): String {
+            val names = allUserNames
+                .filterNotNull()
+                .filter { it.isNotBlank() && it != currentUserFullName }
+                .map { it.substringBefore(" ") }
+            return if (names.isEmpty()) "Group" else names.joinToString(", ")
+        }
+
     }
+
+
 }
+

@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import com.example.chatapplication.R
+import com.example.chatapplication.data.User
 
 class MessageRepository {
 
@@ -24,6 +25,9 @@ class MessageRepository {
 
     private val _recentChats = MutableLiveData<List<ChatRoom>>()
     val recentChats: LiveData<List<ChatRoom>> get() = _recentChats
+
+    private val _chatRoomDetails = MutableLiveData<ChatRoom>()
+    val chatRoomDetails: LiveData<ChatRoom> get() = _chatRoomDetails
 
 //    fun listenToChat(roomId: String) {
 //        db.collection("chatRooms")
@@ -112,7 +116,7 @@ class MessageRepository {
     }
 
     fun sendTextMessage(roomId: String, text: String, otherUserId: String? = null) {
-        ensureChatRoomExists(roomId, otherUserId)
+
         val user = Firebase.auth.currentUser ?: return
 
         val msg = Message(
@@ -121,19 +125,20 @@ class MessageRepository {
             text = text ?: "",
             timestamp = System.currentTimeMillis()
         )
-
+        ensureChatRoomExists(roomId, otherUserId) {
         db.collection("chatRooms")
             .document(roomId)
             .collection("messages")
             .add(msg).addOnSuccessListener {
                 updateChatRoomLastMessage(roomId, text)
             }
+        }
     }
 
 
 
     fun sendImageMessage(roomId: String, imageUrl: String, text: String?, otherUserId: String? = null) {
-        ensureChatRoomExists(roomId, otherUserId)
+
         val user = Firebase.auth.currentUser ?: return
 
         val cleanText = text?.trim() ?: ""
@@ -145,13 +150,14 @@ class MessageRepository {
             imageUrl = imageUrl,
             timestamp = System.currentTimeMillis()
         )
-
-        db.collection("chatRooms")
-            .document(roomId)
-            .collection("messages")
-            .add(msg).addOnSuccessListener {
-                updateChatRoomLastImage(roomId, imageUrl, cleanText)
-            }
+        ensureChatRoomExists(roomId, otherUserId) {
+            db.collection("chatRooms")
+                .document(roomId)
+                .collection("messages")
+                .add(msg).addOnSuccessListener {
+                    updateChatRoomLastImage(roomId, imageUrl, cleanText)
+                }
+        }
     }
 
     fun allChatRoomCollectionReference(): CollectionReference =
@@ -162,6 +168,7 @@ class MessageRepository {
         roomId: String,
         userIds: List<String>,
         groupName: String,
+        memberNames: List<String>,
         onSuccess: (String) -> Unit,
         onError: (Exception) -> Unit = {}
     ) {
@@ -169,6 +176,7 @@ class MessageRepository {
             "roomId" to roomId,
             "groupName" to groupName,
             "members" to userIds,
+            "memberNames" to memberNames,
             "createdAt" to System.currentTimeMillis(),
             "lastMessage" to "",
             "lastImageMessage" to "",
@@ -192,28 +200,56 @@ class MessageRepository {
     }
 
 
-    private fun ensureChatRoomExists(roomId: String, otherUserId: String? = null) {
+    private fun ensureChatRoomExists(roomId: String, otherUserId: String? = null, onReady: () -> Unit = {}) {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: return
+
         db.collection("chatRooms").document(roomId).get()
             .addOnSuccessListener { doc ->
                 if (!doc.exists()) {
-                    val currentUserId = Firebase.auth.currentUser?.uid ?: return@addOnSuccessListener
-                    val members = if (otherUserId != null) {
-                        listOf(currentUserId, otherUserId)
-                    } else {
-                        listOf(currentUserId)
-                    }
+                    val members = if (otherUserId != null) listOf(currentUserId, otherUserId)
+                    else listOf(currentUserId)
 
-                    db.collection("chatRooms").document(roomId).set(mapOf(
-                        "members" to members,
-                        "createdAt" to System.currentTimeMillis(),
-                        "lastMessage" to "",
-                        "lastImageMessage" to "",
-                        "lastMessageTimestamp" to System.currentTimeMillis(),
-                        "isGroup" to false
-                    ))
+                    if (otherUserId != null) {
+                        // Privat chatt: hämta namn på andra användaren
+                        db.collection("users").document(otherUserId).get()
+                            .addOnSuccessListener { otherUserDoc ->
+                                val otherUserName = otherUserDoc.getString("fullName") ?: "Unknown User"
+                                db.collection("chatRooms").document(roomId).set(
+                                    mapOf(
+                                        "members" to members,
+                                        "userName" to otherUserName,
+                                        "groupName" to otherUserName,
+                                        "memberNames" to listOf(otherUserName),
+                                        "createdAt" to System.currentTimeMillis(),
+                                        "lastMessage" to "",          // Viktigt: tom sträng
+                                        "lastImageMessage" to "",
+                                        "lastMessageTimestamp" to System.currentTimeMillis(),
+                                        "isGroup" to false
+                                    )
+                                ).addOnSuccessListener { onReady() }
+                            }
+                    } else {
+                        // Grupp eller privat med bara dig själv
+                        db.collection("chatRooms").document(roomId).set(
+                            mapOf(
+                                "members" to members,
+                                "memberNames" to listOf(currentUserId),
+                                "createdAt" to System.currentTimeMillis(),
+                                "lastMessage" to "",
+                                "lastImageMessage" to "",
+                                "lastMessageTimestamp" to System.currentTimeMillis(),
+                                "isGroup" to false
+                            )
+                        ).addOnSuccessListener { onReady() }
+                    }
+                } else {
+                    onReady()
                 }
             }
     }
+
+
+
 
     fun deleteChatRoom(chatRoom: ChatRoom) {
         chatRoom.roomId?.let {
@@ -250,16 +286,21 @@ class MessageRepository {
                 snapshot.documents.forEach { doc ->
                     val members = doc.get("members") as? List<*>
                     val isGroup = doc.getBoolean("isGroup") == true
-
+                    val memberNames = doc.get("memberNames") as? List<String> ?: emptyList()
+                    val groupNameFromDoc = doc.getString("groupName")?.takeIf { it.isNotBlank() }
                     if (isGroup) {
+                        val memberNames = doc.get("memberNames") as? List<String> ?: emptyList()
+
                         chatList.add(
                             ChatRoom(
                                 roomId = doc.id,
-                                userName = doc.getString("groupName") ?: "Grupp",
+                                userName = null,
+                                groupName = groupNameFromDoc,
+                                memberNames = memberNames,
                                 lastMessage = doc.getString("lastMessage") ?: "",
                                 lastImageMessage = doc.getString("lastImageMessage") ?: "",
                                 timestamp = DateUtils.formatTimestamp(doc.getLong("lastMessageTimestamp") ?: 0),
-                                isGroup = true
+                                isGroup = doc.getBoolean("isGroup") == true
                             )
                         )
                         processedCount++
@@ -280,6 +321,7 @@ class MessageRepository {
                                         userName = userDoc.getString("fullName")?.let { fullName ->
                                             context.getString(R.string.me_following_text, fullName)
                                         } ?: "Me",
+                                        groupName = doc.getString("groupName"),
                                         chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
                                         lastMessage = doc.getString("lastMessage") ?: "",
                                         lastImageMessage = doc.getString("lastImageMessage") ?: "",
@@ -303,6 +345,7 @@ class MessageRepository {
                                 ChatRoom(
                                     roomId = doc.id,
                                     userName = userDoc.getString("fullName") ?: "Unknown User",
+                                    groupName = groupNameFromDoc,
                                     chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
                                     lastMessage = doc.getString("lastMessage") ?: "",
                                     lastImageMessage = doc.getString("lastImageMessage") ?: "",
@@ -348,6 +391,18 @@ class MessageRepository {
                 "lastMessageSenderId" to currentUserId
             )
         )
+    }
+
+    fun getChatRoomDetailsById(roomId: String) {
+        db.collection("chatRooms").document(roomId)
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null && snapshot.exists()) {
+                    val room = snapshot.toObject(ChatRoom::class.java)?.copy(
+                        isGroup = snapshot.getBoolean("isGroup") == true
+                    )
+                    _chatRoomDetails.value = room
+                }
+            }
     }
 
 
@@ -411,6 +466,19 @@ class MessageRepository {
                         .document(roomId)
                         .delete()
                 }
+            }
+    }
+
+
+
+    fun updateChatName(roomId: String, newName: String) {
+        val chatRef = db.collection("chatRooms").document(roomId)
+        chatRef.update("groupName", newName)
+            .addOnSuccessListener {
+                Log.d("Chat", "Chat name updated successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Chat", "Failed to update chat name", e)
             }
     }
 
