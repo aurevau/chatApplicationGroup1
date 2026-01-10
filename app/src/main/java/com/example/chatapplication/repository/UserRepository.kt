@@ -333,6 +333,7 @@ class UserRepository {
 
     fun deleteCurrentUser() {
         val user = FirebaseAuth.getInstance().currentUser ?: return
+        FirebaseAuth.getInstance().currentUser?.delete()
         db.collection("users").document(user.uid).delete().addOnSuccessListener {
             user.delete().addOnSuccessListener {
                 Log.i("SOUT", "deleted user from database and auth with id:${user.uid}")
