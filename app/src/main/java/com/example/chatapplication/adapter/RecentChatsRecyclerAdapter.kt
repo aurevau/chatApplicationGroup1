@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.R
+import com.example.chatapplication.util.DateUtils
 
 class RecentChatsRecyclerAdapter(
     var currentUserFullName: String,
@@ -111,7 +112,7 @@ class RecentChatsRecyclerAdapter(
 
 
             initials.text = chat.userName?.take(2)  // The two first letters of the name
-            time.text = chat.timestamp ?: itemView.context.getString(R.string.now)
+            time.text = DateUtils.formatTimestamp(chat.timestamp)
             itemView.setOnClickListener {
                 onChatClick(chat)
             }
