@@ -173,4 +173,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_email" />
 
+
+    <TextView
+        android:id="@+id/delete_account_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_account_text"
+        android:textAlignment="center"
+        android:fontFamily="@font/quantico_bold"
+        android:textSize="@dimen/small_text_10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/off_white"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

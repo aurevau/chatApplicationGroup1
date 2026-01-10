@@ -1,5 +1,6 @@
 package com.example.chatapplication.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -66,12 +67,34 @@ class ProfileActivity : AppCompatActivity() {
                 save()
 
             }
+
+            binding.deleteAccountTv.visibility = View.VISIBLE
+
+            binding.deleteAccountTv.setOnClickListener {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.delete_account))
+                    .setMessage(getString(R.string.are_you_sure_you_want_to_delete_your_account))
+                    .setPositiveButton(getString(R.string.confirm_delete_btn_text)) { dialog, _ ->
+                        viewModel.deleteCurrentUser()
+                        val intent = Intent(this, WelcomeActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+
+                        dialog.dismiss()
+                    }
+
+                    .setNegativeButton(getString(R.string.cancel_alert_btn_text)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            }
         } else {
             binding.btnSave.visibility = View.GONE
             binding.etFullName.editText?.isEnabled = false
             binding.etFullName.editText?.inputType = InputType.TYPE_NULL
             binding.etEmail.editText?.isEnabled = false
             binding.etEmail.editText?.isEnabled = false
+            binding.deleteAccountTv.visibility = View.GONE
 
         }
 

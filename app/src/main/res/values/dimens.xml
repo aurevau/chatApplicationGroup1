@@ -55,5 +55,6 @@
     <dimen name="margin_2dp">2dp</dimen>
     <dimen name="margin_1dp">1dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
+    <dimen name="small_text_10sp">10sp</dimen>
 
 </resources>
