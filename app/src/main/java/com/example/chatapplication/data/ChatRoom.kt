@@ -11,7 +11,7 @@ data class ChatRoom(
     val memberNames: List<String?> = emptyList(),
     val lastMessage: String? = null,
     val lastImageMessage: String? = null,
-    val timestamp: String? = null,
+    val timestamp: Long = System.currentTimeMillis(),
     val roomId: String? = null,
     val isGroup: Boolean = false,
     val lastSenderName: String? = null

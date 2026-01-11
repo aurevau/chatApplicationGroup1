@@ -16,6 +16,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import com.example.chatapplication.R
 import com.example.chatapplication.data.User
+import com.google.firebase.firestore.Query
 
 class MessageRepository {
 
@@ -258,101 +259,79 @@ class MessageRepository {
             .whereArrayContains("members", currentUserId)
             .orderBy(
                 "lastMessageTimestamp",
-                com.google.firebase.firestore.Query.Direction.DESCENDING
+                Query.Direction.DESCENDING
             )
-            .addSnapshotListener { snapshot, _ ->
-                if (snapshot == null || snapshot.isEmpty) {
+            .addSnapshotListener { snapshot, error ->
+
+                if (error != null || snapshot == null || snapshot.isEmpty) {
                     _recentChats.value = emptyList()
                     return@addSnapshotListener
                 }
 
-                val chatList = mutableListOf<ChatRoom>()
-                var processedCount = 0
                 val totalDocs = snapshot.documents.size
+                val chatList = MutableList<ChatRoom?>(totalDocs) { null }
+                var processedCount = 0
 
-                snapshot.documents.forEach { doc ->
+                snapshot.documents.forEachIndexed { index, doc ->
                     val members = doc.get("members") as? List<*>
                     val isGroup = doc.getBoolean("isGroup") == true
-                    val memberNames = doc.get("memberNames") as? List<String> ?: emptyList()
+                    val lastMessageTimestamp = doc.getLong("lastMessageTimestamp") ?: 0L
                     val groupNameFromDoc = doc.getString("groupName")?.takeIf { it.isNotBlank() }
-                    if (isGroup) {
-                        val memberNames = doc.get("memberNames") as? List<String> ?: emptyList()
 
-                        chatList.add(
+
+                    if (isGroup) {
+                        chatList[index] =
                             ChatRoom(
                                 roomId = doc.id,
                                 userName = null,
                                 groupName = groupNameFromDoc,
-                                memberNames = memberNames,
+                                memberNames = doc.get("memberNames") as? List<String>
+                                    ?: emptyList(),
                                 lastMessage = doc.getString("lastMessage") ?: "",
                                 lastImageMessage = doc.getString("lastImageMessage") ?: "",
-                                timestamp = DateUtils.formatTimestamp(
-                                    doc.getLong("lastMessageTimestamp") ?: 0
-                                ),
+                                timestamp = lastMessageTimestamp,
                                 isGroup = doc.getBoolean("isGroup") == true
                             )
-                        )
+
                         processedCount++
-                        if (processedCount == totalDocs) _recentChats.value = chatList
-                        return@forEach
+                        if (processedCount == totalDocs) _recentChats.value = chatList.filterNotNull()
+                        return@forEachIndexed
                     }
 
 
                     val otherUserId = members?.firstOrNull { it != currentUserId } as? String
+                    val targetUserId = otherUserId ?: currentUserId
 
-                    if (otherUserId == null) {
-                        // Chat with yourself
-                        db.collection("users").document(currentUserId).get()
-                            .addOnSuccessListener { userDoc ->
-                                chatList.add(
-                                    ChatRoom(
-                                        roomId = doc.id,
-                                        userName = userDoc.getString("fullName")?.let { fullName ->
-                                            context.getString(R.string.me_following_text, fullName)
-                                        } ?: "Me",
-                                        groupName = doc.getString("groupName"),
-                                        chatRoomImageUrl = userDoc.getString("profileImageUrl")
-                                            ?: "",
-                                        lastMessage = doc.getString("lastMessage") ?: "",
-                                        lastImageMessage = doc.getString("lastImageMessage") ?: "",
-                                        timestamp = DateUtils.formatTimestamp(
-                                            doc.getLong("lastMessageTimestamp") ?: 0
-                                        )
-                                    )
-                                )
-                                processedCount++
-                                if (processedCount == totalDocs) _recentChats.value = chatList
-                            }
-                            .addOnFailureListener {
-                                processedCount++
-                                if (processedCount == totalDocs) _recentChats.value = chatList
-                            }
-                        return@forEach
-                    }
-
-                    // Chat with another user
-                    db.collection("users").document(otherUserId).get()
+                    db.collection("users").document(targetUserId).get()
                         .addOnSuccessListener { userDoc ->
-                            chatList.add(
+                            val userName = if (otherUserId == null) {
+                                userDoc.getString("fullName")?.let {
+                                    context.getString(R.string.me_following_text, it)
+                                } ?: "Me"
+                            } else {
+                                userDoc.getString("fullName") ?: "Unknown User"
+                            }
+                            chatList[index] =
                                 ChatRoom(
                                     roomId = doc.id,
-                                    userName = userDoc.getString("fullName") ?: "Unknown User",
+                                    userName = userName,
                                     groupName = groupNameFromDoc,
                                     chatRoomImageUrl = userDoc.getString("profileImageUrl") ?: "",
                                     lastMessage = doc.getString("lastMessage") ?: "",
                                     lastImageMessage = doc.getString("lastImageMessage") ?: "",
-                                    timestamp = DateUtils.formatTimestamp(
-                                        doc.getLong("lastMessageTimestamp") ?: 0
-                                    )
+                                    timestamp = lastMessageTimestamp,
+                                    isGroup = false
                                 )
-                            )
                             processedCount++
-                            if (processedCount == totalDocs) _recentChats.value = chatList
-                        }
-                        .addOnFailureListener {
+                            if (processedCount == totalDocs) _recentChats.value =
+                                chatList.filterNotNull()
+                        }.addOnFailureListener {
                             processedCount++
-                            if (processedCount == totalDocs) _recentChats.value = chatList
+                            if (processedCount == totalDocs) _recentChats.value =
+                                chatList.filterNotNull()
                         }
+
+
                 }
             }
     }
