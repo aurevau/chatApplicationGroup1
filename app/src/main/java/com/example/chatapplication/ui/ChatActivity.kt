@@ -117,22 +117,30 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.chatRoomDetails.observe(this) { room ->
                     val displayName = when {
                         room == null -> getString(R.string.chat)
+                        !room.groupName.isNullOrBlank() -> room.groupName
                         room.isGroup -> {
                             when {
                                 !room.groupName.isNullOrBlank() -> room.groupName
                                 !room.memberNames.isNullOrEmpty() -> viewModel.buildGroupName(
                                     room.memberNames,
-                                    currentUserFullName
-                                )
+                                    currentUserFullName)
 
                                 else -> getString(R.string.group)
                             }
                         }
 
                         else -> {
-                            room.groupName ?: getString(R.string.chat)
+                            if (!room.memberNames.isNullOrEmpty()) {
+                                val otherNames = room.memberNames
+                                    .filter { it!!.isNotBlank() && it != currentUserFullName }
+                                    .map { it!!.substringBefore(" ") }
+                                otherNames.firstOrNull() ?: getString(R.string.chat)
+                            } else {
+                                getString(R.string.chat)
+                            }
                         }
                     }
+
 
                     binding.tvHeader.text = displayName
                 }

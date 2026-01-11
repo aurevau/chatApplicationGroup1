@@ -82,13 +82,13 @@ class RecentChatsFragment : Fragment() {
                 // HERE IS THE FIX: We need to assign the adapter to the RecyclerView
                 this.adapter = this@RecentChatsFragment.adapter
             }
-        }
-        // 3. Listen to data
-        viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
-            Log.d("RecentChatsFragment", "recentChats size=${chatList.size}")
 
-            adapter.setChats(chatList)
+            // 3. Listen to data
+            viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
+                Log.d("RecentChatsFragment", "recentChats size=${chatList.size}")
 
+                adapter.setChats(chatList)
+            }
         }
 
         val currentUserId = userViewModel.getCurrentUserId() ?: return

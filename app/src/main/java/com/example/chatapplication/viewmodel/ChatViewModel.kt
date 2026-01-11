@@ -105,6 +105,15 @@ class ChatViewModel : ViewModel() {
             .joinToString(", ") { it?.substringBefore(" ")?.trim() ?: "" }
     }
 
+    fun buildSingleChatName(allUserNames: List<String?>, currentUserFullName: String): String {
+        val otherNames = allUserNames
+            .filterNotNull()
+            .filter { it.isNotBlank() && it != currentUserFullName }
+            .map { it.substringBefore(" ") } // valfritt: bara förnamn
+
+        return otherNames.firstOrNull() ?: ""
+    }
+
 
     fun updateChatName(roomId: String, newName: String) {
         messageRepository.updateChatName(roomId, newName)
