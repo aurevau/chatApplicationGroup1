@@ -8,10 +8,11 @@ A real-time messaging Android application built with Kotlin and Firebase.
 - 🔓 Google Sign-In authentication
 - 💬 One-to-one chat messaging
 - 👥 Group chat functionality
+- 🏷️ Availability to change chat-name
 - 📸 Send images in chat (camera or gallery)
 - 🔍 Search users
 - 👫 Friend system (send/accept/decline friend requests)
-- 🗑️ Delete messages and chats
+- 🗑️ Delete messages, chats, recent searches and account
 - ⏱️ Real-time message updates
 - 📱 Profile management with profile pictures
 
