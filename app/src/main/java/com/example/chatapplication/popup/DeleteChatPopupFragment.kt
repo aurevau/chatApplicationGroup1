@@ -41,15 +41,10 @@ class DeleteChatPopupFragment : DialogFragment() {
 
         binding.btnTrash.setOnClickListener {
             // Show AlertDialog for confirmation
-            AlertDialog.Builder(requireContext())
-                .setTitle("Delete Chat")
-                .setMessage("Are you sure you want to delete this chat with ${chatRoom.userName}? This cannot be undone.")
-                .setPositiveButton("Yes, Delete") { _, _ ->
                     MessageRepository().deleteChatRoom(chatRoom)
                     dismiss()
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+
+
         }
 
         binding.btnClosePopup.setOnClickListener {

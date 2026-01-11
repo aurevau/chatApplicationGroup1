@@ -106,6 +106,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val currentUserId = userViewModel.getCurrentUserId()
+
         if (currentUserId != null) {
             userViewModel.getUserDetailsById(currentUserId) { user ->
                 currentUserFullName = user?.fullName ?: ""
@@ -114,25 +115,32 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.getChatRoomDetailsById(currentRoomId)
 
                 viewModel.chatRoomDetails.observe(this) { room ->
-
                     val displayName = when {
                         room == null -> getString(R.string.chat)
+                        !room.groupName.isNullOrBlank() -> room.groupName
                         room.isGroup -> {
                             when {
                                 !room.groupName.isNullOrBlank() -> room.groupName
                                 !room.memberNames.isNullOrEmpty() -> viewModel.buildGroupName(
                                     room.memberNames,
-                                    currentUserFullName
-                                )
+                                    currentUserFullName)
 
                                 else -> getString(R.string.group)
                             }
                         }
 
                         else -> {
-                            room.groupName ?: getString(R.string.chat)
+                            if (!room.memberNames.isNullOrEmpty()) {
+                                val otherNames = room.memberNames
+                                    .filter { it!!.isNotBlank() && it != currentUserFullName }
+                                    .map { it!!.substringBefore(" ") }
+                                otherNames.firstOrNull() ?: getString(R.string.chat)
+                            } else {
+                                getString(R.string.chat)
+                            }
                         }
                     }
+
 
                     binding.tvHeader.text = displayName
                 }
@@ -143,7 +151,7 @@ class ChatActivity : AppCompatActivity() {
         if (!imageUrl.isNullOrEmpty()) {
             binding.tvInitials.visibility = View.GONE
             binding.profilePic.visibility = View.VISIBLE
-            Glide.with(binding.profilePic.context)
+            Glide.with(this)
                 .load(imageUrl)
                 .circleCrop()
                 .into(binding.profilePic)
@@ -151,12 +159,23 @@ class ChatActivity : AppCompatActivity() {
             binding.tvInitials.visibility = View.GONE
         }
         if (userId != null) {
+
             viewModel.getUserDetailsById(userId)
             viewModel.targetUser.observe(this) { user ->
-                Log.d("??? user", user.toString())
-                binding.tvInitials.visibility = View.VISIBLE
-                binding.tvHeader.text = user?.fullName
-                binding.tvInitials.text = user?.initials
+                if (user?.profileImageUrl != null) {
+                    binding.tvInitials.visibility = View.GONE
+                    binding.profilePic.visibility = View.VISIBLE
+                    Glide.with(this)
+                        .load(user.profileImageUrl)
+                        .circleCrop()
+                        .into(binding.profilePic)
+                    binding.tvHeader.text = user.fullName
+                } else {
+                    Log.d("??? user", user.toString())
+                    binding.tvInitials.visibility = View.VISIBLE
+                    binding.tvHeader.text = user?.fullName
+                    binding.tvInitials.text = user?.initials
+                }
             }
         }
 
