@@ -122,5 +122,6 @@
     <string name="delete_account_text">Delete account</string>
     <string name="are_you_sure_you_want_to_delete_your_account">Are you sure you want to delete your account?</string>
     <string name="delete_account">Delete Account</string>
+    <string name="choose_your_chat_name_hint_text">Choose your chat name</string>
 
 </resources>

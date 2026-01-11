@@ -22,8 +22,6 @@ class RecentChatsFragment : Fragment() {
     private var _binding: FragmentRecentChatsBinding? = null
     private val binding get() = _binding!!
 
-    private val messageRepository = MessageRepository()
-
     private lateinit var adapter: RecentChatsRecyclerAdapter
 
     // Use activityViewModels to share data between fragments if needed, or viewModels for just this fragment
@@ -91,11 +89,12 @@ class RecentChatsFragment : Fragment() {
             }
         }
 
+
         val currentUserId = userViewModel.getCurrentUserId() ?: return
         userViewModel.getUserDetailsById(currentUserId) { user ->
             currentUserFullName = user?.fullName ?: ""
             adapter.currentUserFullName = currentUserFullName
-            adapter.notifyDataSetChanged()  // uppdatera gruppnamn etc
+            adapter.notifyDataSetChanged()
         }
 
 

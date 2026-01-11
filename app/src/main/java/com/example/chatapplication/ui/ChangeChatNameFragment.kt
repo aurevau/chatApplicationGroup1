@@ -1,10 +1,12 @@
 package com.example.chatapplication.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapplication.databinding.FragmentChangeChatNameBinding
@@ -41,6 +43,8 @@ class ChangeChatNameFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+
         val state = arguments?.getString("state")
         val roomId = arguments?.getString("ROOM_ID")
         val memberIds =
