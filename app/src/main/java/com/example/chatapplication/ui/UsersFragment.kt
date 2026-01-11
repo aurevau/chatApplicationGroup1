@@ -192,7 +192,7 @@ class UsersFragment : Fragment() {
 
                 }
                 .show()
-        }, {user ->
+        }, { user ->
             val profileIntent = Intent(activity, ProfileActivity::class.java)
             profileIntent.putExtra("USER_ID", user.id)
             startActivity(profileIntent)
@@ -223,7 +223,6 @@ class UsersFragment : Fragment() {
 
         val currentUserId = viewModel.getCurrentUserId() ?: return
 
-//        viewModel.loadRecentSearches()
 
         if (currentUserId != null) {
             viewModel.loadIncomingFriendRequests(currentUserId)
@@ -243,16 +242,17 @@ class UsersFragment : Fragment() {
                 arguments = bundleOf(
                     "state" to "NEWGROUP",
                     "selected_users" to ArrayList(selectedUserNames),
-                    "member_ids" to ArrayList(memberIds))
+                    "member_ids" to ArrayList(memberIds)
+                )
             }
             chatNameDialog.show(childFragmentManager, "ChatNameDialog")
 
-                viewModel.clearSelection()
-                selectedUsersSet.clear()
-                adapter.updateSelectionList(viewModel.selection.value ?: emptyList())
-                selectedUsersAdapter.submitList(emptyList())
-                binding.rvSelectedUsers.visibility = View.GONE
-                binding.btnStartGroupChat.visibility = View.GONE
+            viewModel.clearSelection()
+            selectedUsersSet.clear()
+            adapter.updateSelectionList(viewModel.selection.value ?: emptyList())
+            selectedUsersAdapter.submitList(emptyList())
+            binding.rvSelectedUsers.visibility = View.GONE
+            binding.btnStartGroupChat.visibility = View.GONE
 
 
             binding.etSearchUser.text?.clear()
@@ -293,8 +293,10 @@ class UsersFragment : Fragment() {
             if (selectionList != null) {
                 adapter.updateSelectionList(selectionList)
                 selectedUsersAdapter.submitList(selectionList)
-                binding.btnStartGroupChat.visibility = if (selectionList.size > 1) View.VISIBLE else View.GONE
-                binding.rvSelectedUsers.visibility = if (selectionList.isNotEmpty()) View.VISIBLE else View.GONE
+                binding.btnStartGroupChat.visibility =
+                    if (selectionList.size > 1) View.VISIBLE else View.GONE
+                binding.rvSelectedUsers.visibility =
+                    if (selectionList.isNotEmpty()) View.VISIBLE else View.GONE
             }
 
 

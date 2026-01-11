@@ -19,8 +19,7 @@ class FriendRecyclerAdapter(
     val onProfileClick: (User) -> Unit,
     val onAcceptFriendRequest: (User) -> Unit,
     val onDeclineFriendRequest: (User) -> Unit
-): RecyclerView.Adapter<FriendRecyclerAdapter.UserViewHolder>() {
-    private var friendRequests = emptyList<User>()
+) : RecyclerView.Adapter<FriendRecyclerAdapter.UserViewHolder>() {
 
 
     private val db = UserRepository()
@@ -31,12 +30,13 @@ class FriendRecyclerAdapter(
     var incomingRequests = mutableSetOf<String>()
     var outgoingRequests = mutableSetOf<String>()
 
-   private var friends = emptyList<User>()
+    private var friends = emptyList<User>()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): FriendRecyclerAdapter.UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_friends, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.list_item_friends, parent, false)
         return UserViewHolder(view)
     }
 
@@ -54,9 +54,6 @@ class FriendRecyclerAdapter(
         combined = incomingFriendRequests + friends
         notifyDataSetChanged()
     }
-
-
-
 
 
     fun updateFriendRequestStatus(
@@ -89,16 +86,22 @@ class FriendRecyclerAdapter(
         when {
             isFriend -> {
                 holder.deleteFriend.visibility = View.VISIBLE
-                holder.deleteFriend.text = ContextCompat.getString(holder.itemView.context,R.string.friends)
+                holder.deleteFriend.text =
+                    ContextCompat.getString(holder.itemView.context, R.string.friends)
                 holder.deleteFriend.setOnClickListener { onDeleteFriendClick(user) }
 
             }
+
             hasIncomingRequest -> {
                 holder.deleteFriend.visibility = View.INVISIBLE
                 holder.acceptFriend.visibility = View.VISIBLE
-                holder.acceptFriend.text = holder.itemView.context.getString(R.string.accept_btn_text)
+                holder.acceptFriend.text =
+                    holder.itemView.context.getString(R.string.accept_btn_text)
                 holder.declineFriend.visibility = View.VISIBLE
-                holder.declineFriend.text = ContextCompat.getString(holder.itemView.context, R.string.decline_friend_request_btn_text)
+                holder.declineFriend.text = ContextCompat.getString(
+                    holder.itemView.context,
+                    R.string.decline_friend_request_btn_text
+                )
 
                 holder.acceptFriend.setOnClickListener { onAcceptFriendRequest(user) }
                 holder.declineFriend.setOnClickListener { onDeclineFriendRequest(user) }
@@ -155,7 +158,7 @@ class FriendRecyclerAdapter(
 
     override fun getItemCount(): Int = combined.size
 
-    inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val profilePic: ImageView = itemView.findViewById(R.id.profilePic)
         val deleteFriend: TextView = itemView.findViewById(R.id.tv_delete_friend_friend)

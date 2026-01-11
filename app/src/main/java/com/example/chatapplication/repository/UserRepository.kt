@@ -3,19 +3,15 @@ package com.example.chatapplication.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.User
-import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
+
 
 class UserRepository {
 
@@ -44,8 +40,6 @@ class UserRepository {
     val searchResults: LiveData<List<User>> get() = _searchResults
 
     private val recentList = mutableListOf<User>()
-
-    private val friendList = mutableListOf<User>()
 
 
     fun searchUsers(searchTerm: String) {
@@ -273,15 +267,16 @@ class UserRepository {
 
             batch.commit()
                 .addOnSuccessListener {
-                    Log.d("Friend", "Deleted friendship and cleared all requests between $currentUserId and $otherUserId")
+                    Log.d(
+                        "Friend",
+                        "Deleted friendship and cleared all requests between $currentUserId and $otherUserId"
+                    )
                 }
                 .addOnFailureListener { e ->
                     Log.e("Friend", "Failed to delete friendship and requests", e)
                 }
         }
     }
-
-
 
 
     fun deleteRecentSearch(user: User) {
@@ -327,8 +322,8 @@ class UserRepository {
             .addOnSuccessListener { documentReference ->
                 Log.i("SOUT", "updated user to database with id: ${uid}")
             }.addOnFailureListener { exception ->
-            Log.e("SOUT", "failed to update user to database, error: " + exception.message)
-        }
+                Log.e("SOUT", "failed to update user to database, error: " + exception.message)
+            }
     }
 
     fun deleteCurrentUser() {
@@ -345,9 +340,6 @@ class UserRepository {
                 Log.e("SOUT", "failed to delete user from database, error: " + exception.message)
             }
     }
-
-
-
 
 
     fun loadRecentSearchesRealtime(currentUserId: String) {
@@ -382,7 +374,12 @@ class UserRepository {
             }
     }
 
-    fun sendFriendRequest(fromUserId: String, fromUserName: String, toUserId: String, toUserName: String) {
+    fun sendFriendRequest(
+        fromUserId: String,
+        fromUserName: String,
+        toUserId: String,
+        toUserName: String
+    ) {
         val batch = db.batch()
 
         // Create request with the recipient
@@ -415,7 +412,12 @@ class UserRepository {
         batch.commit()
     }
 
-    fun acceptFriendRequest(currentUserId: String, otherUserId: String, currentUserName: String, otherUserName: String) {
+    fun acceptFriendRequest(
+        currentUserId: String,
+        otherUserId: String,
+        currentUserName: String,
+        otherUserName: String
+    ) {
         val batch = db.batch()
 
         val currentUserFriendRef = db.collection("users")
@@ -428,15 +430,19 @@ class UserRepository {
             .collection("friends")
             .document(currentUserId)
 
-        batch.set(currentUserFriendRef, mapOf(
-            "userId" to otherUserId,
-            "fullName" to otherUserName
-        ))
+        batch.set(
+            currentUserFriendRef, mapOf(
+                "userId" to otherUserId,
+                "fullName" to otherUserName
+            )
+        )
 
-        batch.set(otherUserFriendRef, mapOf(
-            "userId" to currentUserId,
-            "fullName" to currentUserName
-        ))
+        batch.set(
+            otherUserFriendRef, mapOf(
+                "userId" to currentUserId,
+                "fullName" to currentUserName
+            )
+        )
 
         batch.delete(
             db.collection("users")
@@ -475,7 +481,6 @@ class UserRepository {
     }
 
 
-
     fun loadIncomingFriendRequests(currentUserId: String) {
         db.collection("users")
             .document(currentUserId)
@@ -503,9 +508,6 @@ class UserRepository {
                 _outgoingFriendRequests.value = requests.toMutableList()
             }
     }
-
-
-
 
 
     fun declineFriendRequest(currentUserId: String, otherUserId: String) {
@@ -537,7 +539,11 @@ class UserRepository {
         }
     }
 
-    fun cancelOutgoingFriendRequest(currentUserId: String, otherUserId: String, onComplete: () -> Unit = {}) {
+    fun cancelOutgoingFriendRequest(
+        currentUserId: String,
+        otherUserId: String,
+        onComplete: () -> Unit = {}
+    ) {
         val batch = db.batch()
 
         val incomingRef = db.collection("users")

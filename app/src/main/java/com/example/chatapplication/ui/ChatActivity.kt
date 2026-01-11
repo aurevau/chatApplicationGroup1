@@ -98,8 +98,6 @@ class ChatActivity : AppCompatActivity() {
         val groupRoomId = intent.getStringExtra("ROOM_ID")
         val imageUrl = intent.getStringExtra("IMAGE_URL")
 
-//        val groupName = intent.getStringExtra("GROUP_NAME")
-
 
         val currentRoomId = groupRoomId ?: run {
             val myId = viewModel.myUserId ?: ""
@@ -122,10 +120,15 @@ class ChatActivity : AppCompatActivity() {
                         room.isGroup -> {
                             when {
                                 !room.groupName.isNullOrBlank() -> room.groupName
-                                !room.memberNames.isNullOrEmpty() -> viewModel.buildGroupName(room.memberNames, currentUserFullName)
+                                !room.memberNames.isNullOrEmpty() -> viewModel.buildGroupName(
+                                    room.memberNames,
+                                    currentUserFullName
+                                )
+
                                 else -> getString(R.string.group)
                             }
                         }
+
                         else -> {
                             room.groupName ?: getString(R.string.chat)
                         }
@@ -161,7 +164,8 @@ class ChatActivity : AppCompatActivity() {
             val chatNameDialog = ChangeChatNameFragment().apply {
                 arguments = bundleOf(
                     "state" to "UPDATE",
-                    "ROOM_ID" to currentRoomId)
+                    "ROOM_ID" to currentRoomId
+                )
 
             }
 
@@ -232,7 +236,7 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.sendTextMessage(roomId, text, userId)
             }
 
-                binding.etMessage.text.clear()
+            binding.etMessage.text.clear()
 
         }
 

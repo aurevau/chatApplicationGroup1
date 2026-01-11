@@ -1,4 +1,5 @@
 package com.example.chatapplication.ui
+
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -25,15 +26,12 @@ class FriendFragment : DialogFragment() {
     private lateinit var adapter: FriendRecyclerAdapter
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
         val currentUserId = arguments?.getString("USER_ID")
-        //val currentUserId = viewModel.getCurrentUserId()
         if (currentUserId != null) {
             viewModel.getFriends(currentUserId)
             if (currentUserId != null) {
@@ -44,11 +42,11 @@ class FriendFragment : DialogFragment() {
 
 
 
-        adapter = FriendRecyclerAdapter({user ->
+        adapter = FriendRecyclerAdapter({ user ->
             val chatIntent = Intent(activity, ChatActivity::class.java)
             chatIntent.putExtra("USER_ID", user.id)
             startActivity(chatIntent)
-        }, {user ->
+        }, { user ->
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.delete_friend_text))
                 .setMessage(getString(R.string.delete_friend_alert_text, user.fullName))
@@ -61,11 +59,11 @@ class FriendFragment : DialogFragment() {
                     dialog.dismiss()
                 }
                 .show()
-        }, {user ->
+        }, { user ->
             val profileIntent = Intent(activity, ProfileActivity::class.java)
             profileIntent.putExtra("USER_ID", user.id)
             startActivity(profileIntent)
-        }, {user ->
+        }, { user ->
             val currentUser = viewModel.getUserDetailsById(currentUserId!!) { currentUser ->
                 if (currentUser != null) {
                     viewModel.acceptFriendRequest(
@@ -93,11 +91,6 @@ class FriendFragment : DialogFragment() {
             viewModel.loadOutgoingFriendRequests(currentUserId)
             viewModel.loadIncomingFriendRequests(currentUserId)
         }
-
-
-
-
-
 
 
     }
@@ -130,7 +123,7 @@ class FriendFragment : DialogFragment() {
 
 
 
-        viewModel.friends.observe(viewLifecycleOwner) {friendList ->
+        viewModel.friends.observe(viewLifecycleOwner) { friendList ->
             adapter.updateFriends(friendList)
         }
 
@@ -152,9 +145,6 @@ class FriendFragment : DialogFragment() {
             adapter.updateFriendRequestStatus(incomingIds, outgoingIds)
         }
     }
-
-
-
 
 
     override fun onStart() {

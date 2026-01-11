@@ -6,13 +6,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.chatapplication.ui.RecentChatsFragment
 import com.example.chatapplication.ui.UsersFragment
 
-class DashboardActivityViewPagerAdapter(activity: FragmentActivity): FragmentStateAdapter(activity) {
+class DashboardActivityViewPagerAdapter(activity: FragmentActivity) :
+    FragmentStateAdapter(activity) {
     private val usersFragment = UsersFragment()
 
     private val recentChatsFragment = RecentChatsFragment()
 
     override fun createFragment(position: Int): Fragment {
-        return when(position) {
+        return when (position) {
             0 -> recentChatsFragment
             1 -> usersFragment
             else -> recentChatsFragment

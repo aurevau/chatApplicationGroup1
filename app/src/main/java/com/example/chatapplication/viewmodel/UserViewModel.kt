@@ -6,8 +6,7 @@ import com.example.chatapplication.data.User
 import com.example.chatapplication.repository.UserRepository
 
 
-class UserViewModel: ViewModel() {
-
+class UserViewModel : ViewModel() {
 
 
     private val dataManager = UserRepository()
@@ -25,15 +24,10 @@ class UserViewModel: ViewModel() {
     val incomingFriendRequest: LiveData<List<User>> = dataManager.incomingFriendRequests
 
 
-
-
-
-
-
-
     fun getCurrentUserId(): String? {
         return dataManager.getCurrentUserId()
     }
+
     fun addUser(fullName: String) {
         dataManager.addUser(fullName)
     }
@@ -54,14 +48,14 @@ class UserViewModel: ViewModel() {
 
 
     fun isFriend(currentUserId: String, otherUserId: String, callback: (Boolean) -> Unit) {
-        dataManager.isFriend(currentUserId,otherUserId, callback)
+        dataManager.isFriend(currentUserId, otherUserId, callback)
     }
 
-        fun removeFriend(currentUserId: String?, friend: User) {
-            if (currentUserId != null) {
-                    dataManager.deleteFriendFromFirebase(friend)
+    fun removeFriend(currentUserId: String?, friend: User) {
+        if (currentUserId != null) {
+            dataManager.deleteFriendFromFirebase(friend)
 
-            }
+        }
     }
 
     fun getFriends(currentUserId: String) {
@@ -86,15 +80,10 @@ class UserViewModel: ViewModel() {
     }
 
 
-
-
     fun updateCurrentUser(fullName: String, username: String) {
         val id = getCurrentUserId() ?: return
         dataManager.updateCurrentUser(fullName)
     }
-
-
-
 
 
     fun deleteCurrentUser() {
@@ -116,14 +105,21 @@ class UserViewModel: ViewModel() {
     }
 
 
-
-
-
-    fun acceptFriendRequest(currentUserId: String, otherUserId: String, currentUserName: String, otherUserName: String) {
+    fun acceptFriendRequest(
+        currentUserId: String,
+        otherUserId: String,
+        currentUserName: String,
+        otherUserName: String
+    ) {
         dataManager.acceptFriendRequest(currentUserId, otherUserId, currentUserName, otherUserName)
     }
 
-    fun sendFriendRequest( fromUserId: String, fromUserName: String, toUserId: String, toUserName: String) {
+    fun sendFriendRequest(
+        fromUserId: String,
+        fromUserName: String,
+        toUserId: String,
+        toUserName: String
+    ) {
         dataManager.sendFriendRequest(fromUserId, fromUserName, toUserId, toUserName)
     }
 
@@ -132,8 +128,11 @@ class UserViewModel: ViewModel() {
     }
 
 
-
-    fun cancelOutgoingFriendRequest(currentUserId: String, otherUserId: String, onComplete: () -> Unit = {}) {
+    fun cancelOutgoingFriendRequest(
+        currentUserId: String,
+        otherUserId: String,
+        onComplete: () -> Unit = {}
+    ) {
         dataManager.cancelOutgoingFriendRequest(currentUserId, otherUserId)
     }
 
@@ -144,10 +143,6 @@ class UserViewModel: ViewModel() {
     fun declineFriendRequest(currentUserId: String, otherUserId: String) {
         dataManager.declineFriendRequest(currentUserId, otherUserId)
     }
-
-
-
-
 
 
 }

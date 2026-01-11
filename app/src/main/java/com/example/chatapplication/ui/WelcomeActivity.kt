@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.CredentialManager
@@ -19,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.chatapplication.R
 import com.example.chatapplication.databinding.ActivityWelcomeBinding
 import com.example.chatapplication.repository.UserRepository
-import com.example.chatapplication.ui.DashboardActivity
 import com.example.chatapplication.viewmodel.AuthViewModel
 import com.google.android.gms.common.SignInButton
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -53,8 +51,6 @@ class WelcomeActivity : AppCompatActivity() {
 
         emailEditText = binding.editTextEmail
         passwordEditText = binding.editTextPassword
-
-
 
 
         val emailFromIntent = intent.getStringExtra("EMAIL")
@@ -127,7 +123,7 @@ class WelcomeActivity : AppCompatActivity() {
             authViewModel.loginWithGoogle(idToken, {
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                     ?: return@loginWithGoogle
-                val user = userRepository.getUserDetailsById(userId) {user ->
+                val user = userRepository.getUserDetailsById(userId) { user ->
 
                     if (user?.fullName.isNullOrEmpty()) {
                         intent = Intent(this, ProfileActivity::class.java)
@@ -140,7 +136,11 @@ class WelcomeActivity : AppCompatActivity() {
 
 
             }, {
-                Toast.makeText(this, getString(R.string.not_successful, it.message), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.not_successful, it.message),
+                    Toast.LENGTH_SHORT
+                ).show()
             })
         }
 
@@ -149,10 +149,13 @@ class WelcomeActivity : AppCompatActivity() {
     private fun handleFailure(exception: GetCredentialException) {
         when (exception) {
             is GetCredentialCancellationException -> {
-                Toast.makeText(this,
-                    getString(R.string.not_successful, exception.message), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.not_successful, exception.message), Toast.LENGTH_SHORT
+                ).show()
 
             }
+
             is NoCredentialException -> {
 
                 AlertDialog.Builder(this)
@@ -168,6 +171,7 @@ class WelcomeActivity : AppCompatActivity() {
                     }
                     .show()
             }
+
             else -> {
                 Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
 

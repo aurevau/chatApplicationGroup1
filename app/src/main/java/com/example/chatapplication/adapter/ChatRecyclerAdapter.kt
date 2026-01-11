@@ -44,7 +44,7 @@ class ChatRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val message = getItem(position)
         when (holder) {
-            is SentViewHolder -> holder.bind(message,onMessageClick)
+            is SentViewHolder -> holder.bind(message, onMessageClick)
             is ReceivedViewHolder -> holder.bind(message)
         }
     }
@@ -53,7 +53,7 @@ class ChatRecyclerAdapter(
         private val binding: ItemMessageSentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(message: Message, onMessageClick: (Message) -> Unit ) {
+        fun bind(message: Message, onMessageClick: (Message) -> Unit) {
             binding.root.setOnClickListener {
                 onMessageClick(message)
             }
