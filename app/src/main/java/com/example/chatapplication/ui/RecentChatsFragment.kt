@@ -22,8 +22,6 @@ class RecentChatsFragment : Fragment() {
     private var _binding: FragmentRecentChatsBinding? = null
     private val binding get() = _binding!!
 
-    private val messageRepository = MessageRepository()
-
     private lateinit var adapter: RecentChatsRecyclerAdapter
 
     // Use activityViewModels to share data between fragments if needed, or viewModels for just this fragment
@@ -82,20 +80,21 @@ class RecentChatsFragment : Fragment() {
                 // HERE IS THE FIX: We need to assign the adapter to the RecyclerView
                 this.adapter = this@RecentChatsFragment.adapter
             }
-        }
-        // 3. Listen to data
-        viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
-            Log.d("RecentChatsFragment", "recentChats size=${chatList.size}")
+            // 3. Listen to data
+            viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->
+                Log.d("RecentChatsFragment", "recentChats size=${chatList.size}")
 
-            adapter.setChats(chatList)
+                adapter.setChats(chatList)
 
+            }
         }
+
 
         val currentUserId = userViewModel.getCurrentUserId() ?: return
         userViewModel.getUserDetailsById(currentUserId) { user ->
             currentUserFullName = user?.fullName ?: ""
             adapter.currentUserFullName = currentUserFullName
-            adapter.notifyDataSetChanged()  // uppdatera gruppnamn etc
+            adapter.notifyDataSetChanged()
         }
 
 

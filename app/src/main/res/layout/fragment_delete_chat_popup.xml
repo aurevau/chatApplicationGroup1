@@ -35,6 +35,7 @@
             android:fontFamily="@font/bagel_fat_one"
             android:text="@string/confirm_deleting_chat"
             android:textAlignment="center"
+            android:textColor="@color/off_white"
             android:textSize="@dimen/popup_text_size_32sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

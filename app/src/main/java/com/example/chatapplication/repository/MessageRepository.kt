@@ -7,15 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapplication.data.ChatRoom
 import com.example.chatapplication.data.Message
-import com.example.chatapplication.util.DateUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import com.example.chatapplication.R
-import com.example.chatapplication.data.User
 import com.google.firebase.firestore.Query
 
 class MessageRepository {
@@ -208,7 +204,7 @@ class MessageRepository {
                                         "groupName" to otherUserName,
                                         "memberNames" to listOf(otherUserName),
                                         "createdAt" to System.currentTimeMillis(),
-                                        "lastMessage" to "",          // Viktigt: tom sträng
+                                        "lastMessage" to "",          // Important: empty String
                                         "lastImageMessage" to "",
                                         "lastMessageTimestamp" to System.currentTimeMillis(),
                                         "isGroup" to false
@@ -397,7 +393,6 @@ class MessageRepository {
                     .get()
                     .addOnSuccessListener { snapshot ->
                         if (snapshot.isEmpty) {
-                            //  Ingen kvar → nollställ lastMessage och lastImageMessage
                             db.collection("chatRooms").document(roomId).update(
                                 mapOf(
                                     "lastMessage" to null,
@@ -410,7 +405,7 @@ class MessageRepository {
                             val last = snapshot.documents[0].toObject(Message::class.java)
                             val lastTimestamp: Long = last?.timestamp ?: System.currentTimeMillis()
 
-                            //  Uppdate chatroom with the latest message so the text changes from picture
+                            //  Update chatroom with the latest message so the text changes from picture
                             db.collection("chatRooms").document(roomId).update(
                                 mapOf(
                                     "lastMessage" to last?.text,

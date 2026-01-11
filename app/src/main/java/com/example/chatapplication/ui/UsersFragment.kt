@@ -76,7 +76,7 @@ class UsersFragment : Fragment() {
         })
 
         adapter = UserRecyclerAdapter(viewModel, { user ->
-            // See more information about the user and be able to add friends?
+            // See more information about the user and be able to add friends
             binding.cvSearchUser.visibility = View.GONE
             binding.etSearchUser.text?.clear()
             if (currentUserId != null) {
@@ -84,7 +84,7 @@ class UsersFragment : Fragment() {
             }
 
         }, { user ->
-            // Start New chatroom from user or open existing chatroom. Need ChatRoomRepository for this!
+            // Start New chatroom from user or open existing chatroom
             val chatIntent = Intent(activity, ChatActivity::class.java)
             chatIntent.putExtra("USER_ID", user.id)
             startActivity(chatIntent)

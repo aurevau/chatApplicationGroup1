@@ -1,63 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.ChangeChatNameFragment"
-    android:backgroundTint="@color/dark_green"
-    app:cardCornerRadius="20dp"
-    android:elevation="4dp"
-    android:layout_marginVertical="240dp"
-    android:layout_marginHorizontal="50dp">
+    android:layout_marginHorizontal="@dimen/margin_50dp"
+    android:layout_marginVertical="@dimen/margin_240dp"
+    android:background="@drawable/popup_background"
+    android:elevation="@dimen/margin_4dp"
+    tools:context=".ui.ChangeChatNameFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/et_chat_name"
-        style="?attr/textInputFilledStyle"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="50dp"
-        android:layout_width="@dimen/edit_text_width_220dp"
-        android:layout_height="wrap_content"
-        android:hint="Choose your chat name"
-        android:textColorHint="@color/hint_text_color"
-        app:boxStrokeColor="@color/hint_text_color"
-        app:cursorColor="@color/off_white"
-        app:errorTextColor="@color/white"
-        app:hintTextColor="@color/hint_text_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="16dp"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_chat_name"
+            style="?attr/textInputFilledStyle"
+            android:layout_width="@dimen/edit_text_width_220dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/header_and_edit_text_color"
-            android:fontFamily="@font/bagel_fat_one"
-            android:inputType="text"
-            android:textColor="@color/off_white" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="@dimen/margin_32dp"
+            android:layout_marginBottom="@dimen/margin_16dp"
+            android:hint="@string/choose_your_chat_name_hint_text"
+            android:textColorHint="@color/hint_text_color"
+            app:boxStrokeColor="@color/hint_text_color"
+            app:cursorColor="@color/off_white"
+            app:errorTextColor="@color/white"
+            app:hintTextColor="@color/hint_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/button_save_change_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/button_color"
-        android:fontFamily="@font/bagel_fat_one"
-        android:text="@string/save"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_chat_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="16dp"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/header_and_edit_text_color"
+                android:fontFamily="@font/bagel_fat_one"
+                android:inputType="text"
+                android:textColor="@color/off_white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/button_save_change_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_16dp"
+            android:backgroundTint="@color/button_color"
+            android:fontFamily="@font/bagel_fat_one"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_chat_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.cardview.widget.CardView>
+</FrameLayout>

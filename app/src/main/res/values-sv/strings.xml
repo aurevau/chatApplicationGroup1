@@ -125,5 +125,6 @@
     <string name="delete_account_text">Ta bort konto</string>
     <string name="are_you_sure_you_want_to_delete_your_account">Är du säker på att du vill ta bort ditt konto?</string>
     <string name="delete_account">Ta bort konto</string>
+    <string name="choose_your_chat_name_hint_text">Välj ett chattnamn</string>
 
 </resources>
