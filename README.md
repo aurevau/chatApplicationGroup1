@@ -25,6 +25,7 @@ A real-time messaging Android application built with Kotlin and Firebase.
     - Firebase Storage (image storage)
 - **UI:** ViewBinding, RecyclerView, Fragments
 - **Image Loading:** Glide
+- **Planning:** Lucidchart, Trello, Figma
 
 ## Project Structure
 
@@ -85,8 +86,12 @@ chatRooms/
   │                 └── timestamp: Long
 ```
 
+### Design and App-Structure 
+This is the initial app-structure we used to build our app from: 
+<img width="728" height="458" alt="Skärmavbild 2026-01-11 kl  16 54 50" src="https://github.com/user-attachments/assets/00eba267-08cd-4a2e-8558-036dc64c5d77" />
 
-
+This is the initial app-design we used to build our app from: 
+<img width="1954" height="1932" alt="Group One - ChatApp" src="https://github.com/user-attachments/assets/76a7ba9c-2fe7-46bc-a902-d1c196e8b835" />
 
 
 
