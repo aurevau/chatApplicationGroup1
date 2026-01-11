@@ -31,13 +31,14 @@ class RecentChatsFragment : Fragment() {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var currentUserFullName: String
+    private var currentUserId: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-
+        currentUserId = userViewModel.getCurrentUserId() ?: ""
     }
 
     override fun onCreateView(
@@ -52,30 +53,35 @@ class RecentChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        userViewModel.getUserDetailsById(currentUserId) { user ->
+            currentUserFullName = user?.fullName ?: ""
+            // 1. Create the adapter
+            adapter = RecentChatsRecyclerAdapter(
+                "",
+                onChatClick = { chat ->
+                    val otherUserId = if (chat.isGroup) null
+                    else chat.roomId?.split("_")?.firstOrNull { it != currentUserId }
+                    val intent = Intent(requireContext(), ChatActivity::class.java)
+                    intent.putExtra("ROOM_ID", chat.roomId)
+                    intent.putExtra("IMAGE_URL", chat.chatRoomImageUrl)
+                    intent.putExtra("USER_ID", otherUserId)
 
-        // 1. Create the adapter
-        adapter = RecentChatsRecyclerAdapter(
-            "",
-            onChatClick = { chat ->
-                val intent = Intent(requireContext(), ChatActivity::class.java)
-                intent.putExtra("ROOM_ID", chat.roomId)
-                intent.putExtra("IMAGE_URL", chat.chatRoomImageUrl)
+                    startActivity(intent)
+                },
+                onChatLongClick = { chatRoom ->
+                    DeleteChatPopupFragment.newInstance(chatRoom)
+                        .show(parentFragmentManager, "deleteChat")
+                }
 
-                startActivity(intent)
-            },
-            onChatLongClick = { chatRoom ->
-                DeleteChatPopupFragment.newInstance(chatRoom)
-                    .show(parentFragmentManager, "deleteChat")
+            )
+
+
+            // 2. Connect RecyclerView to LayoutManager and Adapter
+            binding.recyclerViewRecentChats.apply {
+                layoutManager = LinearLayoutManager(context)
+                // HERE IS THE FIX: We need to assign the adapter to the RecyclerView
+                this.adapter = this@RecentChatsFragment.adapter
             }
-
-        )
-
-
-        // 2. Connect RecyclerView to LayoutManager and Adapter
-        binding.recyclerViewRecentChats.apply {
-            layoutManager = LinearLayoutManager(context)
-            // HERE IS THE FIX: We need to assign the adapter to the RecyclerView
-            this.adapter = this@RecentChatsFragment.adapter
         }
         // 3. Listen to data
         viewModel.recentChats.observe(viewLifecycleOwner) { chatList ->

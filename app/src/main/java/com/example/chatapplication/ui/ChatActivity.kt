@@ -106,6 +106,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val currentUserId = userViewModel.getCurrentUserId()
+
         if (currentUserId != null) {
             userViewModel.getUserDetailsById(currentUserId) { user ->
                 currentUserFullName = user?.fullName ?: ""
@@ -114,7 +115,6 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.getChatRoomDetailsById(currentRoomId)
 
                 viewModel.chatRoomDetails.observe(this) { room ->
-
                     val displayName = when {
                         room == null -> getString(R.string.chat)
                         room.isGroup -> {
@@ -143,7 +143,7 @@ class ChatActivity : AppCompatActivity() {
         if (!imageUrl.isNullOrEmpty()) {
             binding.tvInitials.visibility = View.GONE
             binding.profilePic.visibility = View.VISIBLE
-            Glide.with(binding.profilePic.context)
+            Glide.with(this)
                 .load(imageUrl)
                 .circleCrop()
                 .into(binding.profilePic)
@@ -151,12 +151,23 @@ class ChatActivity : AppCompatActivity() {
             binding.tvInitials.visibility = View.GONE
         }
         if (userId != null) {
+
             viewModel.getUserDetailsById(userId)
             viewModel.targetUser.observe(this) { user ->
-                Log.d("??? user", user.toString())
-                binding.tvInitials.visibility = View.VISIBLE
-                binding.tvHeader.text = user?.fullName
-                binding.tvInitials.text = user?.initials
+                if (user?.profileImageUrl != null) {
+                    binding.tvInitials.visibility = View.GONE
+                    binding.profilePic.visibility = View.VISIBLE
+                    Glide.with(this)
+                        .load(user.profileImageUrl)
+                        .circleCrop()
+                        .into(binding.profilePic)
+                    binding.tvHeader.text = user.fullName
+                } else {
+                    Log.d("??? user", user.toString())
+                    binding.tvInitials.visibility = View.VISIBLE
+                    binding.tvHeader.text = user?.fullName
+                    binding.tvInitials.text = user?.initials
+                }
             }
         }
 
