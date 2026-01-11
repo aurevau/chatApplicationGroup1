@@ -186,6 +186,11 @@ class MessageRepository {
     ) {
         val currentUserId = Firebase.auth.currentUser?.uid ?: return
 
+
+        db.collection("users").document(currentUserId).get()
+            .addOnSuccessListener { currentUserDoc ->
+                val currentUserName = currentUserDoc.getString("fullName") ?: "Me"
+
         db.collection("chatRooms").document(roomId).get()
             .addOnSuccessListener { doc ->
                 if (!doc.exists()) {
@@ -201,8 +206,8 @@ class MessageRepository {
                                     mapOf(
                                         "members" to members,
                                         "userName" to otherUserName,
-                                        "groupName" to otherUserName,
-                                        "memberNames" to listOf(otherUserName),
+                                        "groupName" to null,
+                                        "memberNames" to listOf(otherUserName,currentUserName),
                                         "createdAt" to System.currentTimeMillis(),
                                         "lastMessage" to "",          // Important: empty String
                                         "lastImageMessage" to "",
@@ -229,7 +234,7 @@ class MessageRepository {
                     onReady()
                 }
             }
-    }
+    }}
 
 
     fun deleteChatRoom(chatRoom: ChatRoom) {
